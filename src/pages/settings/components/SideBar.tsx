@@ -55,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           isActive: false,
         },
         {
-          title: 'Show Tutorial',
+          title: 'Privacy',
           isActive: true,
         },
       ],
@@ -70,11 +70,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   useEffect(() => {
     const section = searchParams.get('section');
     if (section) {
+      const aliases: Record<string, string> = {
+        'chat-privacy': 'privacy',
+        'show-tutorial': 'privacy',
+      };
+      const resolved = aliases[section] || section;
       const menuItem = Object.values(menuItems)
         .flat()
         .find(
           (item) =>
-            item.title.replace(/\s+/g, '-').toLowerCase() === section,
+            item.title.replace(/\s+/g, '-').toLowerCase() === resolved,
         );
       if (menuItem?.isActive) {
         setActiveMenu(menuItem.title);

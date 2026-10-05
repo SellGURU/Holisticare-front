@@ -8,6 +8,9 @@ interface InputMentionsProps {
   onUpload?: (file: File) => void;
   handleDeleteImage?: (indexToDelete: number) => void;
   PlaceHolder?: string;
+  replyingTo?: { name: string; text: string } | null;
+  onCancelReply?: () => void;
+  error?: string | null;
 }
 const InputMentions: React.FC<InputMentionsProps> = ({
   value,
@@ -17,6 +20,9 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   onUpload,
   handleDeleteImage,
   PlaceHolder = 'Write message here ...',
+  replyingTo,
+  onCancelReply,
+  error,
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -63,6 +69,31 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   };
   return (
     <>
+      {replyingTo && (
+        <div className="absolute bottom-[72px] left-1 md:left-2 mb-1 flex w-[98%] items-start justify-between rounded-lg border border-Gray-50 bg-[#005F730F] px-3 py-2">
+          <div className="min-w-0">
+            <p className="text-[10px] font-medium text-[#005F73]">
+              Replying to {replyingTo.name || 'message'}
+            </p>
+            <p className="text-[11px] text-Text-Secondary line-clamp-2">
+              {replyingTo.text}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onCancelReply}
+            className="ml-2 text-[11px] text-Text-Quadruple"
+            aria-label="Cancel reply"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+      {error && (
+        <div className="absolute bottom-[56px] left-1 md:left-2 mb-1 w-[98%] text-[11px] text-red-500">
+          {error}
+        </div>
+      )}
       <div className="w-[98%]   bg-[#E9F0F2] left-1 md:left-2  absolute bottom-0  mb-4  py-2 h-[40px] px-4 flex items-center gap-3 rounded-[16px]">
         {onUpload && (
           <img

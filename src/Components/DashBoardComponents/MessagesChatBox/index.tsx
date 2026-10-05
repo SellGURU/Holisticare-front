@@ -3,6 +3,7 @@ import React, {
   Fragment,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -10,51 +11,26 @@ import { useSearchParams } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 import Application from '../../../api/app';
 import { getCached } from '../../../utils/pageCache';
-import {
-  invalidateMessagesForMember,
-  PORTAL_CACHE_KEYS,
-} from '../../../utils/cacheKeys';
+import { PORTAL_CACHE_KEYS } from '../../../utils/cacheKeys';
 import Circleloader from '../../CircleLoader';
 import InputMentions from './InputMentions';
 import MainModal from '../../MainModal';
-// import TooltipText from '../../TooltipText';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import SvgIcon from '../../../utils/svgIcon';
 import SearchBox from '../../SearchBox';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import { useVisibilityAwarePoll } from '../../../hooks/useVisibilityAwarePoll';
 import { Tooltip } from 'react-tooltip';
-type Message = {
-  date: string;
-  time: string;
-  conversation_id: number;
-  message_text: string;
-  sender_id: number;
-  isSending?: boolean;
-  replied_message_id: number | null;
-  sender_type: string;
-  images?: string[];
-  timestamp: number;
-  name: string;
-  recipient?: boolean;
-  reported?: boolean;
-};
-type SendMessage = {
-  conversation_id?: number;
-  receiver_id: number;
-  message_text: string;
-  replied_conv_id?: number;
-  images: string[];
-  chatting_with?: string;
-};
-
-function sortMessagesChronologically(items: Message[]): Message[] {
-  return [...items].sort((left, right) => {
-    const timeDelta = Number(left.timestamp || 0) - Number(right.timestamp || 0);
-    if (timeDelta !== 0) return timeDelta;
-    return Number(left.conversation_id || 0) - Number(right.conversation_id || 0);
-  });
-}
+import { ChatDateSeparator } from '../../ComboBar/components/ChatDateSeparator';
+import { ChatMessageBubble } from '../../ComboBar/components/ChatMessageBubble';
+import {
+  groupMessagesByDay,
+  messageListKey,
+  normalizeHistoryResponse,
+  sortMessagesChronologically,
+} from '../../ComboBar/components/chatMessageUtils';
+import type { ChatMessage } from '../../ComboBar/components/chatTypes';
+import { useCoachChatThread } from '../../ComboBar/components/useCoachChatThread';
 interface MessagesChatBoxProps {
   onBack: () => void;
   onMessageSent?: (memberId: number) => void;
@@ -66,12 +42,9 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   onMessageSent,
   selectMessages,
 }) => {
-  const [allMessages, setAllMessages] = useState<Message[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [aiMessages, setAiMessages] = useState<Message[]>([]);
+  const [aiMessages, setAiMessages] = useState<ChatMessage[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
   const [username, setUsername] = useState<any>(null);
-  const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [Images, setImages] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -101,27 +74,12 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   const id = searchParams.get('id');
   const usernameParams = searchParams.get('username');
   const statusParams = searchParams.get('status');
-  const [oneLoadingUser, setOneLoadingUser] = useState(true);
-  const userMessagesList = (member_id: number) => {
-    if (oneLoadingUser) {
-      setIsLoading(true);
-      setOneLoadingUser(false);
-    }
-    getCached(PORTAL_CACHE_KEYS.messagesThread(member_id), () =>
-      Application.userMessagesList({ member_id: member_id }).then(
-        (res) => res.data,
-      ),
-    )
-      .then((data) => {
-        const ordered = sortMessagesChronologically(Array.isArray(data) ? data : []);
-        setMessages(ordered);
-        setAllMessages(ordered);
-      })
-      .catch(() => {})
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+  const coachMemberId = id != null ? Number(id) : NaN;
+  const coachThread = useCoachChatThread({
+    memberId: Number.isFinite(coachMemberId) ? coachMemberId : null,
+    liveEnabled: Boolean(coachMemberId) && !aiMode,
+    onSent: (sentMemberId) => onMessageSent?.(sentMemberId),
+  });
   const aiMessagesList = (member_id: number) => {
     setIsLoading(true);
     getCached(PORTAL_CACHE_KEYS.messagesThreadAi(member_id), () =>
@@ -132,7 +90,9 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
     )
       .then((data) => {
         setAiMessages(
-          sortMessagesChronologically(Array.isArray(data) ? data : []),
+          sortMessagesChronologically(
+            normalizeHistoryResponse(data).messages,
+          ),
         );
       })
       .catch(() => {})
@@ -140,12 +100,6 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
         setIsLoading(false);
       });
   };
-  useEffect(() => {
-    if (id != undefined) {
-      setOneLoadingUser(true);
-      userMessagesList(parseInt(id));
-    }
-  }, [id]);
   useEffect(() => {
     if (id != undefined && aiMode === true) {
       aiMessagesList(parseInt(id));
@@ -158,21 +112,16 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
     } else {
       setMemberId(null);
       setUsername(null);
-      setMessages([]);
     }
   }, [id, usernameParams]);
   const pollUnreadMessages = useCallback(() => {
-    if (!username || !memberId) return;
+    if (!username || !memberId || !aiMode) return;
     Application.has_unread_message({
       member_id: memberId,
     })
       .then((res) => {
         if (res?.data?.has_unread === true) {
-          if (aiMode === true) {
-            aiMessagesList(parseInt(memberId));
-          } else {
-            userMessagesList(parseInt(memberId));
-          }
+          aiMessagesList(parseInt(memberId));
         }
       })
       .catch(() => {});
@@ -181,58 +130,15 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   useVisibilityAwarePoll(
     pollUnreadMessages,
     15000,
-    Boolean(username && memberId),
+    Boolean(username && memberId && aiMode),
     {
       immediate: false,
     },
   );
   const [, setSelectedBenchMarks] = useState<Array<string>>([]);
   const handleSend = async () => {
-    if (input.trim() && memberId !== null) {
-      const receiverId = Number(memberId);
-      if (!Number.isFinite(receiverId)) {
-        return;
-      }
-      const lastConversationId =
-        messages.length > 0
-          ? messages[messages.length - 1].conversation_id
-          : undefined;
-      const newMessage: SendMessage = {
-        message_text: input,
-        receiver_id: receiverId,
-        images: Images,
-        conversation_id: lastConversationId,
-        chatting_with: 'client',
-      };
-      setMessages([
-        ...messages,
-        {
-          conversation_id: Number(lastConversationId),
-          date: new Date().toISOString(),
-          message_text: input,
-          replied_message_id: 0,
-          sender_id: Number(memberId),
-          isSending: true,
-          sender_type: 'user',
-          time: '',
-          images: Images,
-          timestamp: Date.now(),
-          name: '',
-        },
-      ]);
-      setInput('');
-      setImages([]);
-      try {
-        await Application.sendMessage(newMessage);
-        invalidateMessagesForMember(parseInt(memberId));
-        userMessagesList(parseInt(memberId));
-        if (onMessageSent) {
-          onMessageSent(parseInt(memberId));
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    await coachThread.handleSend(undefined, { images: Images });
+    setImages([]);
   };
 
   const formatText = (text: string) => {
@@ -268,8 +174,10 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
     }
   };
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, aiMode]);
+    if (aiMode) {
+      scrollToBottom();
+    }
+  }, [aiMessages, aiMode]);
   // const handleUpload = (file: File) => {
   //   const reader = new FileReader();
   //   reader.onloadend = () => {
@@ -315,11 +223,11 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setisSearchOpen(false);
     },
   });
-  const [searchedMessages, setSearchedMessages] = useState<Message[] | null>(
+  const [searchedMessages, setSearchedMessages] = useState<ChatMessage[] | null>(
     null,
   );
   const [searchedAiMessages, setSearchedAiMessages] = useState<
-    Message[] | null
+    ChatMessage[] | null
   >(null);
 
   useEffect(() => {
@@ -328,7 +236,6 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
     const term = search.trim().toLowerCase();
 
     if (!term) {
-      // Clear search results and restore full messages
       setSearchedMessages(null);
       setSearchedAiMessages(null);
       return;
@@ -340,12 +247,18 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       );
       setSearchedAiMessages(filtered);
     } else {
-      const filtered = allMessages.filter((msg) =>
+      const filtered = coachThread.messageData.filter((msg) =>
         msg.message_text?.toLowerCase().includes(term),
       );
       setSearchedMessages(filtered);
     }
-  }, [search, aiMode, allMessages, aiMessages, memberId]);
+  }, [search, aiMode, coachThread.messageData, aiMessages, memberId]);
+  const coachGroups = useMemo(
+    () => groupMessagesByDay(searchedMessages ?? coachThread.messageData),
+    [searchedMessages, coachThread.messageData],
+  );
+  const peerOnline =
+    coachThread.presence?.peer.online ?? statusParams === 'true';
   const [isMobilePage, setIsMobilePage] = useState(window.innerWidth < 768);
   useEffect(() => {
     const handleResize = () => {
@@ -370,7 +283,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   return (
     <>
       <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
-        {isLoading ? (
+        {(aiMode ? isLoading : coachThread.isLoading && coachThread.messageData.length < 1) ? (
           <>
             <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
               <Circleloader />
@@ -378,7 +291,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
           </>
         ) : (
           <>
-            {messages.length !== 0 || username ? (
+            {coachThread.messageData.length !== 0 || username ? (
               <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]  flex items-center justify-between ">
                 {isMobileSearchOpen() ? (
                   <div className="flex items-center gap-2">
@@ -411,7 +324,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                         </TooltipTextAuto>
                       </div>
                       <div className="text-[10px] text-Text-Quadruple">
-                        {statusParams == 'true' ? 'Online' : 'Offline'}
+                        {peerOnline ? 'Online' : 'Offline'}
                       </div>
                     </div>
                   </div>
@@ -488,161 +401,49 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
             )}
             <div
               id="userChat"
+              ref={!aiMode ? coachThread.listRef : undefined}
+              onScroll={!aiMode ? () => void coachThread.handleScroll() : undefined}
               className="flex h-full flex-col overflow-auto p-4"
             >
-              {!aiMode && (searchedMessages ?? messages).length > 0 && (
-                <div className="mt-auto flex flex-col space-y-4">
-                  {(searchedMessages ?? messages).map(
-                    (message, index: number) => (
-                      <Fragment
-                        key={`${message.conversation_id}-${message.timestamp}-${index}`}
-                      >
-                        {message.sender_type === 'patient' ? (
-                          <>
-                            <div className="flex justify-start items-start gap-1">
-                              <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
-                                <img
-                                  src={`https://ui-avatars.com/api/?name=${username}`}
-                                  alt=""
-                                  className="rounded-full"
-                                />
-                              </div>
-                              <div>
-                                <div className="text-Text-Primary font-medium text-[12px]">
-                                  {username}{' '}
-                                  <span className="text-[#888888] text-[12px] font-normal ml-1">
-                                    {new Date(
-                                      message.timestamp,
-                                    ).toLocaleTimeString([], {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                      hour12: false,
-                                    })}
-                                  </span>
-                                </div>
-                                <div className="flex flex-row gap-2">
-                                  {message.images?.map((image, index) => {
-                                    return (
-                                      <img
-                                        src={image}
-                                        alt=""
-                                        key={index}
-                                        className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                        onClick={() => handleImageClick(image)}
-                                      />
-                                    );
-                                  })}
-                                </div>
-                                <div
-                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                                  style={{
-                                    lineHeight: '26px',
-                                    overflowWrap: 'anywhere',
-                                  }}
-                                >
-                                  {formatText(message.message_text)}
-                                </div>
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="flex  justify-end items-start gap-1">
-                              <div className="flex relative flex-col items-end">
-                                {message.reported == true && (
-                                  <>
-                                    <img
-                                      data-tooltip-id={
-                                        message.conversation_id + 'flag'
-                                      }
-                                      className="absolute -left-5 cursor-pointer top-5"
-                                      src="/icons/flag-2.svg"
-                                      alt=""
-                                    />
-                                    <Tooltip
-                                      id={message.conversation_id + 'flag'}
-                                    >
-                                      This response was reported by the client.
-                                    </Tooltip>
-                                  </>
-                                )}
-
-                                <div className="text-Text-Primary text-xs font-medium">
-                                  <span className="text-[#888888] text-[12px] font-normal mr-1">
-                                    {new Date(
-                                      message.timestamp,
-                                    ).toLocaleTimeString([], {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                      hour12: false,
-                                    })}
-                                  </span>
-                                  {message.name}
-                                </div>
-                                <div className="flex flex-row gap-2">
-                                  {message.images?.map((image, index) => {
-                                    return (
-                                      <img
-                                        src={image}
-                                        alt=""
-                                        key={index}
-                                        className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                        onClick={() => handleImageClick(image)}
-                                      />
-                                    );
-                                  })}
-                                </div>
-                                <div className="flex items-end ml-1">
-                                  {
-                                    message.isSending ? (
-                                      <span>
-                                        <MoonLoader color="#383838" size={12} />
-                                      </span>
-                                    ) : null
-                                    // <span>
-                                    //   <SvgIcon
-                                    //     src="./icons/tick-green.svg"
-                                    //     color="#8a8a8a"
-                                    //   />
-                                    // </span>
-                                  }
-                                  {message.recipient == true && (
-                                    <>
-                                      <span title={'Seen by the ' + username}>
-                                        <img
-                                          className="w-4 h-4 object-contain"
-                                          src="/icons/telegram_read.svg"
-                                          alt=""
-                                        />
-                                        {/* <SvgIcon
-                                        src="./icons/telegram_read.svg"
-                                        // color="#8a8a8a"
-                                      /> */}
-                                      </span>
-                                    </>
-                                  )}
-                                  <div
-                                    style={{ overflowWrap: 'anywhere' }}
-                                    className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
-                                  >
-                                    {formatText(message.message_text)}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="min-w-[40px] min-h-[40px] size-10 overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
-                                <img
-                                  className="rounded-full"
-                                  src={`https://ui-avatars.com/api/?name=${message.name}`}
-                                  alt=""
-                                />
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </Fragment>
-                    ),
+              {!aiMode && coachGroups.length > 0 && (
+                <div className="mt-auto flex flex-col">
+                  {coachThread.isLoadingOlder && (
+                    <p className="text-center text-[11px] text-Text-Quadruple py-2">
+                      Loading earlier messages...
+                    </p>
                   )}
-                  <div ref={!aiMode ? messagesEndRef : undefined} />
+                  {coachGroups.map((group) => (
+                    <section key={group.key} aria-label={group.label}>
+                      <ChatDateSeparator label={group.label} />
+                      {group.messages.map((message) => (
+                        <ChatMessageBubble
+                          key={messageListKey(message)}
+                          message={{
+                            ...message,
+                            name:
+                              message.sender_type === 'patient'
+                                ? username || message.name
+                                : message.name,
+                          }}
+                          layout="wide"
+                          highlighted={
+                            coachThread.highlightedId === message.conversation_id
+                          }
+                          onReply={coachThread.setReplyingTo}
+                          onDelete={coachThread.handleDelete}
+                          onReact={coachThread.handleReact}
+                          onRetry={coachThread.handleSend}
+                          onJumpToReply={(conversationId) => {
+                            setSearch('');
+                            setSearchedMessages(null);
+                            void coachThread.jumpToReply(conversationId);
+                          }}
+                          onImageClick={handleImageClick}
+                        />
+                      ))}
+                    </section>
+                  ))}
+                  <div ref={coachThread.endRef} />
                 </div>
               )}
               {aiMode && (searchedAiMessages ?? aiMessages).length > 0 && (
@@ -805,7 +606,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                     Select a client from the list to view or send messages.
                   </div>
                 </div>
-              ) : (aiMode === false && messages.length === 0) ||
+              ) : (aiMode === false && coachThread.messageData.length === 0) ||
                 (aiMode === true && aiMessages.length === 0) ? (
                 <div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
                   <img src="/icons/empty-messages.svg" alt="" />
@@ -816,17 +617,33 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
               )}
             </div>
             {username && !aiMode ? (
-              <div className="px-2 w-full flex justify-center h-[100px]">
+              <div
+                className={`px-2 w-full flex justify-center ${
+                  coachThread.replyingTo || coachThread.error
+                    ? 'h-[148px]'
+                    : 'h-[100px]'
+                }`}
+              >
                 <InputMentions
-                  // onUpload={handleUpload}
-                  // handleDeleteImage={handleDeleteImage}
                   changeBenchMarks={(val: Array<string>) => {
                     setSelectedBenchMarks(val);
                   }}
-                  onChange={setInput}
+                  onChange={coachThread.setInput}
                   onSubmit={handleSend}
-                  value={input}
+                  value={coachThread.input}
                   PlaceHolder="Enter your message here..."
+                  error={coachThread.error}
+                  replyingTo={
+                    coachThread.replyingTo
+                      ? {
+                          name: coachThread.replyingTo.name,
+                          text: coachThread.replyingTo.deleted
+                            ? 'This message was deleted'
+                            : coachThread.replyingTo.message_text,
+                        }
+                      : null
+                  }
+                  onCancelReply={() => coachThread.setReplyingTo(null)}
                 />
               </div>
             ) : (

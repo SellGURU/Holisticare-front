@@ -10,7 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import { Notification } from '../Notification';
 import NotificationApi from '../../api/Notification';
 import { useApp } from '../../hooks';
+import Application from '../../api/app.ts';
 import { useVisibilityAwarePoll } from '../../hooks/useVisibilityAwarePoll';
+import { CHAT_PRESENCE_HEARTBEAT_MS } from '../ComboBar/components/chatMessageUtils';
 import { fetchBrandInfo } from '../../utils/brandInfoCache';
 import { readJson } from '../../utils/safeStorage';
 const MainTopBar = () => {
@@ -133,6 +135,14 @@ const MainTopBar = () => {
   }, []);
 
   useVisibilityAwarePoll(checkNewNotifications, 120000);
+  useVisibilityAwarePoll(
+    () => {
+      void Application.chatPresenceHeartbeat().catch(() => {});
+    },
+    CHAT_PRESENCE_HEARTBEAT_MS,
+    true,
+    { immediate: true },
+  );
   return (
     <>
       <div className="w-full  flex md:hidden justify-between items-center border-b border-white  py-2">

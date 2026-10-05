@@ -674,6 +674,20 @@ class Application extends Api {
     const response = this.post('/messages/chat_window/messages_list', data);
     return response;
   };
+  static deleteMessage = (data: any) => {
+    const response = this.post('/messages/chat_window/delete_message', data);
+    return response;
+  };
+  static reactMessage = (data: any) => {
+    const response = this.post('/messages/chat_window/react_message', data);
+    return response;
+  };
+  static chatPresenceHeartbeat = () => {
+    return this.post('/messages/presence/heartbeat', {});
+  };
+  static chatPresencePrivacy = (data: { share_online?: boolean } = {}) => {
+    return this.post('/messages/presence/privacy', data);
+  };
   static clientsStats = () => {
     const response = this.post('/dashboard/clinic/clients_statistics', {});
     return response;

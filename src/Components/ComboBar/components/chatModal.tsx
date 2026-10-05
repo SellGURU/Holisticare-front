@@ -1,199 +1,121 @@
 import { InputChat } from '../../popupChat/inputChat.tsx';
-import { FC, useEffect, useRef, useState } from 'react';
-import Application from '../../../api/app.ts';
-import { UserMsg } from './userMsg.tsx';
-import { BotMsg } from './botMsg.tsx';
-import { subscribe } from '../../../utils/event.ts';
+import { FC } from 'react';
+import { ChatDateSeparator } from './ChatDateSeparator';
+import { ChatMessageBubble } from './ChatMessageBubble';
+import { ChatPresenceBar } from './ChatPresenceBar';
+import { messageListKey } from './chatMessageUtils';
+import { useCoachChatThread } from './useCoachChatThread';
+
 interface ChatModalProps {
   memberId: number;
-}
-type SendMessage = {
-  conversation_id?: number;
-  receiver_id: number;
-  message_text: string;
-  replied_conv_id?: number;
-  chatting_with?: string;
-};
-type Message = {
-  date: string;
-  recipient?: boolean;
-  time: string;
-  conversation_id: number;
-  message_text: string;
-  sender_id: number;
-  isSending?: boolean;
-  replied_message_id: number | null;
-  sender_type: string;
-  images?: string[];
-  timestamp: number;
-  name: string;
-};
-
-function sortMessagesChronologically(items: Message[]): Message[] {
-  return [...items].sort((left, right) => {
-    const timeDelta = Number(left.timestamp || 0) - Number(right.timestamp || 0);
-    if (timeDelta !== 0) return timeDelta;
-    return Number(left.conversation_id || 0) - Number(right.conversation_id || 0);
-  });
+  liveEnabled?: boolean;
 }
 
-export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
-  const [messageData, setMessageData] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+export const ChatModal: FC<ChatModalProps> = ({
+  memberId,
+  liveEnabled = true,
+}) => {
+  const {
+    input,
+    setInput,
+    replyingTo,
+    setReplyingTo,
+    isSending,
+    isLoading,
+    isLoadingOlder,
+    error,
+    highlightedId,
+    presence,
+    listRef,
+    endRef,
+    handleScroll,
+    handleSend,
+    handleDelete,
+    handleReact,
+    jumpToReply,
+    messageData,
+    groups,
+    empty,
+  } = useCoachChatThread({ memberId, liveEnabled });
 
-  const userMessagesList = (member_id: number) => {
-    Application.getListChats({
-      member_id: member_id,
-      chatting_with: 'client',
-    })
-      .then((res) => {
-        setMessageData(
-          sortMessagesChronologically(
-            Array.isArray(res.data.messages) ? res.data.messages : [],
-          ),
-        );
-      })
-      .catch((err) => {
-        console.error('Error getting list chats:', err);
-      });
-  };
-  useEffect(() => {
-    if (memberId) {
-      userMessagesList(memberId);
-    }
-  }, [memberId]);
-  subscribe('hasUnreadMessage', () => {
-    userMessagesList(memberId);
-  });
-  const handleSend = async () => {
-    if (input.trim() && memberId !== null) {
-      const lastConversationId =
-        messageData.length > 0
-          ? messageData[messageData.length - 1].conversation_id
-          : undefined;
-      const newMessage: SendMessage = {
-        message_text: input,
-        receiver_id: Number(memberId),
-        conversation_id: lastConversationId,
-        chatting_with: 'client',
-      };
-      setMessageData([
-        ...messageData,
-        {
-          conversation_id: Number(lastConversationId),
-          date: new Date().toISOString(),
-          message_text: input,
-          replied_message_id: 0,
-          sender_id: Number(memberId),
-          isSending: true,
-          sender_type: 'user',
-          time: '',
-          timestamp: Date.now(),
-          recipient: false,
-          name: '',
-        },
-      ]);
-      setInput('');
-      try {
-        await Application.sendMessage(newMessage);
-        userMessagesList(memberId);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
-  useEffect(() => {
-    scrollToBottom();
-  }, [messageData]);
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
   return (
-    <div className="w-full h-full relative">
-      {messageData.length < 1 ? (
-        <div
-          className="relative "
-          style={{ height: window.innerHeight - 120 + 'px' }}
-        >
-          {' '}
-          <div className="w-full  flex flex-col items-center justify-center h-[533px]">
+    <div className="w-full h-[calc(100vh-130px)] min-h-0 flex flex-col">
+      <ChatPresenceBar presence={presence} />
+      {isLoading && messageData.length < 1 ? (
+        <div className="flex-1 flex items-center justify-center text-[11px] text-Text-Quadruple">
+          Loading chat...
+        </div>
+      ) : empty ? (
+        <div className="relative flex-1 min-h-0 flex flex-col">
+          <div className="flex-1 flex flex-col items-center justify-center">
             <img src="/icons/EmptyInbox.svg" alt="" />
             <div className="text-Text-Primary font-medium text-xs">
               No history found.
             </div>
           </div>
-          <div className="w-full absolute bottom-2 flex justify-center">
+          <div className="w-full px-1 pb-2">
             <InputChat
+              value={input}
               onChange={(event) => setInput(event.target.value)}
-              sendHandler={handleSend}
+              sendHandler={() => handleSend()}
+              isSending={isSending}
+              error={error}
+              onRetry={() => handleSend()}
+              Placeholder="Type a message..."
             />
           </div>
         </div>
       ) : (
-        <div
-          className={'flex flex-col justify-between'}
-          style={{ height: window.innerHeight - 120 + 'px' }}
-        >
-          {/* <h1 className={"TextStyle-Headline-6"}>Copilot</h1> */}
-          {messageData.length == 0 ? (
-            <div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
-              <img src="/icons/empty-messages.svg" alt="" />
-              No messages found
-            </div>
-          ) : (
-            <div className={'w-full h-[90%] overflow-y-auto overscroll-y-auto'}>
-              {messageData.map((message) => {
-                if (message.sender_type == 'user') {
-                  return (
-                    <>
-                      <UserMsg
-                        isRecipient={message.recipient}
-                        time={new Date(message.timestamp).toLocaleTimeString(
-                          [],
-                          {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false,
-                          },
-                        )}
-                        msg={message.message_text}
-                        key={message.conversation_id}
-                        isSending={message.isSending}
-                        name={message.name}
-                      />
-                    </>
-                  );
-                } else {
-                  return (
-                    <>
-                      <BotMsg
-                        time={new Date(message.timestamp).toLocaleTimeString(
-                          [],
-                          {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false,
-                          },
-                        )}
-                        msg={message.message_text || ''}
-                        key={message.conversation_id}
-                        name={message.name || ''}
-                      />
-                    </>
-                  );
-                }
-              })}
-
-              <div ref={messagesEndRef}></div>
-            </div>
-          )}
-
-          <div className="w-full ">
+        <div className="flex flex-col justify-between flex-1 min-h-0">
+          <div
+            ref={listRef}
+            onScroll={handleScroll}
+            className="w-full flex-1 min-h-0 overflow-x-hidden overflow-y-auto overscroll-y-auto px-1"
+          >
+            {isLoadingOlder && (
+              <p className="text-center text-[11px] text-Text-Quadruple py-2">
+                Loading earlier messages...
+              </p>
+            )}
+            {groups.map((group) => (
+              <section key={group.key} aria-label={group.label}>
+                <ChatDateSeparator label={group.label} />
+                {group.messages.map((message) => (
+                  <ChatMessageBubble
+                    key={messageListKey(message)}
+                    message={message}
+                    highlighted={highlightedId === message.conversation_id}
+                    onReply={setReplyingTo}
+                    onDelete={handleDelete}
+                    onReact={handleReact}
+                    onRetry={handleSend}
+                    onJumpToReply={jumpToReply}
+                  />
+                ))}
+              </section>
+            ))}
+            <div ref={endRef}></div>
+          </div>
+          <div className="w-full pt-2">
             <InputChat
+              value={input}
               onChange={(event) => setInput(event.target.value)}
-              sendHandler={handleSend}
-              Placeholder="Enter your message here..."
+              sendHandler={() => handleSend()}
+              isSending={isSending}
+              error={error}
+              onRetry={() => handleSend()}
+              Placeholder="Type a message..."
+              replyingTo={
+                replyingTo
+                  ? {
+                      name: replyingTo.name,
+                      text: replyingTo.deleted
+                        ? 'This message was deleted'
+                        : replyingTo.message_text,
+                    }
+                  : null
+              }
+              onCancelReply={() => setReplyingTo(null)}
             />
           </div>
         </div>

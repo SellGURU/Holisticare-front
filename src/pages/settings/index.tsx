@@ -6,7 +6,7 @@ import { Zappier } from './components/Zappier';
 import { ClinicPreferences } from './components/ClinicPreferences';
 import { ClinicProfile } from './components/ClinicProfile';
 import { ChangePassword } from '../../Components/changePassword';
-import { ShowTutorial } from './components/ShowTutorial';
+import { PrivacySettings } from './components/PrivacySettings';
 import { fetchBrandInfo } from '../../utils/brandInfoCache';
 import { useApp } from '../../hooks';
 
@@ -25,7 +25,7 @@ const Setting: React.FC = () => {
       { title: 'Clinic Profile', isActive: isAdmin },
       { title: 'Clinic Preferences', isActive: true },
       { title: 'Change Password', isActive: loginWithGoogle === false },
-      { title: 'Show Tutorial', isActive: true },
+      { title: 'Privacy', isActive: true },
     ];
     return items.filter((item) => item.isActive);
   }, [isAdmin, loginWithGoogle]);
@@ -75,8 +75,10 @@ const Setting: React.FC = () => {
         return <></>;
       case 'Change Password':
         return <ChangePassword />;
+      case 'Privacy':
+      case 'Chat Privacy':
       case 'Show Tutorial':
-        return <ShowTutorial />;
+        return <PrivacySettings />;
       default:
         return <div></div>;
     }

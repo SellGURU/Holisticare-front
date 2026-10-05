@@ -25,6 +25,11 @@ import {
   HEALTH_PLAN_TTL_MS,
 } from '../../utils/cacheKeys';
 import { visibilityPollMs } from '../../utils/visibilityPoll';
+import { useVisibilityAwarePoll } from '../../hooks/useVisibilityAwarePoll';
+import {
+  CHAT_PRESENCE_HEARTBEAT_MS,
+  unreadPollIntervalMs,
+} from './components/chatMessageUtils';
 
 // import { Tooltip } from 'react-tooltip';
 interface ComboBarProps {
@@ -38,40 +43,6 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   useEffect(() => {
     if (id) {
       setIdData(id);
-      // Initial check
-      Application.has_unread_message({
-        member_id: id,
-      })
-        .then((res) => {
-          if (res.data.has_unread == true) {
-            setHasUnreadMessage(res.data.has_unread);
-            publish('hasUnreadMessage', {});
-          }
-        })
-        .catch(() => {});
-
-      // RP-C07: visibility-aware unread poll (60s visible, 5x when hidden)
-      let timeoutId: ReturnType<typeof setTimeout> | null = null;
-      const checkUnread = () => {
-        Application.has_unread_message({
-          member_id: id,
-        })
-          .then((res) => {
-            setHasUnreadMessage(res.data.has_unread);
-          })
-          .catch(() => {});
-      };
-      const scheduleUnread = () => {
-        timeoutId = setTimeout(() => {
-          checkUnread();
-          scheduleUnread();
-        }, visibilityPollMs(60000));
-      };
-      scheduleUnread();
-
-      return () => {
-        if (timeoutId) clearTimeout(timeoutId);
-      };
     }
   }, [id]);
   const itemList = [
@@ -229,6 +200,49 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   });
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
+  const chatOpen =
+    isSlideOutPanel && activeItem === "Client's Chat History";
+
+  useEffect(() => {
+    if (!id) return;
+
+    const checkUnread = () => {
+      Application.has_unread_message({
+        member_id: id,
+      })
+        .then((res) => {
+          const hasUnread = res.data.has_unread == true;
+          setHasUnreadMessage(hasUnread);
+          if (hasUnread) {
+            publish('hasUnreadMessage', {});
+          }
+        })
+        .catch(() => {});
+    };
+
+    checkUnread();
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    const scheduleUnread = () => {
+      timeoutId = setTimeout(() => {
+        checkUnread();
+        scheduleUnread();
+      }, visibilityPollMs(unreadPollIntervalMs(chatOpen)));
+    };
+    scheduleUnread();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [id, chatOpen]);
+
+  useVisibilityAwarePoll(
+    () => {
+      void Application.chatPresenceHeartbeat().catch(() => {});
+    },
+    CHAT_PRESENCE_HEARTBEAT_MS,
+    true,
+    { immediate: true },
+  );
   const handleCloseSlideOutPanel = () => {
     if (isSlideOutPanel && isUploading) {
       publish('isuploadingBackGround', {
@@ -293,7 +307,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'Timeline':
         return <TimeLine />;
       case "Client's Chat History":
-        return <ChatModal memberId={parseInt(idData)}></ChatModal>;
+        return (
+          <ChatModal memberId={parseInt(idData)} liveEnabled={chatOpen} />
+        );
       case 'Switch Client':
         return (
           <SwitchClient
