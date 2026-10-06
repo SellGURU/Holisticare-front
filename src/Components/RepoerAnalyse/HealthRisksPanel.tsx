@@ -49,7 +49,7 @@ function ModelGroup({
           {empty}
         </p>
       ) : (
-        <ul className="mt-4 grid gap-4 xl:grid-cols-2">
+        <ul className="mt-3 grid grid-cols-1 items-start gap-3 md:grid-cols-2 xl:grid-cols-3">
           {items.map((item) => (
             <li key={`${item.risk_key}-${item.calculated_at}`}>
               <HealthRiskScoreCard

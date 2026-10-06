@@ -1,3 +1,4 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   formatRiskScore,
   riskContributions,
@@ -106,13 +107,15 @@ function Donut({
   percent,
   segments,
   color,
+  size = 72,
+  stroke = 8,
 }: {
   percent: number;
   segments: RiskContribution[];
   color: string;
+  size?: number;
+  stroke?: number;
 }) {
-  const size = 116;
-  const stroke = 11;
   const radius = (size - stroke) / 2;
   const cx = size / 2;
   const cy = size / 2;
@@ -193,92 +196,198 @@ export default function HealthRiskScoreCard({
     item.score == null || Number.isNaN(Number(item.score))
       ? null
       : Number(item.score);
+  const [hovered, setHovered] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const hoverTimer = useRef<number>();
+  const hasFlipTarget = parts.length > 0 || evidence.length > 0;
+  const flipped = hasFlipTarget && (hovered || pinned);
+  const frontRef = useRef<HTMLDivElement>(null);
+  const backRef = useRef<HTMLDivElement>(null);
+  const [faceHeight, setFaceHeight] = useState<number>();
+  const title = item.display_name || item.risk_key;
+  const scoreLabel =
+    kind === 'age'
+      ? years == null
+        ? '—'
+        : String(Math.round(years))
+      : String(Math.round(percent));
+
+  useEffect(() => {
+    return () => window.clearTimeout(hoverTimer.current);
+  }, []);
+
+  useLayoutEffect(() => {
+    const node = flipped ? backRef.current : frontRef.current;
+    if (!node) return;
+    setFaceHeight(node.offsetHeight);
+  }, [flipped, parts.length, evidence.length]);
+
+  const detailsList =
+    parts.length > 0 ? (
+      <ul className="space-y-2">
+        {parts.map((row) => (
+          <li key={row.label}>
+            <div className="mb-0.5 flex items-center justify-between gap-2 text-[10px]">
+              <span className="min-w-0 truncate font-medium text-Text-Primary">
+                {row.label}
+              </span>
+              <span className="shrink-0 text-Text-Secondary">
+                {kind === 'score' ? `weight ${row.share}%` : `${row.share}%`}
+                {row.value != null
+                  ? ` · ${row.value}${row.unit ? ` ${row.unit}` : ''}`
+                  : ''}
+              </span>
+            </div>
+            <div className="h-1 overflow-hidden rounded-full bg-[#EEF2F3]">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${Math.max(row.share, 2)}%`,
+                  background: row.color,
+                }}
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <ul className="grid gap-1 text-[10px] text-Text-Secondary">
+        {evidence.slice(0, 6).map((ev, index) => (
+          <li key={`${ev.input}-${index}`}>
+            {ev.input}
+            {ev.value != null ? `: ${ev.value}${ev.unit ? ` ${ev.unit}` : ''}` : ''}
+          </li>
+        ))}
+      </ul>
+    );
 
   return (
-    <article className={`overflow-hidden rounded-2xl border border-Gray-50 bg-gradient-to-br ${tone.wash} ${compact ? 'p-3' : 'p-4'} shadow-[0_8px_24px_rgba(15,23,42,0.04)]`}>
-      <div className={`flex items-center ${compact ? 'flex-col text-center gap-2' : 'gap-4'}`}>
-        <div className="relative shrink-0">
-          <Donut
-            percent={percent}
-            segments={kind === 'risk' ? parts : []}
-            color={tone.ring}
-          />
-          <div className="absolute inset-0 flex rotate-0 flex-col items-center justify-center">
-            <span className="text-[22px] font-semibold leading-none text-Text-Primary">
-              {kind === 'age'
-                ? years == null
-                  ? '—'
-                  : Math.round(years)
-                : Math.round(percent)}
-            </span>
-            <span className="mt-0.5 text-[10px] tracking-wide text-Text-Secondary uppercase">
-              {kind === 'age'
-                ? 'years'
-                : `% ${kind === 'score' ? 'score' : 'risk'}`}
-            </span>
+    <article
+      className="[perspective:1200px]"
+      onPointerEnter={(event) => {
+        if (event.pointerType !== 'mouse') return;
+        window.clearTimeout(hoverTimer.current);
+        hoverTimer.current = window.setTimeout(() => setHovered(true), 450);
+      }}
+      onPointerLeave={() => {
+        window.clearTimeout(hoverTimer.current);
+        setHovered(false);
+      }}
+    >
+      <div
+        className={`relative overflow-hidden rounded-xl border border-Gray-50 bg-gradient-to-br ${tone.wash} shadow-[0_6px_16px_rgba(15,23,42,0.04)] transition-[height] duration-300`}
+        style={faceHeight ? { height: faceHeight } : undefined}
+      >
+        <div
+          className={`relative h-full w-full transition-transform duration-500 [transform-style:preserve-3d] ${
+            flipped ? '[transform:rotateY(180deg)]' : ''
+          }`}
+        >
+          <div
+            ref={frontRef}
+            className={`${compact ? 'p-2.5' : 'p-3'} [backface-visibility:hidden]`}
+          >
+            <div className={`flex items-center ${compact ? 'flex-col text-center gap-2' : 'gap-3'}`}>
+              <div className="relative shrink-0">
+                <Donut
+                  percent={percent}
+                  segments={kind === 'risk' ? parts : []}
+                  color={tone.ring}
+                />
+                <div className="absolute inset-0 flex rotate-0 flex-col items-center justify-center">
+                  <span className="text-[15px] font-semibold leading-none text-Text-Primary">
+                    {scoreLabel}
+                  </span>
+                  <span className="mt-0.5 text-[8px] tracking-wide text-Text-Secondary uppercase">
+                    {kind === 'age' ? 'years' : `% ${kind === 'score' ? 'score' : 'risk'}`}
+                  </span>
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="text-[13px] font-semibold leading-5 text-Text-Primary">
+                    {title}
+                  </h3>
+                  <span
+                    className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${tone.chip}`}
+                  >
+                    {item.severity || 'Calculated'}
+                  </span>
+                </div>
+                <p className="mt-0.5 text-[10px] text-Text-Secondary">
+                  {kind === 'age'
+                    ? `${formatRiskScore(item.score)} years${
+                        chrono?.value != null ? ` · chrono ${chrono.value}` : ''
+                      } · screening only`
+                    : `Score ${formatRiskScore(item.score)} · screening only`}
+                </p>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EEF2F3]">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${percent}%`, background: tone.ring }}
+                  />
+                </div>
+                {hasFlipTarget ? (
+                  <button
+                    type="button"
+                    onClick={() => setPinned((open) => !open)}
+                    aria-expanded={flipped}
+                    className="mt-2 inline-flex items-center gap-1 text-[10px] font-medium text-Primary-DeepTeal"
+                  >
+                    Show details
+                    <img src="/icons/arrow-down-new.svg" alt="" className="size-3" />
+                  </button>
+                ) : null}
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className="text-[15px] font-semibold text-Text-Primary">
-              {item.display_name || item.risk_key}
-            </h3>
-            <span
-              className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${tone.chip}`}
+
+          <div
+            ref={backRef}
+            className={`absolute inset-x-0 top-0 ${compact ? 'p-2.5' : 'p-3'} [backface-visibility:hidden] [transform:rotateY(180deg)]`}
+          >
+            <div className="flex items-center gap-2 border-b border-Gray-50 pb-2">
+              <div className="relative shrink-0">
+                <Donut
+                  percent={percent}
+                  segments={kind === 'risk' ? parts : []}
+                  color={tone.ring}
+                  size={36}
+                  stroke={4}
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-[10px] font-semibold leading-none text-Text-Primary">
+                    {scoreLabel}
+                  </span>
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="truncate text-[12px] font-semibold text-Text-Primary">
+                    {title}
+                  </h3>
+                  <span
+                    className={`shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wide ${tone.chip}`}
+                  >
+                    {item.severity || 'Calculated'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-2">{detailsList}</div>
+            <button
+              type="button"
+              onClick={() => {
+                setPinned(false);
+                setHovered(false);
+              }}
+              className="mt-2 text-[10px] font-medium text-Primary-DeepTeal"
             >
-              {item.severity || 'Calculated'}
-            </span>
-          </div>
-          <p className="mt-1 text-[11px] text-Text-Secondary">
-            {kind === 'age'
-              ? `${formatRiskScore(item.score)} years${
-                  chrono?.value != null ? ` · chrono ${chrono.value}` : ''
-                } · formula screening, not a diagnosis`
-              : `Score ${formatRiskScore(item.score)} · formula screening, not a diagnosis`}
-          </p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#EEF2F3]">
-            <div
-              className="h-full rounded-full"
-              style={{ width: `${percent}%`, background: tone.ring }}
-            />
+              Hide details
+            </button>
           </div>
         </div>
       </div>
-
-      {parts.length > 0 ? (
-        <ul className="mt-4 space-y-2.5">
-          {parts.map((row) => (
-            <li key={row.label}>
-              <div className="mb-1 flex items-center justify-between gap-2 text-[11px]">
-                <span className="min-w-0 truncate font-medium text-Text-Primary">
-                  {row.label}
-                </span>
-                <span className="shrink-0 text-Text-Secondary">
-                  {kind === 'score' ? `weight ${row.share}%` : `${row.share}%`}
-                  {row.value != null
-                    ? ` · ${row.value}${row.unit ? ` ${row.unit}` : ''}`
-                    : ''}
-                </span>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-[#EEF2F3]">
-                <div
-                  className="h-full rounded-full"
-                  style={{ width: `${Math.max(row.share, 2)}%`, background: row.color }}
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : evidence.length > 0 ? (
-        <ul className="mt-4 grid gap-1.5 text-[11px] text-Text-Secondary sm:grid-cols-2">
-          {evidence.slice(0, 6).map((ev, index) => (
-            <li key={`${ev.input}-${index}`}>
-              {ev.input}
-              {ev.value != null ? `: ${ev.value}${ev.unit ? ` ${ev.unit}` : ''}` : ''}
-            </li>
-          ))}
-        </ul>
-      ) : null}
     </article>
   );
 }
