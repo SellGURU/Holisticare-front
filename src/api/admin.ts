@@ -576,6 +576,85 @@ class AdminApi {
     );
   }
 
+  static copyIntelligenceFormulasToAllClinics(clinicId: number) {
+    return axios.post(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/intelligence/copy-to-all`,
+      {},
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static syncIntelligenceDefaults() {
+    return axios.post(
+      `${getBaseUrl()}/admin/intelligence/defaults/sync`,
+      {},
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static listIntelligenceDefaults(domainType?: string) {
+    return axios.get(`${getBaseUrl()}/admin/intelligence/defaults`, {
+      headers: withAuthHeaders(),
+      params: domainType ? { domain_type: domainType } : undefined,
+    });
+  }
+
+  static createIntelligenceDefault(data: any) {
+    return axios.post(`${getBaseUrl()}/admin/intelligence/defaults`, data, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static updateIntelligenceDefault(defaultId: string, data: any) {
+    return axios.put(
+      `${getBaseUrl()}/admin/intelligence/defaults/${defaultId}`,
+      data,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static deleteIntelligenceDefault(defaultId: string, domainType?: string) {
+    return axios.delete(
+      `${getBaseUrl()}/admin/intelligence/defaults/${defaultId}`,
+      {
+        headers: withAuthHeaders(),
+        params: domainType ? { domain_type: domainType } : undefined,
+      },
+    );
+  }
+
+  static validateIntelligenceDefault(data: {
+    formula_code: string;
+    domain_type?: string;
+    catalog_biomarker_uid?: string;
+  }) {
+    return axios.post(
+      `${getBaseUrl()}/admin/intelligence/defaults/validate`,
+      data,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static getIntelligenceDefaultOptions() {
+    return axios.get(`${getBaseUrl()}/admin/intelligence/defaults/options`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static getIntelligenceDefaultLibrary() {
+    return axios.get(`${getBaseUrl()}/admin/intelligence/defaults/library`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static importIntelligenceDefaultLibrary(templateId: string, isEnabled = true) {
+    return axios.post(
+      `${getBaseUrl()}/admin/intelligence/defaults/library/import`,
+      { template_id: templateId, is_enabled: isEnabled },
+      { headers: withAuthHeaders() },
+    );
+  }
+
   static listPayments(params?: {
     limit?: number;
     offset?: number;

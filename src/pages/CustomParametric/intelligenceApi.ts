@@ -125,6 +125,35 @@ export function clinicIntelligenceApi(): IntelligenceApi {
   };
 }
 
+export function adminDefaultIntelligenceApi(): IntelligenceApi {
+  return {
+    listDomains: (domainType) => AdminApi.listIntelligenceDefaults(domainType),
+    createDomain: (payload) => AdminApi.createIntelligenceDefault(payload),
+    updateDomain: (id, payload) => AdminApi.updateIntelligenceDefault(id, payload),
+    deleteDomain: (id, domainType) =>
+      AdminApi.deleteIntelligenceDefault(id, domainType),
+    validateFormula: (formula_code, options) =>
+      AdminApi.validateIntelligenceDefault({
+        formula_code,
+        domain_type: options?.domain_type,
+        catalog_biomarker_uid: options?.catalog_biomarker_uid,
+      }),
+    getFormulaLibrary: () => AdminApi.getIntelligenceDefaultLibrary(),
+    importFormulaLibrary: (template_id, is_enabled = true) =>
+      AdminApi.importIntelligenceDefaultLibrary(template_id, is_enabled),
+    listCatalogBiomarkers: async () => {
+      const res = await AdminApi.getIntelligenceDefaultOptions();
+      return mapCatalogRows(
+        Array.isArray(res.data?.biomarkers) ? res.data.biomarkers : [],
+      );
+    },
+    listFormulaOptions: async () => {
+      const res = await AdminApi.getIntelligenceDefaultOptions();
+      return mapFormulaOptions(res.data);
+    },
+  };
+}
+
 export function adminIntelligenceApi(clinicId: number): IntelligenceApi {
   return {
     listDomains: (domainType) =>
