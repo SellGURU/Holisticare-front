@@ -70,12 +70,8 @@ const noteTemplates = [
 
 const ClinicWorkspace = () => {
   const navigate = useNavigate();
-  const {
-    clinics,
-    selectedClinicEmail,
-    startDate,
-    endDate,
-  } = useAdminContext();
+  const { clinics, selectedClinicEmail, startDate, endDate } =
+    useAdminContext();
   const activeClinicEmail =
     selectedClinicEmail || clinics[0]?.clinic_email || '';
   const activeClinic =

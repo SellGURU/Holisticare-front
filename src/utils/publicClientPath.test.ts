@@ -12,9 +12,7 @@ import {
 describe('isPublicClientPath', () => {
   it('treats questionnaire fill links as public', () => {
     expect(
-      isPublicClientPath(
-        '/questionary/gAAAAABqmZA2/1e5d26a080/5040f90d3e',
-      ),
+      isPublicClientPath('/questionary/gAAAAABqmZA2/1e5d26a080/5040f90d3e'),
     ).toBe(true);
     expect(
       isPublicClientPath(
@@ -39,9 +37,7 @@ describe('isPublicClientPath', () => {
 
 describe('shouldIgnorePortalAuthFailure', () => {
   it('ignores expired portal tokens on public fill and auth pages', () => {
-    expect(
-      shouldIgnorePortalAuthFailure('/questionary/enc/id/fid'),
-    ).toBe(true);
+    expect(shouldIgnorePortalAuthFailure('/questionary/enc/id/fid')).toBe(true);
     expect(shouldIgnorePortalAuthFailure('/share/12/name')).toBe(true);
     expect(shouldIgnorePortalAuthFailure('/login')).toBe(true);
     expect(shouldIgnorePortalAuthFailure('/register')).toBe(true);
@@ -49,9 +45,9 @@ describe('shouldIgnorePortalAuthFailure', () => {
     expect(shouldIgnorePortalAuthFailure('/html-previewer/1')).toBe(true);
     expect(shouldIgnorePortalAuthFailure('/privacy')).toBe(true);
     expect(shouldIgnorePortalAuthFailure('/terms')).toBe(true);
-    expect(shouldIgnorePortalAuthFailure('/legal/providers-privacy-policy')).toBe(
-      true,
-    );
+    expect(
+      shouldIgnorePortalAuthFailure('/legal/providers-privacy-policy'),
+    ).toBe(true);
     expect(shouldIgnorePortalAuthFailure('/admin/clinics')).toBe(true);
   });
 
@@ -84,16 +80,18 @@ describe('stale in-flight auth failures', () => {
       'abc.def',
     );
     expect(extractBearerToken({ Authorization: 'Bearer null' })).toBeNull();
-    expect(extractBearerToken({ Authorization: 'Bearer undefined' })).toBeNull();
+    expect(
+      extractBearerToken({ Authorization: 'Bearer undefined' }),
+    ).toBeNull();
   });
 
   it('ignores 401 from login/session endpoints', () => {
-    expect(
-      isNonSessionAuthRequest('http://127.0.0.1:3800/auth/token'),
-    ).toBe(true);
-    expect(
-      isNonSessionAuthRequest('http://127.0.0.1:3800/auth/signup'),
-    ).toBe(true);
+    expect(isNonSessionAuthRequest('http://127.0.0.1:3800/auth/token')).toBe(
+      true,
+    );
+    expect(isNonSessionAuthRequest('http://127.0.0.1:3800/auth/signup')).toBe(
+      true,
+    );
     expect(
       isNonSessionAuthRequest('http://127.0.0.1:3800/marketing/session'),
     ).toBe(true);

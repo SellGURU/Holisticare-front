@@ -17,7 +17,12 @@ import GlobalDemoClientList from './globalDemo/GlobalDemoClientList';
 import GlobalDemoClientSelect from './globalDemo/GlobalDemoClientSelect';
 import { jobIsActive as globalJobIsActive } from './globalDemo/globalDemoUtils';
 
-type DemoStatus = 'fresh' | 'stale' | 'missing' | 'source_template' | 'source_clinic';
+type DemoStatus =
+  | 'fresh'
+  | 'stale'
+  | 'missing'
+  | 'source_template'
+  | 'source_clinic';
 
 interface DemoClinicRow {
   clinic_id: number;
@@ -108,10 +113,12 @@ const AdminDemoPatient = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | DemoStatus>('all');
   const [payload, setPayload] = useState<DemoStatusPayload | null>(null);
   const [job, setJob] = useState<DemoJob | null>(null);
-  const [globalClients, setGlobalClients] = useState<GlobalDemoClientItem[]>([]);
-  const [globalCandidates, setGlobalCandidates] = useState<GlobalDemoCandidate[]>(
+  const [globalClients, setGlobalClients] = useState<GlobalDemoClientItem[]>(
     [],
   );
+  const [globalCandidates, setGlobalCandidates] = useState<
+    GlobalDemoCandidate[]
+  >([]);
   const [selectedCandidate, setSelectedCandidate] =
     useState<GlobalDemoCandidate | null>(null);
   const [candidateQuery, setCandidateQuery] = useState('');
@@ -120,7 +127,9 @@ const AdminDemoPatient = () => {
   const [settingGlobal, setSettingGlobal] = useState(false);
   const [removingGlobalId, setRemovingGlobalId] = useState<string | null>(null);
   const [retryingGlobalId, setRetryingGlobalId] = useState<string | null>(null);
-  const [polledGlobalJobId, setPolledGlobalJobId] = useState<string | null>(null);
+  const [polledGlobalJobId, setPolledGlobalJobId] = useState<string | null>(
+    null,
+  );
 
   const handleAuthFailure = () => {
     removeAdminToken();
@@ -158,7 +167,9 @@ const AdminDemoPatient = () => {
       if (err?.response?.status === 401) {
         handleAuthFailure();
       } else {
-        toast.error(err?.response?.data?.detail || 'Failed to load demo status.');
+        toast.error(
+          err?.response?.data?.detail || 'Failed to load demo status.',
+        );
       }
     } finally {
       setLoadingList(false);
@@ -212,8 +223,13 @@ const AdminDemoPatient = () => {
       setCandidateLoading(true);
       setCandidateError(null);
       try {
-        const res = await AdminApi.searchGlobalDemoCandidates(candidateQuery, 20);
-        setGlobalCandidates((res.data?.candidates || []) as GlobalDemoCandidate[]);
+        const res = await AdminApi.searchGlobalDemoCandidates(
+          candidateQuery,
+          20,
+        );
+        setGlobalCandidates(
+          (res.data?.candidates || []) as GlobalDemoCandidate[],
+        );
       } catch (err: any) {
         if (err?.response?.status === 401) {
           handleAuthFailure();
@@ -265,7 +281,9 @@ const AdminDemoPatient = () => {
     if (!selectedCandidate) return;
     setSettingGlobal(true);
     try {
-      const res = await AdminApi.setGlobalDemoClient(selectedCandidate.patient_id);
+      const res = await AdminApi.setGlobalDemoClient(
+        selectedCandidate.patient_id,
+      );
       acceptGlobalJob(res.data as GlobalDemoJobAccepted);
       toast.success(
         res.data?.reused
@@ -277,7 +295,10 @@ const AdminDemoPatient = () => {
       await loadGlobalClients();
     } catch (err: any) {
       if (err?.response?.status === 401) handleAuthFailure();
-      else toast.error(err?.response?.data?.detail || 'Failed to set global demo.');
+      else
+        toast.error(
+          err?.response?.data?.detail || 'Failed to set global demo.',
+        );
     } finally {
       setSettingGlobal(false);
     }
@@ -292,7 +313,10 @@ const AdminDemoPatient = () => {
       await loadGlobalClients();
     } catch (err: any) {
       if (err?.response?.status === 401) handleAuthFailure();
-      else toast.error(err?.response?.data?.detail || 'Failed to retry global demo.');
+      else
+        toast.error(
+          err?.response?.data?.detail || 'Failed to retry global demo.',
+        );
     } finally {
       setRetryingGlobalId(null);
     }
@@ -308,13 +332,18 @@ const AdminDemoPatient = () => {
     }
     setRemovingGlobalId(client.source_patient_id);
     try {
-      const res = await AdminApi.removeGlobalDemoClient(client.source_patient_id);
+      const res = await AdminApi.removeGlobalDemoClient(
+        client.source_patient_id,
+      );
       acceptGlobalJob(res.data as GlobalDemoJobAccepted);
       toast.success('Archive job queued for generated copies.');
       await loadGlobalClients();
     } catch (err: any) {
       if (err?.response?.status === 401) handleAuthFailure();
-      else toast.error(err?.response?.data?.detail || 'Failed to remove global demo.');
+      else
+        toast.error(
+          err?.response?.data?.detail || 'Failed to remove global demo.',
+        );
     } finally {
       setRemovingGlobalId(null);
     }
@@ -365,7 +394,9 @@ const AdminDemoPatient = () => {
       }
       await loadStatus();
     } catch (err: any) {
-      toast.error(err?.response?.data?.detail || 'Failed to reset this clinic.');
+      toast.error(
+        err?.response?.data?.detail || 'Failed to reset this clinic.',
+      );
     } finally {
       setReplacingId(null);
     }
@@ -390,10 +421,15 @@ const AdminDemoPatient = () => {
       toast.success('Replace-all job started.');
     } catch (err: any) {
       if (err?.response?.status === 409) {
-        toast.info(err?.response?.data?.detail || 'A replace-all job is already running.');
+        toast.info(
+          err?.response?.data?.detail ||
+            'A replace-all job is already running.',
+        );
         await loadStatus();
       } else {
-        toast.error(err?.response?.data?.detail || 'Failed to start replace-all.');
+        toast.error(
+          err?.response?.data?.detail || 'Failed to start replace-all.',
+        );
       }
     } finally {
       setStartingJob(false);
@@ -413,7 +449,9 @@ const AdminDemoPatient = () => {
       setRefreshConfirm('');
       await loadStatus();
     } catch (err: any) {
-      toast.error(err?.response?.data?.detail || 'Failed to refresh the template.');
+      toast.error(
+        err?.response?.data?.detail || 'Failed to refresh the template.',
+      );
     } finally {
       setRefreshing(false);
     }
@@ -442,7 +480,10 @@ const AdminDemoPatient = () => {
             disabled={loadingList}
             className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-white px-4 py-2 text-[12px] text-Text-Primary"
           >
-            <RefreshCw size={14} className={loadingList ? 'animate-spin' : ''} />
+            <RefreshCw
+              size={14}
+              className={loadingList ? 'animate-spin' : ''}
+            />
             Refresh
           </button>
           <button
@@ -505,7 +546,9 @@ const AdminDemoPatient = () => {
                 </div>
               </div>
               <div className="rounded-2xl bg-[#F8FAFB] p-3">
-                <div className="text-[11px] text-Text-Secondary">Graph counts</div>
+                <div className="text-[11px] text-Text-Secondary">
+                  Graph counts
+                </div>
                 <div className="mt-1 text-[13px] font-medium text-Text-Primary">
                   Plans {template.plans ?? 0} · HTML {template.html ?? 0} · Rook{' '}
                   {template.rook ?? 0}
@@ -521,77 +564,84 @@ const AdminDemoPatient = () => {
                 </div>
                 <div className="mt-1 text-[12px] text-Text-Primary">
                   {(template.intervention_titles || []).length
-                    ? (template.intervention_titles || []).slice(0, 6).join(' · ')
+                    ? (template.intervention_titles || [])
+                        .slice(0, 6)
+                        .join(' · ')
                     : 'No intervention titles on the active plan'}
                 </div>
                 <div className="mt-2 text-[11px] text-Text-Secondary">
                   looking_forwards Key areas to address:{' '}
-                  {template.looking_forwards_has_key_areas ? 'present' : 'missing'}
+                  {template.looking_forwards_has_key_areas
+                    ? 'present'
+                    : 'missing'}
                 </div>
               </div>
             </div>
           ) : (
             <div className="mt-4 rounded-2xl bg-amber-50 p-3 text-[12px] text-amber-800">
-              Template member was not found. Refresh the template from source to recreate it.
+              Template member was not found. Refresh the template from source to
+              recreate it.
             </div>
           )}
         </div>
 
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
-            <div className="text-lg font-semibold text-Text-Primary">
-              Global demo clients
-            </div>
-            <div className="mt-1 text-[12px] text-Text-Secondary">
-              Select any existing client. A sanitized snapshot is copied to every
-              clinic without replacing the frozen Alexander demo.
-            </div>
-            <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-end">
-              <div className="flex-1">
-                <GlobalDemoClientSelect
-                  candidates={globalCandidates}
-                  value={selectedCandidate}
-                  query={candidateQuery}
-                  loading={candidateLoading}
-                  error={candidateError}
-                  onQueryChange={setCandidateQuery}
-                  onSelect={setSelectedCandidate}
-                />
-              </div>
-              <button
-                type="button"
-                disabled={!selectedCandidate || settingGlobal}
-                onClick={setSelectedAsGlobal}
-                className="rounded-full bg-Primary-DeepTeal px-4 py-2 text-[12px] text-white disabled:opacity-50"
-              >
-                {settingGlobal
-                  ? 'Setting…'
-                  : 'Set as Global Demo for All Clinics'}
-              </button>
-            </div>
-            <div className="mt-4">
-              <GlobalDemoClientList
-                clients={globalClients}
-                removingId={removingGlobalId}
-                retryingId={retryingGlobalId}
-                onRemove={removeGlobalClient}
-                onRetry={retryGlobalClient}
+          <div className="text-lg font-semibold text-Text-Primary">
+            Global demo clients
+          </div>
+          <div className="mt-1 text-[12px] text-Text-Secondary">
+            Select any existing client. A sanitized snapshot is copied to every
+            clinic without replacing the frozen Alexander demo.
+          </div>
+          <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-end">
+            <div className="flex-1">
+              <GlobalDemoClientSelect
+                candidates={globalCandidates}
+                value={selectedCandidate}
+                query={candidateQuery}
+                loading={candidateLoading}
+                error={candidateError}
+                onQueryChange={setCandidateQuery}
+                onSelect={setSelectedCandidate}
               />
             </div>
+            <button
+              type="button"
+              disabled={!selectedCandidate || settingGlobal}
+              onClick={setSelectedAsGlobal}
+              className="rounded-full bg-Primary-DeepTeal px-4 py-2 text-[12px] text-white disabled:opacity-50"
+            >
+              {settingGlobal
+                ? 'Setting…'
+                : 'Set as Global Demo for All Clinics'}
+            </button>
           </div>
+          <div className="mt-4">
+            <GlobalDemoClientList
+              clients={globalClients}
+              removingId={removingGlobalId}
+              retryingId={retryingGlobalId}
+              onRemove={removeGlobalClient}
+              onRetry={retryGlobalClient}
+            />
+          </div>
+        </div>
 
         {job && (
           <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
             <div className="text-lg font-semibold text-Text-Primary">Jobs</div>
             <div className="mt-1 text-[12px] text-Text-Secondary">
-              {job.status} · copied {job.copied} · skipped {job.skipped} · failed{' '}
-              {job.failed}
+              {job.status} · copied {job.copied} · skipped {job.skipped} ·
+              failed {job.failed}
               {job.total ? ` · total ${job.total}` : ''}
               {job.current_clinic_id
                 ? ` · current clinic ${job.current_clinic_id}`
                 : ''}
             </div>
             {job.last_error && (
-              <div className="mt-2 text-[12px] text-red-600">{job.last_error}</div>
+              <div className="mt-2 text-[12px] text-red-600">
+                {job.last_error}
+              </div>
             )}
           </div>
         )}
@@ -599,10 +649,12 @@ const AdminDemoPatient = () => {
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
           <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <div className="text-lg font-semibold text-Text-Primary">Fleet</div>
+              <div className="text-lg font-semibold text-Text-Primary">
+                Fleet
+              </div>
               <div className="text-[12px] text-Text-Secondary">
-                Fresh {totals?.fresh ?? 0} · Stale {totals?.stale ?? 0} · Missing{' '}
-                {totals?.missing ?? 0} · {filteredClinics.length} shown
+                Fresh {totals?.fresh ?? 0} · Stale {totals?.stale ?? 0} ·
+                Missing {totals?.missing ?? 0} · {filteredClinics.length} shown
               </div>
             </div>
             <div className="flex flex-col gap-2 md:flex-row md:items-center">
@@ -648,14 +700,24 @@ const AdminDemoPatient = () => {
             <table className="w-full min-w-[880px] divide-y divide-Gray-50 text-left text-[12px]">
               <thead className="bg-[#F8FAFB] text-Text-Secondary">
                 <tr>
-                  <th className="whitespace-nowrap px-3 py-3 font-medium">Clinic</th>
-                  <th className="whitespace-nowrap px-3 py-3 font-medium">Demo</th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">
+                    Clinic
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">
+                    Demo
+                  </th>
                   <th className="whitespace-nowrap px-3 py-3 font-medium">
                     Member / email
                   </th>
-                  <th className="whitespace-nowrap px-3 py-3 font-medium">Plans</th>
-                  <th className="whitespace-nowrap px-3 py-3 font-medium">HTML</th>
-                  <th className="whitespace-nowrap px-3 py-3 font-medium">Actions</th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">
+                    Plans
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">
+                    HTML
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-Gray-50">
@@ -672,7 +734,10 @@ const AdminDemoPatient = () => {
                 {filteredClinics.map((clinic) => {
                   const busy = replacingId === clinic.clinic_id;
                   return (
-                    <tr key={clinic.clinic_id} className="hover:bg-[#F8FAFB]/70">
+                    <tr
+                      key={clinic.clinic_id}
+                      className="hover:bg-[#F8FAFB]/70"
+                    >
                       <td className="px-3 py-3">
                         <div className="font-medium text-Text-Primary">
                           {clinic.clinic_name || `Clinic #${clinic.clinic_id}`}
@@ -696,8 +761,12 @@ const AdminDemoPatient = () => {
                           {clinic.email || 'No demo email'}
                         </div>
                       </td>
-                      <td className="px-3 py-3 text-Text-Primary">{clinic.plans}</td>
-                      <td className="px-3 py-3 text-Text-Primary">{clinic.html}</td>
+                      <td className="px-3 py-3 text-Text-Primary">
+                        {clinic.plans}
+                      </td>
+                      <td className="px-3 py-3 text-Text-Primary">
+                        {clinic.html}
+                      </td>
                       <td className="px-3 py-3">
                         {clinic.can_replace ? (
                           <div className="min-w-[148px]">

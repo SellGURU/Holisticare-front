@@ -37,9 +37,7 @@ describe('resolveCompileButtonState', () => {
     expect(
       resolveCompileButtonState({
         ...idleInput,
-        progressData: [
-          { category: 'questionnaire', process_status: false },
-        ],
+        progressData: [{ category: 'questionnaire', process_status: false }],
       }),
     ).toBe('PROGRESSING');
   });

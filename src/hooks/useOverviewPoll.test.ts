@@ -94,7 +94,10 @@ describe('sourceSnapshotChanged', () => {
 
   it('emits biomarker domain ready without waiting for narrative', () => {
     const domains = domainsThatBecameTerminal(
-      { biomarkers: { state: 'pending' }, client_summary: { state: 'pending' } },
+      {
+        biomarkers: { state: 'pending' },
+        client_summary: { state: 'pending' },
+      },
       {
         biomarkers: { state: 'ready', data_revision: 'r2' },
         client_summary: { state: 'pending' },

@@ -13,8 +13,7 @@ export const hasAnyMacros = (macros: any): boolean => {
 };
 
 export const associatedInterventionOf = (item: any): string => {
-  const value =
-    item?.Parent || item?.Parent_Title || item?.Parent_title || '';
+  const value = item?.Parent || item?.Parent_Title || item?.Parent_title || '';
   return hasActionText(value) ? String(value).trim() : '';
 };
 
@@ -138,9 +137,7 @@ const ActionTaskDetailFields: FC<ActionTaskDetailFieldsProps> = ({
                     <span className="font-medium">{schedule.Title}: </span>
                   )}
                   {schedule.Dose || '-'}
-                  {freq && (
-                    <span className="text-gray-500"> • {freq}</span>
-                  )}
+                  {freq && <span className="text-gray-500"> • {freq}</span>}
                 </div>
               );
             })}

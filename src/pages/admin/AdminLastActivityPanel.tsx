@@ -24,7 +24,9 @@ const TimestampBlock = ({
   if (!value) {
     return (
       <div>
-        <div className="text-xl font-semibold text-Text-Primary">{emptyLabel}</div>
+        <div className="text-xl font-semibold text-Text-Primary">
+          {emptyLabel}
+        </div>
         <div className="mt-1 text-[11px] text-Text-Secondary">
           No timestamp in this date range
         </div>

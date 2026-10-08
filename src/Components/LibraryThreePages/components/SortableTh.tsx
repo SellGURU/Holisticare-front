@@ -27,8 +27,7 @@ const SortableTh: FC<SortableThProps> = ({
   const desc = isLibrarySortDesc(sortId);
 
   const thClass =
-    className ||
-    'px-3 pt-4 pb-3.5 text-xs font-medium w-[100px] md:w-[unset]';
+    className || 'px-3 pt-4 pb-3.5 text-xs font-medium w-[100px] md:w-[unset]';
 
   return (
     <th

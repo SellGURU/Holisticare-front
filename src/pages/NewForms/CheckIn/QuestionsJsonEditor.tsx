@@ -478,8 +478,7 @@ const QuestionsJsonEditor: FC<QuestionsJsonEditorProps> = ({
           </div>
           <div className="mt-1">
             BMI example:
-            <code> q_weight / ((q_height / 100) ** 2)</code>
-            . Text example:
+            <code> q_weight / ((q_height / 100) ** 2)</code>. Text example:
             <code> if_(q_smoke == "Yes", "Smoker", "Non-smoker")</code>
           </div>
         </div>

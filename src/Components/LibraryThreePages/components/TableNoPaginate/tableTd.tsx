@@ -94,9 +94,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
                   text={
                     row.original?.Value == null || row.original?.Value === ''
                       ? '-'
-                      : row.original?.Value +
-                        ' ' +
-                        (row.original?.Unit || '')
+                      : row.original?.Value + ' ' + (row.original?.Unit || '')
                   }
                 />
               </div>

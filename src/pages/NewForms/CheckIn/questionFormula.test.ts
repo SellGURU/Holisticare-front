@@ -39,7 +39,10 @@ describe('unknownFormulaIds', () => {
 
   it('flags unknown variables before save', () => {
     expect(
-      unknownFormulaIds('q_weight / ((q_height / 100) ** 2)', new Set(['q_weight'])),
+      unknownFormulaIds(
+        'q_weight / ((q_height / 100) ** 2)',
+        new Set(['q_weight']),
+      ),
     ).toEqual(['q_height']);
   });
 
@@ -83,9 +86,17 @@ describe('mapClinicCatalog', () => {
       { Biomarker: 'Live', unit: 'mg', is_enabled: true },
       { Biomarker: 'Legacy', unit: 'mg' },
     ]);
-    expect(mapped.map((item) => item.name)).toEqual(['Hidden', 'Legacy', 'Live']);
-    expect(mapped.find((item) => item.name === 'Hidden')?.is_enabled).toBe(false);
-    expect(mapped.find((item) => item.name === 'Legacy')?.is_enabled).toBe(true);
+    expect(mapped.map((item) => item.name)).toEqual([
+      'Hidden',
+      'Legacy',
+      'Live',
+    ]);
+    expect(mapped.find((item) => item.name === 'Hidden')?.is_enabled).toBe(
+      false,
+    );
+    expect(mapped.find((item) => item.name === 'Legacy')?.is_enabled).toBe(
+      true,
+    );
   });
 
   it('prefers the enabled duplicate when names collide', () => {
@@ -94,6 +105,10 @@ describe('mapClinicCatalog', () => {
       { Biomarker: 'CRP', unit: 'mg/L', is_enabled: true },
     ]);
     expect(mapped).toHaveLength(1);
-    expect(mapped[0]).toMatchObject({ name: 'CRP', unit: 'mg/L', is_enabled: true });
+    expect(mapped[0]).toMatchObject({
+      name: 'CRP',
+      unit: 'mg/L',
+      is_enabled: true,
+    });
   });
 });

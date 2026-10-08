@@ -392,9 +392,10 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
       setTableData(prev);
     });
   };
-  const filteredData = tableData.filter((item) =>
-    item.Title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    matchesEnabledFilter(item, enabledFilter),
+  const filteredData = tableData.filter(
+    (item) =>
+      item.Title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      matchesEnabledFilter(item, enabledFilter),
   );
 
   const sortedData = sortLibraryRows(filteredData, sortId);

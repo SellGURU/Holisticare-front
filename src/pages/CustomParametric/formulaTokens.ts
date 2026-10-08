@@ -123,7 +123,8 @@ function aliasToNamespace(alias: string): FormulaNamespace | null {
     return 'Questionnaire';
   }
   if ((PROFILE_ALIASES as readonly string[]).includes(key)) return 'Profile';
-  if ((BIOMARKER_ALIASES as readonly string[]).includes(key)) return 'Biomarker';
+  if ((BIOMARKER_ALIASES as readonly string[]).includes(key))
+    return 'Biomarker';
   return null;
 }
 

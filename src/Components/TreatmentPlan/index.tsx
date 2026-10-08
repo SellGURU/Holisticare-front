@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -148,10 +154,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   };
   useEffect(() => {
     if (!isShare && id) {
-      fetchFresh(
-        HEALTH_PLAN_CACHE_KEYS.treatmentPlanList(id),
-        () =>
-          Application.showHistory({ member_id: id }).then((res) => res.data),
+      fetchFresh(HEALTH_PLAN_CACHE_KEYS.treatmentPlanList(id), () =>
+        Application.showHistory({ member_id: id }).then((res) => res.data),
       )
         .then((data) => {
           const plans = Array.isArray(data) ? data : [];

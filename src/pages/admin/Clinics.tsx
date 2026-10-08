@@ -1,7 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Copy, KeyRound, Pencil, RefreshCw, Search, ShieldCheck, ShieldOff, Smartphone, X } from 'lucide-react';
+import {
+  Copy,
+  KeyRound,
+  Pencil,
+  RefreshCw,
+  Search,
+  ShieldCheck,
+  ShieldOff,
+  Smartphone,
+  X,
+} from 'lucide-react';
 import { toast } from 'react-toastify';
 import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
@@ -105,9 +115,9 @@ const Clinics = () => {
   const [nowTick, setNowTick] = useState(0);
   const [mobileClinic, setMobileClinic] = useState<ClinicRow | null>(null);
   const [profileClinic, setProfileClinic] = useState<ClinicRow | null>(null);
-  const [demoByClinic, setDemoByClinic] = useState<Record<number, DemoClinicSummary>>(
-    {},
-  );
+  const [demoByClinic, setDemoByClinic] = useState<
+    Record<number, DemoClinicSummary>
+  >({});
 
   const handleAuthFailure = () => {
     removeAdminToken();
@@ -137,7 +147,10 @@ const Clinics = () => {
   const loadClinics = async () => {
     setLoadingList(true);
     try {
-      const [res] = await Promise.all([AdminApi.listClinics(), loadDemoStatus()]);
+      const [res] = await Promise.all([
+        AdminApi.listClinics(),
+        loadDemoStatus(),
+      ]);
       const nowMs = Date.now();
       setClinics(
         (res.data?.clinics || []).map((clinic: ClinicRow) =>
@@ -173,11 +186,16 @@ const Clinics = () => {
 
   const hasActiveTempPassword =
     Boolean(tempGrant) ||
-    clinics.some((clinic) => remainingSecondsFromMs(clinic.tempExpiresAtMs) > 0);
+    clinics.some(
+      (clinic) => remainingSecondsFromMs(clinic.tempExpiresAtMs) > 0,
+    );
 
   useEffect(() => {
     if (!hasActiveTempPassword) return undefined;
-    const timer = window.setInterval(() => setNowTick((value) => value + 1), 1000);
+    const timer = window.setInterval(
+      () => setNowTick((value) => value + 1),
+      1000,
+    );
     return () => window.clearInterval(timer);
   }, [hasActiveTempPassword]);
 
@@ -297,7 +315,9 @@ const Clinics = () => {
       }
       await loadDemoStatus();
     } catch (err: any) {
-      toast.error(err?.response?.data?.detail || 'Failed to reset demo patient.');
+      toast.error(
+        err?.response?.data?.detail || 'Failed to reset demo patient.',
+      );
     } finally {
       setUpdatingId(null);
     }
@@ -367,16 +387,36 @@ const Clinics = () => {
           <table className="w-full min-w-[1180px] divide-y divide-Gray-50 text-left text-[12px]">
             <thead className="bg-[#F8FAFB] text-Text-Secondary">
               <tr>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Clinic</th>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Demo</th>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Created</th>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Users</th>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Patients</th>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Plan</th>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Report labels</th>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Status</th>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Actions</th>
-                <th className="whitespace-nowrap px-3 py-3 font-medium">Updated</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Clinic
+                </th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Demo
+                </th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Created
+                </th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Users
+                </th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Patients
+                </th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Plan
+                </th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Report labels
+                </th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Status
+                </th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Actions
+                </th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">
+                  Updated
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-Gray-50">
@@ -397,7 +437,10 @@ const Clinics = () => {
                 );
                 const demo = demoByClinic[clinic.clinic_id];
                 return (
-                  <tr key={clinic.clinic_id} className="align-top hover:bg-[#F8FAFB]/70">
+                  <tr
+                    key={clinic.clinic_id}
+                    className="align-top hover:bg-[#F8FAFB]/70"
+                  >
                     <td className="px-3 py-3">
                       <div className="font-medium text-Text-Primary">
                         {clinic.name || `Clinic #${clinic.clinic_id}`}

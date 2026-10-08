@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, Search, X } from 'lucide-react';
 
@@ -60,7 +66,8 @@ const AdminClinicSearchSelect = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const selected = clinics.find((clinic) => clinic.clinic_email === value) || null;
+  const selected =
+    clinics.find((clinic) => clinic.clinic_email === value) || null;
   const filtered = useMemo(
     () => filterAdminClinics(clinics, query),
     [clinics, query],
@@ -286,7 +293,10 @@ const AdminClinicSearchSelect = ({
             <X size={14} />
           </button>
         ) : (
-          <ChevronDown size={14} className="ml-1 shrink-0 text-Text-Secondary" />
+          <ChevronDown
+            size={14}
+            className="ml-1 shrink-0 text-Text-Secondary"
+          />
         )}
       </div>
       {open && typeof document !== 'undefined'

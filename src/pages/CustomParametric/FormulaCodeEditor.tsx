@@ -1,11 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import {
-  BookOpen,
-  Check,
-  ChevronDown,
-  ChevronUp,
-  Copy,
-} from 'lucide-react';
+import { BookOpen, Check, ChevronDown, ChevronUp, Copy } from 'lucide-react';
 import {
   filterInsertable,
   insertBiomarkerToken,
@@ -112,7 +106,9 @@ export default function FormulaCodeEditor({
   const unknownSet = useMemo(() => {
     const next = new Set(unknown.map((token) => `Biomarker.${token}`));
     unknownProfiles.forEach((token) => next.add(`Profile.${token}`));
-    unknownQuestionnaires.forEach((token) => next.add(`Questionnaire.${token}`));
+    unknownQuestionnaires.forEach((token) =>
+      next.add(`Questionnaire.${token}`),
+    );
     return next;
   }, [unknown, unknownProfiles, unknownQuestionnaires]);
 
@@ -140,11 +136,14 @@ export default function FormulaCodeEditor({
     }
     return filterInsertableItems(questionnaireItems, trigger.query).slice(0, 8);
   }, [offeringNs, trigger, insertable, profileItems, questionnaireItems]);
-  const showSuggest = Boolean(offeringNs && suggestOpen && suggestions.length > 0);
+  const showSuggest = Boolean(
+    offeringNs && suggestOpen && suggestions.length > 0,
+  );
   const isEmpty = !value;
 
   const pickerItems = useMemo(() => {
-    if (pickerNs === 'Profile') return filterInsertableItems(profileItems, pickerQuery);
+    if (pickerNs === 'Profile')
+      return filterInsertableItems(profileItems, pickerQuery);
     if (pickerNs === 'Questionnaire') {
       return filterInsertableItems(questionnaireItems, pickerQuery);
     }
@@ -256,25 +255,29 @@ export default function FormulaCodeEditor({
           {pickerOpen ? (
             <div className="absolute top-[calc(100%+6px)] left-0 z-30 w-[min(100%,320px)] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
               <div className="flex gap-1 border-b border-gray-100 p-1.5">
-                {(['Questionnaire', 'Biomarker', 'Profile'] as FormulaNamespace[]).map(
-                  (ns) => (
-                    <button
-                      key={ns}
-                      type="button"
-                      onClick={() => {
-                        setPickerNs(ns);
-                        setPickerQuery('');
-                      }}
-                      className={`rounded-md px-2 py-1 text-[11px] font-medium ${
-                        pickerNs === ns
-                          ? 'bg-gray-900 text-white'
-                          : 'text-gray-500 hover:bg-gray-50'
-                      }`}
-                    >
-                      {ns}
-                    </button>
-                  ),
-                )}
+                {(
+                  [
+                    'Questionnaire',
+                    'Biomarker',
+                    'Profile',
+                  ] as FormulaNamespace[]
+                ).map((ns) => (
+                  <button
+                    key={ns}
+                    type="button"
+                    onClick={() => {
+                      setPickerNs(ns);
+                      setPickerQuery('');
+                    }}
+                    className={`rounded-md px-2 py-1 text-[11px] font-medium ${
+                      pickerNs === ns
+                        ? 'bg-gray-900 text-white'
+                        : 'text-gray-500 hover:bg-gray-50'
+                    }`}
+                  >
+                    {ns}
+                  </button>
+                ))}
               </div>
               <input
                 autoFocus
@@ -289,7 +292,9 @@ export default function FormulaCodeEditor({
               />
               <div className="max-h-[168px] overflow-y-auto">
                 {optionsLoading ? (
-                  <p className="px-2.5 py-3 text-[12px] text-gray-400">Loading…</p>
+                  <p className="px-2.5 py-3 text-[12px] text-gray-400">
+                    Loading…
+                  </p>
                 ) : pickerNs === 'Questionnaire' &&
                   questionnaireItems.length === 0 ? (
                   <p className="px-2.5 py-3 text-[12px] text-gray-400">
@@ -570,12 +575,7 @@ ${questionnaires}
 
 FORMULA REQUIREMENT
 [Describe the desired calculation, output range, thresholds, weights, and units here.]`;
-  }, [
-    catalog,
-    multiSourceEnabled,
-    profileItems,
-    questionnaireItems,
-  ]);
+  }, [catalog, multiSourceEnabled, profileItems, questionnaireItems]);
 
   const copyDocumentation = async () => {
     try {
@@ -649,12 +649,10 @@ FORMULA REQUIREMENT
           </section>
 
           <section>
-            <h4 className="font-semibold text-gray-900">
-              Supported functions
-            </h4>
+            <h4 className="font-semibold text-gray-900">Supported functions</h4>
             <p className="mt-1 font-mono text-[10px]">
-              sum · avg · min · max · round · abs · sqrt · ln · log · exp ·
-              if_ · status_weight · phenoage
+              sum · avg · min · max · round · abs · sqrt · ln · log · exp · if_
+              · status_weight · phenoage
             </p>
           </section>
 
@@ -705,7 +703,9 @@ FORMULA REQUIREMENT
   );
 }
 
-function toBiomarkerInsertItem(item: InsertableBiomarker): FormulaInsertableItem {
+function toBiomarkerInsertItem(
+  item: InsertableBiomarker,
+): FormulaInsertableItem {
   return {
     namespace: 'Biomarker',
     token: item.token,
@@ -766,11 +766,7 @@ function renderHighlighted(
           ? 'text-sky-600'
           : 'text-[#059669]';
     parts.push(
-      <span
-        key={key++}
-        title={title}
-        className={bad ? 'text-red-600' : color}
-      >
+      <span key={key++} title={title} className={bad ? 'text-red-600' : color}>
         {full}
       </span>,
     );

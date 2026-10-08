@@ -31,7 +31,9 @@ function PrivacyRow({
             </span>
           )}
         </div>
-        <p className="mt-1 text-[10px] leading-4 text-[#888888]">{description}</p>
+        <p className="mt-1 text-[10px] leading-4 text-[#888888]">
+          {description}
+        </p>
       </div>
       <div className="shrink-0 pt-0.5">{control}</div>
     </div>

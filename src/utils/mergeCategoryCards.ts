@@ -304,7 +304,9 @@ export const filterCategoryCardsToVisibleBiomarkers = (
   );
   const kept: any[] = [];
   for (const card of cards || []) {
-    const key = String(card?.subcategory || '').trim().toLowerCase();
+    const key = String(card?.subcategory || '')
+      .trim()
+      .toLowerCase();
     const stats = leftover.get(key);
     if (!stats) continue;
     kept.push({

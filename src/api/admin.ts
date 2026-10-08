@@ -647,7 +647,10 @@ class AdminApi {
     });
   }
 
-  static importIntelligenceDefaultLibrary(templateId: string, isEnabled = true) {
+  static importIntelligenceDefaultLibrary(
+    templateId: string,
+    isEnabled = true,
+  ) {
     return axios.post(
       `${getBaseUrl()}/admin/intelligence/defaults/library/import`,
       { template_id: templateId, is_enabled: isEnabled },
@@ -671,9 +674,12 @@ class AdminApi {
   }
 
   static getPayment(id: string) {
-    return axios.get(`${getBaseUrl()}/admin/payments/${encodeURIComponent(id)}`, {
-      headers: withAuthHeaders(),
-    });
+    return axios.get(
+      `${getBaseUrl()}/admin/payments/${encodeURIComponent(id)}`,
+      {
+        headers: withAuthHeaders(),
+      },
+    );
   }
 
   static syncPayments() {

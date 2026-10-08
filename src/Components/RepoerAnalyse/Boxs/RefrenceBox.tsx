@@ -197,10 +197,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
                   className="pt-2"
                 />
               ) : showChartEmpty ? (
-                <ChartEmptyPlaceholder
-                  variant="status-bar"
-                  className="pt-2"
-                />
+                <ChartEmptyPlaceholder variant="status-bar" className="pt-2" />
               ) : (
                 <StatusBarChartv3
                   status={data.status}

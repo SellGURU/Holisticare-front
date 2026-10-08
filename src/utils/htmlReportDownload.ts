@@ -24,7 +24,11 @@ export function isDownloadablePdfBlob(blob: Blob): boolean {
   if (type.includes('application/pdf')) {
     return true;
   }
-  if (type.includes('json') || type.includes('text/html') || type.includes('text/plain')) {
+  if (
+    type.includes('json') ||
+    type.includes('text/html') ||
+    type.includes('text/plain')
+  ) {
     return false;
   }
   return blob.size > 4;
@@ -47,7 +51,9 @@ export function detailFromUnknownError(error: unknown): string | null {
   return null;
 }
 
-export async function readBlobErrorDetail(data: unknown): Promise<string | null> {
+export async function readBlobErrorDetail(
+  data: unknown,
+): Promise<string | null> {
   const direct = detailFromUnknownError(data);
   if (direct) {
     return direct;

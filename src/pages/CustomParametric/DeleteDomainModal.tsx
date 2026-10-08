@@ -6,10 +6,7 @@ import {
   getDefaultIntelligenceApi,
   type IntelligenceApi,
 } from './intelligenceApi';
-import {
-  v2DangerBtnClass,
-  v2OutlineBtnClass,
-} from './intelligenceUi';
+import { v2DangerBtnClass, v2OutlineBtnClass } from './intelligenceUi';
 import type { RiskDomainViewModel } from './types';
 
 interface DeleteDomainModalProps {
@@ -31,15 +28,16 @@ export default function DeleteDomainModal({
   const handleDelete = () => {
     if (!domain?.id) return;
     setPending(true);
-    intelligenceApi.deleteDomain(
-      domain.id,
-      domain.domainType as
-        | 'RISK'
-        | 'SCORING'
-        | 'AGING'
-        | 'PARAMETRIC_BIOMARKER'
-        | undefined,
-    )
+    intelligenceApi
+      .deleteDomain(
+        domain.id,
+        domain.domainType as
+          | 'RISK'
+          | 'SCORING'
+          | 'AGING'
+          | 'PARAMETRIC_BIOMARKER'
+          | undefined,
+      )
       .then(() => {
         toast.success('Domain deleted');
         onDeleted();

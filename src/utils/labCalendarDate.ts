@@ -32,8 +32,11 @@ const MONTHS_DISPLAY = [
   'Dec',
 ] as const;
 
-export const localDateAtMidnight = (year: number, monthIndex: number, day: number) =>
-  new Date(year, monthIndex, day);
+export const localDateAtMidnight = (
+  year: number,
+  monthIndex: number,
+  day: number,
+) => new Date(year, monthIndex, day);
 
 export const todayLocalDate = () => {
   const now = new Date();

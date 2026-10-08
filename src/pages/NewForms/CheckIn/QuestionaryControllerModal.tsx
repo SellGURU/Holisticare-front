@@ -686,7 +686,8 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
                                 pre
                                   .map((q) => q.id)
                                   .filter(
-                                    (id): id is string => typeof id === 'string',
+                                    (id): id is string =>
+                                      typeof id === 'string',
                                   ),
                               );
                               const copy = {

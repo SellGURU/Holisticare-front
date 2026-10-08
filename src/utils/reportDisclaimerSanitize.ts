@@ -36,9 +36,7 @@ export function wrapHeroTitleWithBrand(html: string): string {
 
   const parts = h1.match(/^(<h1\b[^>]*>)([\s\S]*)(<\/h1>)$/i);
   if (!parts) return html;
-  const unwrapped = parts[2]
-    .replace(INNER_BRAND_SPAN, '$1')
-    .trim();
+  const unwrapped = parts[2].replace(INNER_BRAND_SPAN, '$1').trim();
   if (!unwrapped) return html;
 
   let openTag = parts[1].replace(/\btext-white\b/g, 'text-transparent');

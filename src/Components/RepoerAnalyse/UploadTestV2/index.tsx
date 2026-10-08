@@ -690,7 +690,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       });
   };
   useEffect(() => {
-    const handleDeleteFileTrigger = (event?: { detail?: { file_id?: string } }) => {
+    const handleDeleteFileTrigger = (event?: {
+      detail?: { file_id?: string };
+    }) => {
       handleDeleteFile(event?.detail?.file_id);
     };
     subscribe('DELETE_FILE_TRIGGER', handleDeleteFileTrigger);

@@ -221,181 +221,183 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                 value.Category == 'Supplement') &&
                 value?.label &&
                 value.label !== '-' && (
-                <>
-                  <div
-                    className={`select-none rounded-full h-[20px] md:h-auto px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
-                    style={{ backgroundColor: bgColor }}
-                  >
+                  <>
                     <div
-                      className={`size-[8px] select-none rounded-full`}
-                      style={{ backgroundColor: color }}
-                    ></div>
-                    {value.label}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-1 relative">
-                    {selectedIssues.map((issue: string, index: number) => (
+                      className={`select-none rounded-full h-[20px] md:h-auto px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                      style={{ backgroundColor: bgColor }}
+                    >
                       <div
-                        key={index}
-                        className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray text-nowrap"
+                        className={`size-[8px] select-none rounded-full`}
+                        style={{ backgroundColor: color }}
+                      ></div>
+                      {value.label}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1 relative">
+                      {selectedIssues.map((issue: string, index: number) => (
+                        <div
+                          key={index}
+                          className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray text-nowrap"
+                        >
+                          {issue.split(':')[0].trim()}{' '}
+                          <img
+                            src="/icons/close-circle.svg"
+                            alt=""
+                            className="w-3 h-3 cursor-pointer"
+                            onClick={() => handleRemoveIssueCard(issue)}
+                          />
+                        </div>
+                      ))}
+                      <div
+                        className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray cursor-pointer text-nowrap"
+                        onClick={() => setShowAddIssue(true)}
                       >
-                        {issue.split(':')[0].trim()}{' '}
+                        Add Issue{' '}
                         <img
-                          src="/icons/close-circle.svg"
+                          src="/icons/add-small.svg"
                           alt=""
-                          className="w-3 h-3 cursor-pointer"
-                          onClick={() => handleRemoveIssueCard(issue)}
+                          className="w-3 h-3"
                         />
                       </div>
-                    ))}
-                    <div
-                      className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray cursor-pointer text-nowrap"
-                      onClick={() => setShowAddIssue(true)}
-                    >
-                      Add Issue{' '}
-                      <img
-                        src="/icons/add-small.svg"
-                        alt=""
-                        className="w-3 h-3"
-                      />
-                    </div>
-                    {showAddIssue && (
-                      <div
-                        ref={addIssueRef}
-                        className="flex flex-col absolute top-6 right-0 w-[230px] xs:w-[260px] md:w-[303px] max-h-[282px] overflow-y-auto rounded-md border break-all border-Gray-50 bg-white p-4 shadow-200 z-10"
-                        style={{
-                          scrollbarWidth: 'thin',
-                          scrollbarColor: '#E9EDF5 #FFFFFF',
-                        }}
-                      >
-                        {issuesData?.map((issue, index) => {
-                          const [text] = Object.entries(issue)[0];
-                          const issueLabel = text.split(':')[0].trim();
-                          const isInSelected = selectedIssues.some(
-                            (r: string) =>
-                              r.split(':')[0].trim() === issueLabel,
-                          );
-                          const handleToggle = () => {
-                            const newSelected = isInSelected
-                              ? value.issue_list.filter(
-                                  (r: string) => r !== text,
-                                )
-                              : [...value.issue_list, text];
-
-                            handleUpdateIssueListByKey(
-                              value.Category,
-                              value.Recommendation,
-                              newSelected,
+                      {showAddIssue && (
+                        <div
+                          ref={addIssueRef}
+                          className="flex flex-col absolute top-6 right-0 w-[230px] xs:w-[260px] md:w-[303px] max-h-[282px] overflow-y-auto rounded-md border break-all border-Gray-50 bg-white p-4 shadow-200 z-10"
+                          style={{
+                            scrollbarWidth: 'thin',
+                            scrollbarColor: '#E9EDF5 #FFFFFF',
+                          }}
+                        >
+                          {issuesData?.map((issue, index) => {
+                            const [text] = Object.entries(issue)[0];
+                            const issueLabel = text.split(':')[0].trim();
+                            const isInSelected = selectedIssues.some(
+                              (r: string) =>
+                                r.split(':')[0].trim() === issueLabel,
                             );
+                            const handleToggle = () => {
+                              const newSelected = isInSelected
+                                ? value.issue_list.filter(
+                                    (r: string) => r !== text,
+                                  )
+                                : [...value.issue_list, text];
 
-                            const newIssueList = isInSelected
-                              ? selectedIssues.filter(
-                                  (r: string) =>
-                                    r.split(':')[0].trim() !== issueLabel,
-                                )
-                              : [...selectedIssues, text];
+                              handleUpdateIssueListByKey(
+                                value.Category,
+                                value.Recommendation,
+                                newSelected,
+                              );
 
-                            setSelectedIssues(newIssueList);
-                          };
+                              const newIssueList = isInSelected
+                                ? selectedIssues.filter(
+                                    (r: string) =>
+                                      r.split(':')[0].trim() !== issueLabel,
+                                  )
+                                : [...selectedIssues, text];
 
-                          return (
-                            <div
-                              key={index}
-                              className="flex select-none text-justify items-start text-Text-Primary text-xs group relative pr-5 py-1"
-                            >
-                              <Checkbox
-                                checked={isInSelected}
-                                onChange={handleToggle}
-                              ></Checkbox>
-                              <span className="text-Text-Secondary text-nowrap mr-1">
-                                {issueLabel}:{' '}
-                              </span>
-                              {text?.split(':')[1]?.trim()}
-                              {isDeleting === index + 1 ? (
-                                <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  {/* <div className="text-Text-Quadruple text-xs">
+                              setSelectedIssues(newIssueList);
+                            };
+
+                            return (
+                              <div
+                                key={index}
+                                className="flex select-none text-justify items-start text-Text-Primary text-xs group relative pr-5 py-1"
+                              >
+                                <Checkbox
+                                  checked={isInSelected}
+                                  onChange={handleToggle}
+                                ></Checkbox>
+                                <span className="text-Text-Secondary text-nowrap mr-1">
+                                  {issueLabel}:{' '}
+                                </span>
+                                {text?.split(':')[1]?.trim()}
+                                {isDeleting === index + 1 ? (
+                                  <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {/* <div className="text-Text-Quadruple text-xs">
                                 Sure?
                               </div> */}
+                                    <img
+                                      src="/icons/tick-circle-green.svg"
+                                      alt=""
+                                      className="w-[20px] h-[20px] cursor-pointer"
+                                      onClick={() => {
+                                        handleRemoveIssueFromList(text);
+                                        const newSelected =
+                                          selectedIssues.filter(
+                                            (r: string) =>
+                                              r.split(':')[0].trim() !==
+                                              issueLabel,
+                                          );
+                                        setSelectedIssues(newSelected);
+                                        handleUpdateIssueListByKey(
+                                          value.Category,
+                                          value.Recommendation,
+                                          newSelected,
+                                        );
+                                      }}
+                                    />
+                                    <img
+                                      src="/icons/close-circle-red.svg"
+                                      alt=""
+                                      className="w-[20px] h-[20px] cursor-pointer"
+                                      onClick={() => setIsDeleting(null)}
+                                    />
+                                  </div>
+                                ) : (
                                   <img
-                                    src="/icons/tick-circle-green.svg"
+                                    src="/icons/delete.svg"
                                     alt=""
-                                    className="w-[20px] h-[20px] cursor-pointer"
+                                    className="absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 cursor-pointer"
                                     onClick={() => {
-                                      handleRemoveIssueFromList(text);
-                                      const newSelected = selectedIssues.filter(
-                                        (r: string) =>
-                                          r.split(':')[0].trim() !== issueLabel,
-                                      );
-                                      setSelectedIssues(newSelected);
-                                      handleUpdateIssueListByKey(
-                                        value.Category,
-                                        value.Recommendation,
-                                        newSelected,
-                                      );
+                                      setIsDeleting(index + 1);
                                     }}
                                   />
-                                  <img
-                                    src="/icons/close-circle-red.svg"
-                                    alt=""
-                                    className="w-[20px] h-[20px] cursor-pointer"
-                                    onClick={() => setIsDeleting(null)}
-                                  />
-                                </div>
-                              ) : (
-                                <img
-                                  src="/icons/delete.svg"
-                                  alt=""
-                                  className="absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 cursor-pointer"
-                                  onClick={() => {
-                                    setIsDeleting(index + 1);
-                                  }}
-                                />
-                              )}
-                            </div>
-                          );
-                        })}
-                        {issuesData?.length < 1 && (
-                          <div className="flex flex-col items-center justify-center mb-2">
-                            <img src="/icons/empty-state-issue.svg" alt="" />
-                            <div className="text-Text-Primary text-[10px] font-medium -mt-5">
-                              No issues found.
-                            </div>
-                          </div>
-                        )}
-                        <div className="flex items-center justify-center text-Primary-DeepTeal text-xs font-medium gap-1 border-t border-Gray-50 rounded-md pt-3 mt-2">
-                          {addIssue ? (
-                            <>
-                              <input
-                                type="text"
-                                placeholder="Type new issue and press Enter..."
-                                value={newIssue}
-                                onChange={(e) => setNewIssue(e.target.value)}
-                                className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border-Gray-50 border rounded-2xl  text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    setAddIssue(false);
-                                    handleAddIssue(newIssue);
-                                  }
-                                }}
-                              />
-                            </>
-                          ) : (
-                            <div
-                              className="flex items-center gap-1 cursor-pointer"
-                              onClick={() => setAddIssue(true)}
-                            >
-                              <img
-                                src="/icons/add-small.svg"
-                                alt=""
-                                className="w-5 h-5"
-                              />
-                              Create new issue
+                                )}
+                              </div>
+                            );
+                          })}
+                          {issuesData?.length < 1 && (
+                            <div className="flex flex-col items-center justify-center mb-2">
+                              <img src="/icons/empty-state-issue.svg" alt="" />
+                              <div className="text-Text-Primary text-[10px] font-medium -mt-5">
+                                No issues found.
+                              </div>
                             </div>
                           )}
+                          <div className="flex items-center justify-center text-Primary-DeepTeal text-xs font-medium gap-1 border-t border-Gray-50 rounded-md pt-3 mt-2">
+                            {addIssue ? (
+                              <>
+                                <input
+                                  type="text"
+                                  placeholder="Type new issue and press Enter..."
+                                  value={newIssue}
+                                  onChange={(e) => setNewIssue(e.target.value)}
+                                  className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border-Gray-50 border rounded-2xl  text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      setAddIssue(false);
+                                      handleAddIssue(newIssue);
+                                    }
+                                  }}
+                                />
+                              </>
+                            ) : (
+                              <div
+                                className="flex items-center gap-1 cursor-pointer"
+                                onClick={() => setAddIssue(true)}
+                              >
+                                <img
+                                  src="/icons/add-small.svg"
+                                  alt=""
+                                  className="w-5 h-5"
+                                />
+                                Create new issue
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                  {/* {!editAble && (
+                      )}
+                    </div>
+                    {/* {!editAble && (
                     <>
                       <div
                         data-tooltip-id="system-score"
@@ -445,7 +447,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                       </div>
                     </>
                   )} */}
-                  {/* {value['Practitioner Comments'][0]?.length > 0 && (
+                    {/* {value['Practitioner Comments'][0]?.length > 0 && (
                     <div
                       data-tooltip-id={`${value.title}-${index}`}
                       className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
@@ -466,8 +468,8 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                       </Tooltip>
                     </div>
                   )} */}
-                </>
-              )}
+                  </>
+                )}
               {Conflicts?.length > 0 && (
                 <div
                   onClick={() => setShowConflict(true)}

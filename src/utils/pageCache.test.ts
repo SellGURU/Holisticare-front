@@ -59,7 +59,7 @@ describe('pageCache', () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 
-    it('invalidate(prefix) removes only matching keys', async () => {
+  it('invalidate(prefix) removes only matching keys', async () => {
     await getCached('portal:patients', () => Promise.resolve(1));
     await getCached('portal:messages:users', () => Promise.resolve(2));
 
@@ -100,15 +100,15 @@ describe('pageCache', () => {
         }),
     );
 
-    const stalePromise = getCached('portal:healthplan:stale-race', staleFetcher);
+    const stalePromise = getCached(
+      'portal:healthplan:stale-race',
+      staleFetcher,
+    );
     invalidate('portal:healthplan:');
     expect(hasCached('portal:healthplan:stale-race')).toBe(false);
 
     const freshFetcher = vi.fn().mockResolvedValue('fresh');
-    const fresh = await getCached(
-      'portal:healthplan:stale-race',
-      freshFetcher,
-    );
+    const fresh = await getCached('portal:healthplan:stale-race', freshFetcher);
     expect(fresh).toBe('fresh');
     expect(peekCached('portal:healthplan:stale-race')).toBe('fresh');
 

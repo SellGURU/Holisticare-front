@@ -15,7 +15,9 @@ export function catalogNameToToken(name: string): string {
 
 export function tokenMatchesCatalogName(token: string, name: string): boolean {
   const t = token.trim().toLowerCase();
-  const n = String(name || '').trim().toLowerCase();
+  const n = String(name || '')
+    .trim()
+    .toLowerCase();
   if (!t || !n) return false;
   if (t === n) return true;
   if (t.replace(/_/g, ' ') === n) return true;
@@ -23,7 +25,10 @@ export function tokenMatchesCatalogName(token: string, name: string): boolean {
 }
 
 export function extractBiomarkerTokens(formula: string): string[] {
-  return Array.from(String(formula || '').matchAll(REF_RE), (match) => match[1]);
+  return Array.from(
+    String(formula || '').matchAll(REF_RE),
+    (match) => match[1],
+  );
 }
 
 export function isReservedAlias(token: string): boolean {
@@ -125,7 +130,11 @@ export function toInsertableBiomarkers(
   const rows: InsertableBiomarker[] = [];
   for (const alias of RESERVED_BIOMARKER_ALIASES) {
     seen.add(alias.toLowerCase());
-    rows.push({ name: alias, token: alias, unit: alias === 'Height' ? 'cm' : 'kg' });
+    rows.push({
+      name: alias,
+      token: alias,
+      unit: alias === 'Height' ? 'cm' : 'kg',
+    });
   }
   for (const item of names) {
     const token = catalogNameToToken(item.name);

@@ -124,19 +124,21 @@ const TableForm: FC<TableProps> = ({
               </thead>
               <tbody>
                 {table.getRowModel().rows.length > 0 ? (
-                  table.getRowModel().rows.map((row, index) => (
-                    <TableRow
-                      key={row.id}
-                      row={row}
-                      onDelete={onDelete}
-                      onEdit={onEdit}
-                      onPreview={onPreview}
-                      onDuplicate={onDuplicate}
-                      onCopy={onCopy}
-                      onToggleEnabled={onToggleEnabled}
-                      index={index}
-                    />
-                  ))
+                  table
+                    .getRowModel()
+                    .rows.map((row, index) => (
+                      <TableRow
+                        key={row.id}
+                        row={row}
+                        onDelete={onDelete}
+                        onEdit={onEdit}
+                        onPreview={onPreview}
+                        onDuplicate={onDuplicate}
+                        onCopy={onCopy}
+                        onToggleEnabled={onToggleEnabled}
+                        index={index}
+                      />
+                    ))
                 ) : (
                   <tr>
                     <td

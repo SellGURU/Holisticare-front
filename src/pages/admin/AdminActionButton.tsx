@@ -6,13 +6,12 @@ type Variant = 'default' | 'warning' | 'danger';
 const VARIANT: Record<Variant, string> = {
   default:
     'border-Gray-50 bg-[#F8FAFB] text-Text-Primary hover:border-Primary-DeepTeal/40 hover:bg-white',
-  warning:
-    'border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100',
-  danger:
-    'border-red-200 bg-red-50 text-red-700 hover:bg-red-100',
+  warning: 'border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100',
+  danger: 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100',
 };
 
-interface AdminActionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface AdminActionButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: LucideIcon;
   label: ReactNode;
   variant?: Variant;

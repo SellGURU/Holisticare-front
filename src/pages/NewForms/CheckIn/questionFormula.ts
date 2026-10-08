@@ -10,7 +10,9 @@ export function isScoringSentinel(item: unknown): boolean {
   );
 }
 
-export function fillableQuestions<T>(questions: Array<T> | undefined | null): Array<T> {
+export function fillableQuestions<T>(
+  questions: Array<T> | undefined | null,
+): Array<T> {
   return (questions || []).filter((item) => !isScoringSentinel(item));
 }
 
@@ -85,14 +87,18 @@ export function resolveQuestionId(
 }
 
 export function stripQuotedStrings(formula: string): string {
-  return String(formula || '').replace(/'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"/g, ' ');
+  return String(formula || '').replace(
+    /'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"/g,
+    ' ',
+  );
 }
 
 export function unknownFormulaIds(
   formula: string,
   knownIds: Set<string>,
 ): string[] {
-  const matches = stripQuotedStrings(formula).match(/[A-Za-z_][A-Za-z0-9_]*/g) || [];
+  const matches =
+    stripQuotedStrings(formula).match(/[A-Za-z_][A-Za-z0-9_]*/g) || [];
   const seen = new Set<string>();
   const unknown: string[] = [];
   for (const id of matches) {
@@ -167,13 +173,15 @@ export function mapClinicCatalog(raw: unknown): Array<FormCatalogItem> {
   const rows = Array.isArray(raw)
     ? raw
     : Array.isArray((raw as { chart_bounds?: unknown })?.chart_bounds)
-      ? ((raw as { chart_bounds: unknown[] }).chart_bounds)
+      ? (raw as { chart_bounds: unknown[] }).chart_bounds
       : [];
   const mapped: Array<FormCatalogItem> = [];
   const seen = new Set<string>();
   const ordered = [...rows].sort((left, right) => {
     const leftDisabled =
-      left && typeof left === 'object' && (left as { is_enabled?: unknown }).is_enabled === false
+      left &&
+      typeof left === 'object' &&
+      (left as { is_enabled?: unknown }).is_enabled === false
         ? 1
         : 0;
     const rightDisabled =

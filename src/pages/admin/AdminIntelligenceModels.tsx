@@ -69,7 +69,9 @@ const AdminIntelligenceModels = () => {
     init().catch(() => {});
   }, [handleAuthFailure, loadClinics]);
 
-  const selectedClinic = clinics.find((clinic) => clinic.clinic_id === clinicId);
+  const selectedClinic = clinics.find(
+    (clinic) => clinic.clinic_id === clinicId,
+  );
   const editingDefaults = scope === 'default';
 
   const intelligenceApi = useMemo(() => {
@@ -101,18 +103,25 @@ const AdminIntelligenceModels = () => {
       const message = intelligenceSyncSummaryMessage(summary);
       if (!summary.formula_count || !summary.clinics_targeted) {
         toast.info(message);
-      } else if (summary.created === 0 && summary.updated === 0 && summary.skipped > 0) {
+      } else if (
+        summary.created === 0 &&
+        summary.updated === 0 &&
+        summary.skipped > 0
+      ) {
         toast.error(message);
       } else {
         toast.success(message);
       }
     } catch (err: unknown) {
-      const status = (err as { response?: { status?: number } })?.response?.status;
+      const status = (err as { response?: { status?: number } })?.response
+        ?.status;
       if (status === 401) {
         handleAuthFailure();
         return;
       }
-      toast.error(formatApiErrorMessage(err) || 'Failed to sync default formulas.');
+      toast.error(
+        formatApiErrorMessage(err) || 'Failed to sync default formulas.',
+      );
     } finally {
       setSyncing(false);
     }
@@ -201,7 +210,8 @@ const AdminIntelligenceModels = () => {
             </div>
             {selectedClinic ? (
               <p className="mt-3 text-[12px] text-Text-Secondary">
-                Editing {selectedClinic.name || `Clinic #${selectedClinic.clinic_id}`}
+                Editing{' '}
+                {selectedClinic.name || `Clinic #${selectedClinic.clinic_id}`}
                 {selectedClinic.primary_email
                   ? ` · ${selectedClinic.primary_email}`
                   : ''}{' '}
@@ -277,7 +287,10 @@ const AdminIntelligenceModels = () => {
               })}
             </div>
 
-            <div className="mt-6" key={`${editingDefaults ? 'default' : clinicId}-${selected}`}>
+            <div
+              className="mt-6"
+              key={`${editingDefaults ? 'default' : clinicId}-${selected}`}
+            >
               {selected === 'risk' ? (
                 <RiskDomainsPanel modelKind="RISK" api={intelligenceApi} />
               ) : selected === 'health' ? (

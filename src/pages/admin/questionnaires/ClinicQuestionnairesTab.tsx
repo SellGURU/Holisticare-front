@@ -49,7 +49,9 @@ const ClinicQuestionnairesTab = ({
         onAuthFailure();
         return;
       }
-      toast.error(formatApiErrorMessage(err) || 'Failed to load questionnaires.');
+      toast.error(
+        formatApiErrorMessage(err) || 'Failed to load questionnaires.',
+      );
       setRows([]);
     } finally {
       setLoading(false);
@@ -106,7 +108,8 @@ const ClinicQuestionnairesTab = ({
         onAuthFailure();
         return;
       }
-      const message = formatApiErrorMessage(err) || 'Failed to save questionnaire.';
+      const message =
+        formatApiErrorMessage(err) || 'Failed to save questionnaire.';
       if (message === 'A form with the same title already exists.') {
         setError(message);
       } else {
@@ -125,7 +128,9 @@ const ClinicQuestionnairesTab = ({
         onAuthFailure();
         return;
       }
-      toast.error(formatApiErrorMessage(err) || 'Failed to delete questionnaire.');
+      toast.error(
+        formatApiErrorMessage(err) || 'Failed to delete questionnaire.',
+      );
     }
   };
 
@@ -139,7 +144,9 @@ const ClinicQuestionnairesTab = ({
         onAuthFailure();
         return;
       }
-      toast.error(formatApiErrorMessage(err) || 'Failed to duplicate questionnaire.');
+      toast.error(
+        formatApiErrorMessage(err) || 'Failed to duplicate questionnaire.',
+      );
     }
   };
 
@@ -148,7 +155,9 @@ const ClinicQuestionnairesTab = ({
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="flex w-full flex-col gap-3 md:flex-row md:items-end">
           <div className="w-full md:w-[320px]">
-            <label className="mb-1 block text-[12px] text-Text-Secondary">Clinic</label>
+            <label className="mb-1 block text-[12px] text-Text-Secondary">
+              Clinic
+            </label>
             <ClinicSearchSelect
               clinics={clinics}
               value={clinicId}
@@ -274,7 +283,10 @@ const ClinicQuestionnairesTab = ({
         />
       </MainModal>
 
-      <MainModal isOpen={Boolean(copySource)} onClose={() => setCopySource(null)}>
+      <MainModal
+        isOpen={Boolean(copySource)}
+        onClose={() => setCopySource(null)}
+      >
         {copySource ? (
           <CopyQuestionnaireModal
             clinics={clinics}

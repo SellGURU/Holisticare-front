@@ -256,7 +256,9 @@ const HolisticPlanShareAndDownload = ({
             <SpinnerLoader color="#005F73" />
             Public Link
           </div>
-          <div className="text-[10px] text-Text-Fivefold">Preparing report…</div>
+          <div className="text-[10px] text-Text-Fivefold">
+            Preparing report…
+          </div>
         </div>
       );
     }
@@ -295,12 +297,12 @@ const HolisticPlanShareAndDownload = ({
         {activeTreatment &&
           normalizeHolisticPlanState(activeTreatment.state).toLowerCase() !==
             'draft' && (
-          <>
-            {resolveShareButtonHadler()}
-            {resolvePublicShareButtonHandler()}
-            {resolveDownloadButtonHadler()}
-          </>
-        )}
+            <>
+              {resolveShareButtonHadler()}
+              {resolvePublicShareButtonHandler()}
+              {resolveDownloadButtonHadler()}
+            </>
+          )}
       </div>
       <PublicShareModal
         isOpen={openPublicShare}

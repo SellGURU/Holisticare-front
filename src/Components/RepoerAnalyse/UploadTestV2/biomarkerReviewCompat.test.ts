@@ -428,9 +428,7 @@ describe('categorizeReviewRow restored_from_excluded', () => {
       eligible_for_chart: false,
     };
 
-    expect(
-      categorizeReviewRow(row, {}, new Set(), 0, { catalog }),
-    ).toEqual({
+    expect(categorizeReviewRow(row, {}, new Set(), 0, { catalog })).toEqual({
       category: 'review',
       reviewReason: 'unit_mismatch',
     });
@@ -454,9 +452,7 @@ describe('categorizeReviewRow restored_from_excluded', () => {
       eligible_for_chart: false,
     };
 
-    expect(
-      categorizeReviewRow(row, {}, new Set(), 0, { catalog }),
-    ).toEqual({
+    expect(categorizeReviewRow(row, {}, new Set(), 0, { catalog })).toEqual({
       category: 'ready',
     });
   });
@@ -473,9 +469,7 @@ describe('categorizeReviewRow restored_from_excluded', () => {
       resolution_status: 'unit_target_mismatch',
     };
 
-    expect(
-      categorizeReviewRow(row, {}, new Set(), 0, { catalog }),
-    ).toEqual({
+    expect(categorizeReviewRow(row, {}, new Set(), 0, { catalog })).toEqual({
       category: 'ready',
     });
   });
@@ -1041,9 +1035,7 @@ describe('buildProcessLabReportPayload', () => {
       resolution_source: 'manual_review',
     });
     expect(savedRow.resolution_status).toBeUndefined();
-    expect(
-      savedRow.eligible_for_chart,
-    ).toBeUndefined();
+    expect(savedRow.eligible_for_chart).toBeUndefined();
   });
 });
 

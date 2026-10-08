@@ -50,7 +50,10 @@ const GlobalDemoClientList = ({
               retryingId === client.source_patient_id ||
               jobIsActive(client.job);
             return (
-              <tr key={client.global_demo_id} className="border-t border-Gray-50">
+              <tr
+                key={client.global_demo_id}
+                className="border-t border-Gray-50"
+              >
                 <td className="px-2 py-3">
                   <div className="font-medium text-Text-Primary">
                     {client.display_name}
@@ -64,7 +67,8 @@ const GlobalDemoClientList = ({
                   </span>
                 </td>
                 <td className="px-2 py-3 text-Text-Secondary">
-                  {client.source_clinic_name || `Clinic ${client.source_clinic_id}`}
+                  {client.source_clinic_name ||
+                    `Clinic ${client.source_clinic_id}`}
                 </td>
                 <td className="px-2 py-3">
                   <span

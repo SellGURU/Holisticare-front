@@ -42,7 +42,8 @@ export function formatRelativeDate(dateStr: string | null | undefined): string {
 
   if (diffSec < 60) return 'just now';
   if (diffMin < 60) return `${diffMin} min ago`;
-  if (dateStart === todayStart && diffHours < 24) return `${diffHours} hours ago`;
+  if (dateStart === todayStart && diffHours < 24)
+    return `${diffHours} hours ago`;
   if (dateStart === yesterdayStart) return 'yesterday';
   return format(date, 'd MMM yyyy');
 }

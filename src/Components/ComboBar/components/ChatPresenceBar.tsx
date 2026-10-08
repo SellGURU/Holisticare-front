@@ -11,13 +11,7 @@ function PresenceDot({ online }: { online: boolean }) {
   );
 }
 
-function PresenceParty({
-  label,
-  online,
-}: {
-  label: string;
-  online: boolean;
-}) {
+function PresenceParty({ label, online }: { label: string; online: boolean }) {
   return (
     <span className="inline-flex min-w-0 items-center gap-1">
       <PresenceDot online={online} />
@@ -29,7 +23,11 @@ function PresenceParty({
   );
 }
 
-export function ChatPresenceBar({ presence }: { presence: ChatPresence | null }) {
+export function ChatPresenceBar({
+  presence,
+}: {
+  presence: ChatPresence | null;
+}) {
   if (!presence) return null;
   return (
     <div

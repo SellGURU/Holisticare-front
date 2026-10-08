@@ -78,8 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       const menuItem = Object.values(menuItems)
         .flat()
         .find(
-          (item) =>
-            item.title.replace(/\s+/g, '-').toLowerCase() === resolved,
+          (item) => item.title.replace(/\s+/g, '-').toLowerCase() === resolved,
         );
       if (menuItem?.isActive) {
         setActiveMenu(menuItem.title);

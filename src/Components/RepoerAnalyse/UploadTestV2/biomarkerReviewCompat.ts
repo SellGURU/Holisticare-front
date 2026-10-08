@@ -4,7 +4,10 @@ import {
   formatLabCalendarDateIso,
   parseLabDateOfTest,
 } from '../../../utils/labCalendarDate';
-import { resolveExactBiomarkerName, reviewProvenancePayloadFields } from './biomarkerNameFields';
+import {
+  resolveExactBiomarkerName,
+  reviewProvenancePayloadFields,
+} from './biomarkerNameFields';
 
 export { parseLabDateOfTest };
 
@@ -577,7 +580,10 @@ export const buildProcessLabReportPayload = ({
       validation_status: stringifyLabField(
         String(row.validation_status || '').trim() || 'ready',
       ),
-      ...reviewProvenanceForSave(row, catalog?.length ? { catalog } : undefined),
+      ...reviewProvenanceForSave(
+        row,
+        catalog?.length ? { catalog } : undefined,
+      ),
     };
   });
 

@@ -8,7 +8,10 @@ import {
   stripQuery,
   surrogateKey,
 } from './activityIdentity';
-import { isPublicClientPath, shouldIgnorePortalAuthFailure } from './publicClientPath';
+import {
+  isPublicClientPath,
+  shouldIgnorePortalAuthFailure,
+} from './publicClientPath';
 
 export default class ActivityLogger {
   private static instance: ActivityLogger;

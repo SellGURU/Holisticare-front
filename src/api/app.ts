@@ -922,7 +922,10 @@ class Application extends Api {
     return this.post('/peptide_library/peptides_list', {});
   };
   static setPeptideEnabled = (Peptide_Id: string, is_enabled: boolean) => {
-    return this.post('/peptide_library/set_enabled', { Peptide_Id, is_enabled });
+    return this.post('/peptide_library/set_enabled', {
+      Peptide_Id,
+      is_enabled,
+    });
   };
   static showPeptideDetails = (id: string) => {
     return this.post('/peptide_library/show_peptide_details', {
@@ -1308,9 +1311,13 @@ class Application extends Api {
     );
   };
   static getPdfReport = (member_id: string | number) => {
-    return this.post(`/get_pdf_report`, { member_id: Number(member_id) }, {
-      noPending: true,
-    });
+    return this.post(
+      `/get_pdf_report`,
+      { member_id: Number(member_id) },
+      {
+        noPending: true,
+      },
+    );
   };
   static getPublicShareState = (payload: { member_id: string | number }) => {
     return this.post('/patients/public_share_state', payload);

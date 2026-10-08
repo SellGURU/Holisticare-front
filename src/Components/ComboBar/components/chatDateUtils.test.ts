@@ -20,9 +20,9 @@ describe('formatChatDayLabel', () => {
   const now = new Date(2026, 9, 5, 8, 0, 0);
 
   it('labels the current local day as Today', () => {
-    expect(formatChatDayLabel(new Date(2026, 9, 5, 23, 59).getTime(), now)).toBe(
-      'Today',
-    );
+    expect(
+      formatChatDayLabel(new Date(2026, 9, 5, 23, 59).getTime(), now),
+    ).toBe('Today');
   });
 
   it('labels the previous local day as Yesterday', () => {
@@ -38,7 +38,10 @@ describe('formatChatDayLabel', () => {
   });
 
   it('formats older days with a readable local date', () => {
-    const label = formatChatDayLabel(new Date(2026, 8, 1, 12, 0).getTime(), now);
+    const label = formatChatDayLabel(
+      new Date(2026, 8, 1, 12, 0).getTime(),
+      now,
+    );
     expect(label).toMatch(/1/);
     expect(label).not.toBe('Today');
     expect(label).not.toBe('Yesterday');

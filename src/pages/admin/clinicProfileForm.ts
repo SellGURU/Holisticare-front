@@ -50,7 +50,11 @@ export const mergeClinicProfile = (
 ): ClinicProfileData => {
   const name = (api?.name || fallback.name || '').trim();
   const publicEmail = (api?.public_email || '').trim();
-  const ownerEmail = (api?.owner_login_email || fallback.primaryEmail || '').trim();
+  const ownerEmail = (
+    api?.owner_login_email ||
+    fallback.primaryEmail ||
+    ''
+  ).trim();
   const logo = api?.logo || api?.blob_logo_link || '';
   return {
     clinic_id: api?.clinic_id ?? fallback.clinicId,
@@ -106,7 +110,11 @@ export const validateEmail = (value: string, label: string): string => {
 
 export const validateLogoFile = (file: File): string => {
   const extension = `.${(file.name.split('.').pop() || '').toLowerCase()}`;
-  if (!VALID_LOGO_EXTENSIONS.includes(extension as (typeof VALID_LOGO_EXTENSIONS)[number])) {
+  if (
+    !VALID_LOGO_EXTENSIONS.includes(
+      extension as (typeof VALID_LOGO_EXTENSIONS)[number],
+    )
+  ) {
     return 'File has an unsupported format.';
   }
   if (file.size > MAX_LOGO_BYTES) {
@@ -161,7 +169,10 @@ export const validateClinicProfileDraft = (
 
   const ownerChanged =
     draft.owner_login_email.trim() !== (initial.owner_login_email || '').trim();
-  if (options?.ownerEditable !== false && (ownerChanged || draft.owner_login_email.trim())) {
+  if (
+    options?.ownerEditable !== false &&
+    (ownerChanged || draft.owner_login_email.trim())
+  ) {
     const ownerEmailError = validateEmail(
       draft.owner_login_email,
       'Owner login email',

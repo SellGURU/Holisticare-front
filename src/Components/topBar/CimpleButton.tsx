@@ -285,7 +285,10 @@ const CompileButton: FC<CompileButtonProps> = ({
     subscribe('syncReport', handleSyncReport);
     subscribe(COMPILE_STARTED_EVENT, handleCompileStarted);
     subscribe(COMPILE_FAILED_EVENT, handleCompileFailed);
-    subscribe(OVERVIEW_PROCESSING_CHANGED_EVENT, handleOverviewProcessingChanged);
+    subscribe(
+      OVERVIEW_PROCESSING_CHANGED_EVENT,
+      handleOverviewProcessingChanged,
+    );
 
     return () => {
       unsubscribe('openProgressModal', handleOpenProgressModal);

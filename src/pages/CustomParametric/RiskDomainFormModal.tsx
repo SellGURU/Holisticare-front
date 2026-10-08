@@ -1,11 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  CheckCircle2,
-  Pencil,
-  Plus,
-  Trash2,
-  XCircle,
-} from 'lucide-react';
+import { CheckCircle2, Pencil, Plus, Trash2, XCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
 import FormulaCodeEditor from './FormulaCodeEditor';
 import {
@@ -113,9 +107,7 @@ function domainToForm(domain: RiskDomainViewModel): FormState {
     displayName: domain.displayName,
     description: domain.description,
     category: domain.category ?? '',
-    icon: HEALTH_RISK_ICONS[domain.iconKey]
-      ? domain.iconKey
-      : 'Activity',
+    icon: HEALTH_RISK_ICONS[domain.iconKey] ? domain.iconKey : 'Activity',
     iconColor: domain.iconColor,
     timeHorizon: domain.timeHorizon ?? '',
     assignedGroups: domain.assignedGroups,
@@ -257,9 +249,10 @@ export default function RiskDomainFormModal({
     if (!form.formulaCode.trim()) return;
     setValidating(true);
     setValidation(null);
-    intelligenceApi.validateFormula(form.formulaCode, {
-      domain_type: form.domainType,
-    })
+    intelligenceApi
+      .validateFormula(form.formulaCode, {
+        domain_type: form.domainType,
+      })
       .then((res) => setValidation(res.data || null))
       .catch((err) =>
         setValidation({
@@ -324,7 +317,9 @@ export default function RiskDomainFormModal({
           const next = res.data || null;
           setValidation(next);
           if (!next?.syntax_valid) {
-            toast.error(next?.error_message || 'Validate the formula before saving.');
+            toast.error(
+              next?.error_message || 'Validate the formula before saving.',
+            );
             setSaving(false);
             return;
           }
@@ -427,9 +422,7 @@ export default function RiskDomainFormModal({
       <div className="grid items-start gap-x-5 gap-y-3 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="space-y-1.5">
-            <span className={v2LabelClass}>
-              Internal name *
-            </span>
+            <span className={v2LabelClass}>Internal name *</span>
             <input
               value={form.name}
               onChange={(e) => patch('name', e.target.value)}
@@ -445,9 +438,7 @@ export default function RiskDomainFormModal({
             />
           </label>
           <label className="space-y-1.5">
-            <span className={v2LabelClass}>
-              Display name
-            </span>
+            <span className={v2LabelClass}>Display name</span>
             <input
               value={form.displayName}
               onChange={(e) => patch('displayName', e.target.value)}
@@ -456,9 +447,7 @@ export default function RiskDomainFormModal({
             />
           </label>
           <label className="space-y-1.5 sm:col-span-2">
-            <span className={v2LabelClass}>
-              Description
-            </span>
+            <span className={v2LabelClass}>Description</span>
             <textarea
               value={form.description}
               onChange={(e) => patch('description', e.target.value)}
@@ -467,9 +456,7 @@ export default function RiskDomainFormModal({
             />
           </label>
           <label className="space-y-1.5">
-            <span className={v2LabelClass}>
-              Category
-            </span>
+            <span className={v2LabelClass}>Category</span>
             <input
               value={form.category}
               onChange={(e) => patch('category', e.target.value)}
@@ -478,9 +465,7 @@ export default function RiskDomainFormModal({
             />
           </label>
           <label className="space-y-1.5">
-            <span className={v2LabelClass}>
-              Time horizon
-            </span>
+            <span className={v2LabelClass}>Time horizon</span>
             <input
               value={form.timeHorizon}
               onChange={(e) => patch('timeHorizon', e.target.value)}
@@ -489,9 +474,7 @@ export default function RiskDomainFormModal({
             />
           </label>
           <label className="space-y-1.5">
-            <span className={v2LabelClass}>
-              Icon
-            </span>
+            <span className={v2LabelClass}>Icon</span>
             <select
               value={form.icon}
               onChange={(e) => patch('icon', e.target.value)}
@@ -505,9 +488,7 @@ export default function RiskDomainFormModal({
             </select>
           </label>
           <div className="space-y-1.5">
-            <span className={v2LabelClass}>
-              Color
-            </span>
+            <span className={v2LabelClass}>Color</span>
             <div className="flex items-center gap-2">
               <div
                 className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-gray-200"
@@ -535,9 +516,7 @@ export default function RiskDomainFormModal({
             </div>
           </div>
           <div className="space-y-1.5 sm:col-span-2">
-            <span className={v2LabelClass}>
-              Assigned groups
-            </span>
+            <span className={v2LabelClass}>Assigned groups</span>
             <div className="flex min-h-9 flex-wrap items-center gap-1.5 rounded-lg border border-gray-200 px-2 py-1.5">
               {form.assignedGroups.map((g) => (
                 <span
@@ -575,9 +554,7 @@ export default function RiskDomainFormModal({
             </div>
           </div>
           <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2">
-            <span className={v2LabelClass}>
-              Active
-            </span>
+            <span className={v2LabelClass}>Active</span>
             <button
               type="button"
               role="switch"
@@ -599,9 +576,7 @@ export default function RiskDomainFormModal({
         <div className="flex min-h-0 flex-col gap-3">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
-              <span className={v2LabelClass}>
-                Formula code *
-              </span>
+              <span className={v2LabelClass}>Formula code *</span>
               <button
                 type="button"
                 className={`${v2OutlineBtnClass} !h-7 !text-[10px]`}
@@ -626,7 +601,8 @@ export default function RiskDomainFormModal({
                 }
               }}
               formulaOptions={{
-                multiSourceEnabled: formulaOptions?.multiSourceEnabled !== false,
+                multiSourceEnabled:
+                  formulaOptions?.multiSourceEnabled !== false,
                 profile: formulaOptions?.profile || [
                   { token: 'age', label: 'Age', unit: 'years' },
                 ],
@@ -657,8 +633,7 @@ export default function RiskDomainFormModal({
                 ) : null}
                 {validation.biomarker_dependencies?.length ? (
                   <p className="mt-1">
-                    Biomarkers:{' '}
-                    {validation.biomarker_dependencies.join(', ')}
+                    Biomarkers: {validation.biomarker_dependencies.join(', ')}
                   </p>
                 ) : null}
                 {validation.biomarkers_not_in_clinic?.length ? (
@@ -691,9 +666,7 @@ export default function RiskDomainFormModal({
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
-              <span className={v2LabelClass}>
-                Result categories
-              </span>
+              <span className={v2LabelClass}>Result categories</span>
               <button
                 type="button"
                 className={`${v2OutlineBtnClass} !h-7 !text-[10px]`}

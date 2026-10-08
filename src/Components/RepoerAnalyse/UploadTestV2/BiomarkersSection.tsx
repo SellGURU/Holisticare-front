@@ -353,7 +353,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     const updated = biomarkers.filter((_, i) => i !== indexToDelete);
     if (updated.length === 0) {
-      publish('DELETE_FILE_TRIGGER', lastRowDeleteEventDetail(uploadedFile?.file_id));
+      publish(
+        'DELETE_FILE_TRIGGER',
+        lastRowDeleteEventDetail(uploadedFile?.file_id),
+      );
       return;
     }
     onChange(updated);

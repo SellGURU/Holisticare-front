@@ -200,8 +200,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   });
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const chatOpen =
-    isSlideOutPanel && activeItem === "Client's Chat History";
+  const chatOpen = isSlideOutPanel && activeItem === "Client's Chat History";
 
   useEffect(() => {
     if (!id) return;
@@ -223,10 +222,13 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     checkUnread();
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
     const scheduleUnread = () => {
-      timeoutId = setTimeout(() => {
-        checkUnread();
-        scheduleUnread();
-      }, visibilityPollMs(unreadPollIntervalMs(chatOpen)));
+      timeoutId = setTimeout(
+        () => {
+          checkUnread();
+          scheduleUnread();
+        },
+        visibilityPollMs(unreadPollIntervalMs(chatOpen)),
+      );
     };
     scheduleUnread();
 
@@ -307,9 +309,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'Timeline':
         return <TimeLine />;
       case "Client's Chat History":
-        return (
-          <ChatModal memberId={parseInt(idData)} liveEnabled={chatOpen} />
-        );
+        return <ChatModal memberId={parseInt(idData)} liveEnabled={chatOpen} />;
       case 'Switch Client':
         return (
           <SwitchClient

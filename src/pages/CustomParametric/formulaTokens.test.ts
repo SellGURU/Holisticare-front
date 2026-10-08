@@ -22,9 +22,7 @@ describe('formulaTokens', () => {
 
   it('flags unknown questionnaire tokens only when multi-source is on', () => {
     const formula = 'Questionnaire.q_smoke__form1';
-    expect(
-      unknownQuestionnaireTokens(formula, ['q_smoke__form1']),
-    ).toEqual([]);
+    expect(unknownQuestionnaireTokens(formula, ['q_smoke__form1'])).toEqual([]);
     expect(unknownQuestionnaireTokens(formula, [])).toEqual(['q_smoke__form1']);
     expect(
       formulaHasUnknownReferences(formula, ['LDL'], {
@@ -92,18 +90,18 @@ describe('formulaTokens', () => {
         question_id: 'q_smoke',
       },
     ]);
-    expect(filterInsertableItems(items, 'smoke').map((item) => item.token)).toEqual([
-      'q_smoke__form1',
-    ]);
-    expect(filterInsertableItems(items, 'intake').map((item) => item.token)).toEqual([
-      'q_smoke__form1',
-    ]);
-    expect(filterInsertableItems(items, 'q_smoke').map((item) => item.token)).toEqual([
-      'q_smoke__form1',
-    ]);
-    expect(groupQuestionnairesByForm(items)[0].form).toBe('Intake');
     expect(
-      readableFormulaLabel('Questionnaire', 'q_smoke__form1', items),
-    ).toBe('Intake · Do you smoke?');
+      filterInsertableItems(items, 'smoke').map((item) => item.token),
+    ).toEqual(['q_smoke__form1']);
+    expect(
+      filterInsertableItems(items, 'intake').map((item) => item.token),
+    ).toEqual(['q_smoke__form1']);
+    expect(
+      filterInsertableItems(items, 'q_smoke').map((item) => item.token),
+    ).toEqual(['q_smoke__form1']);
+    expect(groupQuestionnairesByForm(items)[0].form).toBe('Intake');
+    expect(readableFormulaLabel('Questionnaire', 'q_smoke__form1', items)).toBe(
+      'Intake · Do you smoke?',
+    );
   });
 });

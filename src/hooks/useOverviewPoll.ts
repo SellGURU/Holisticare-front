@@ -59,8 +59,7 @@ export function snapshotSourceSignature(snapshot: OverviewSnapshot): {
 } {
   return {
     revision: snapshot.data_revision ?? null,
-    count:
-      snapshot.biomarker_count ?? snapshot.biomarkers_scored ?? null,
+    count: snapshot.biomarker_count ?? snapshot.biomarkers_scored ?? null,
   };
 }
 
@@ -90,7 +89,9 @@ export function sourceSnapshotChanged(
 }
 
 /** A second checkProgress during an active poll must not reset domain tracking. */
-export function shouldResetOverviewPollSession(alreadyPolling: boolean): boolean {
+export function shouldResetOverviewPollSession(
+  alreadyPolling: boolean,
+): boolean {
   return !alreadyPolling;
 }
 
@@ -116,7 +117,9 @@ export function snapshotHasCanonicalOperation(
     }
   }
   const outcomes = snapshot.outcomes || {};
-  return Object.values(outcomes).some((outcome) => outcome?.state === 'pending');
+  return Object.values(outcomes).some(
+    (outcome) => outcome?.state === 'pending',
+  );
 }
 
 type UseOverviewPollOptions = {
@@ -130,7 +133,10 @@ type UseOverviewPollOptions = {
   onPollTimeout?: () => void;
   onSettled?: () => void;
   onDomainTerminal?: (domain: DomainName, outcome: DomainOutcome) => void;
-  onDomainsTerminal?: (domains: DomainName[], outcomes: OperationOutcomes) => void;
+  onDomainsTerminal?: (
+    domains: DomainName[],
+    outcomes: OperationOutcomes,
+  ) => void;
   onUnresolved?: () => void;
 };
 
@@ -229,10 +235,7 @@ export function useOverviewPoll({
       const scoredCount =
         snapshot.biomarker_count ?? snapshot.biomarkers_scored ?? 0;
       if (
-        shouldRefreshBiomarkersOnCountChange(
-          lastScoredRef.current,
-          scoredCount,
-        )
+        shouldRefreshBiomarkersOnCountChange(lastScoredRef.current, scoredCount)
       ) {
         lastScoredRef.current = scoredCount;
         if (!terminalWave.includes('biomarkers')) {

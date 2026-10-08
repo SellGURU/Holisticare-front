@@ -108,9 +108,8 @@ describe('manual review provenance', () => {
   });
 
   it('omits confirmed flag when the reviewer did not set it', () => {
-    expect(reviewProvenancePayloadFields({ biomarker: 'Lymphocytes %' })).toEqual(
-      {},
-    );
+    expect(
+      reviewProvenancePayloadFields({ biomarker: 'Lymphocytes %' }),
+    ).toEqual({});
   });
 });
-

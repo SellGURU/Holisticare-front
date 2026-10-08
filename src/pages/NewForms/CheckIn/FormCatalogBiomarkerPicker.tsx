@@ -26,9 +26,7 @@ const FormCatalogBiomarkerPicker: FC<FormCatalogBiomarkerPickerProps> = ({
 
   const selectableItems = useMemo(
     () =>
-      items.filter(
-        (item) => item.is_enabled !== false || item.name === value,
-      ),
+      items.filter((item) => item.is_enabled !== false || item.name === value),
     [items, value],
   );
   const selected = selectableItems.find((item) => item.name === value);
@@ -87,8 +85,9 @@ const FormCatalogBiomarkerPicker: FC<FormCatalogBiomarkerPickerProps> = ({
               {selected.name}
             </span>
             <span className="block text-[10px] text-gray-500">
-              {[typeLabel(selected), selected.unit].filter(Boolean).join(' · ') ||
-                'Catalog biomarker'}
+              {[typeLabel(selected), selected.unit]
+                .filter(Boolean)
+                .join(' · ') || 'Catalog biomarker'}
             </span>
           </button>
           {!disabled ? (

@@ -454,7 +454,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: resolvedMemberID,
         include_wearable: includeWearable,
       }).then((res) => res.data);
-    return (force ? fetchFresh(key, fetcher) : getCached(key, fetcher, HEALTH_PLAN_TTL_MS))
+    return (
+      force
+        ? fetchFresh(key, fetcher)
+        : getCached(key, fetcher, HEALTH_PLAN_TTL_MS)
+    )
       .then((data) => {
         if (gen !== sourceRefreshGenRef.current) return;
         if (
@@ -509,7 +513,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
   };
 
-  const fetchClientSummaryCategories = (includeWearable = true, force = false) => {
+  const fetchClientSummaryCategories = (
+    includeWearable = true,
+    force = false,
+  ) => {
     if (resolvedMemberID == null) return Promise.resolve();
     const gen = sourceRefreshGenRef.current;
     const token = force
@@ -530,9 +537,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: resolvedMemberID,
         include_wearable: includeWearable,
       }).then((res) => res.data);
-    return (force
-      ? fetchFresh(key, fetcher)
-      : getCached(key, fetcher, HEALTH_PLAN_TTL_MS))
+    return (
+      force
+        ? fetchFresh(key, fetcher)
+        : getCached(key, fetcher, HEALTH_PLAN_TTL_MS)
+    )
       .then((data) => {
         if (gen !== sourceRefreshGenRef.current) return;
         if (
@@ -602,9 +611,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: resolvedMemberID,
         include_wearable: includeWearable,
       }).then((res) => res.data);
-    return (force
-      ? fetchFresh(key, fetcher)
-      : getCached(key, fetcher, HEALTH_PLAN_TTL_MS))
+    return (
+      force
+        ? fetchFresh(key, fetcher)
+        : getCached(key, fetcher, HEALTH_PLAN_TTL_MS)
+    )
       .then((data) => {
         if (gen !== sourceRefreshGenRef.current) return;
         if (
@@ -914,7 +925,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setDisableGenerate(data.has_minimum_data === false);
       })
       .catch((err) => {
-        console.error('Error refreshing patient info after source change:', err);
+        console.error(
+          'Error refreshing patient info after source change:',
+          err,
+        );
       });
   };
 
@@ -1090,9 +1104,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           } else {
             publish('DetailedAnalysisStatus', { isempty: false });
           }
-          if (
-            biomarkers.filter((el: any) => el.outofref == true).length == 0
-          ) {
+          if (biomarkers.filter((el: any) => el.outofref == true).length == 0) {
             publish('NeedsFocusBiomarkerStatus', { isempty: true });
           } else {
             publish('NeedsFocusBiomarkerStatus', { isempty: false });
@@ -1136,8 +1148,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       if (
         shouldApplyCategoryResponse(data) ||
         isDomainAuthoritative(
-          (data.domain_outcomes as OperationOutcomes | undefined)?.client_summary
-            ?.state,
+          (data.domain_outcomes as OperationOutcomes | undefined)
+            ?.client_summary?.state,
         )
       ) {
         setClientSummaryBoxs((prev: any) =>
@@ -1605,7 +1617,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const showNeedFocusEmpty = shouldShowNeedFocusEmptyIllustration({
     hasReferenceBiomarkers,
     needFocusCount: needFocusBiomarkers.length,
-    isLoading: referenceLoading || awaitingOverviewData || showNeedFocusSkeleton,
+    isLoading:
+      referenceLoading || awaitingOverviewData || showNeedFocusSkeleton,
   });
   const showConcerningSkeleton = shouldShowSectionSkeleton({
     hasDisplayedData: ConcerningResultIsLoaded,
@@ -1925,9 +1938,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             return;
           }
           setIsHtmlReportExists(exists);
-          setHtmlReportPollState(
-            status === 'pending' ? 'pending' : 'building',
-          );
+          setHtmlReportPollState(status === 'pending' ? 'pending' : 'building');
           scheduleHtmlReportPoll(pollHtmlReport);
           return;
         }
@@ -2017,10 +2028,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     } else {
       setHtmlReportPollState('idle');
     }
-  }, [
-    activeHolisticPlan?.treatment_plan_id,
-    activeHolisticPlan?.t_plan_id,
-  ]);
+  }, [activeHolisticPlan?.treatment_plan_id, activeHolisticPlan?.t_plan_id]);
 
   const [loadingHtmlReport] = useState(false);
 
@@ -2235,24 +2243,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       style={{ lineHeight: '24px' }}
                     >
                       {showClientSummaryTextLoading ? (
-                          <ChartLoadingPlaceholder
-                            variant="text"
-                            label="Generating summary…"
-                          />
-                        ) : showClientSummaryContentSkeleton ? (
-                          <div className="animate-pulse space-y-2">
-                            {Array.from({ length: 3 }).map((_, i) => (
-                              <div
-                                key={i}
-                                className="h-2.5 rounded bg-Gray-100"
-                                style={{
-                                  width: i === 2 ? '75%' : '100%',
-                                  animationDelay: `${i * 50}ms`,
-                                }}
-                              />
-                            ))}
-                          </div>
-                        ) : (
+                        <ChartLoadingPlaceholder
+                          variant="text"
+                          label="Generating summary…"
+                        />
+                      ) : showClientSummaryContentSkeleton ? (
+                        <div className="animate-pulse space-y-2">
+                          {Array.from({ length: 3 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className="h-2.5 rounded bg-Gray-100"
+                              style={{
+                                width: i === 2 ? '75%' : '100%',
+                                animationDelay: `${i * 50}ms`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                      ) : (
                         <MarkdownText
                           text={ClientSummaryBoxs?.client_summary}
                         />
@@ -2281,21 +2289,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       hasReferenceBiomarkers,
                       showingSkeleton: showClientSummaryContentSkeleton,
                     }) && (
-                        <>
-                          <div className="flex justify-center items-center w-full">
-                            <div className="flex flex-col items-center justify-center">
-                              <img
-                                src="/icons/Empty/biomarkerEmpty.svg"
-                                alt=""
-                                className="w-[219px]"
-                              />
-                              <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
-                                No Biomarkers Available Yet!
-                              </div>
+                      <>
+                        <div className="flex justify-center items-center w-full">
+                          <div className="flex flex-col items-center justify-center">
+                            <img
+                              src="/icons/Empty/biomarkerEmpty.svg"
+                              alt=""
+                              className="w-[219px]"
+                            />
+                            <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                              No Biomarkers Available Yet!
                             </div>
                           </div>
-                        </>
-                      )}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -2304,7 +2312,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
             .checked == true && (
             <>
-              <div className={`text-light-primary-text dark:text-primary-text ${needFocusBiomarkers.length > 0 ? 'my-[200px] xl:min-h-[700px]' : 'my-10'}`}>
+              <div
+                className={`text-light-primary-text dark:text-primary-text ${needFocusBiomarkers.length > 0 ? 'my-[200px] xl:min-h-[700px]' : 'my-10'}`}
+              >
                 <div>
                   <div
                     id="Need Focus Biomarker"

@@ -39,17 +39,14 @@ describe('formulaBiomarker', () => {
       'Glucose',
     ]);
     expect(
-      unknownBiomarkerTokens(
-        'Biomarker.Weight / Biomarker.Height',
-        catalog,
-      ),
+      unknownBiomarkerTokens('Biomarker.Weight / Biomarker.Height', catalog),
     ).toEqual([]);
   });
 
   it('treats Height and Weight as reserved even if omitted from catalog', () => {
-    expect(unknownBiomarkerTokens('Biomarker.Height + Biomarker.Weight', [])).toEqual(
-      [],
-    );
+    expect(
+      unknownBiomarkerTokens('Biomarker.Height + Biomarker.Weight', []),
+    ).toEqual([]);
   });
 
   it('replaces a partial Biomarker. prefix at the caret', () => {

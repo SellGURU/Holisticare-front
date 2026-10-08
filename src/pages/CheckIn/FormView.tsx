@@ -180,52 +180,52 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-3 md:px-4"
           ref={scrollRef}
         >
-        {isComplete ? (
-          <div className="flex min-h-full flex-col items-center justify-center px-4 py-10 text-center">
-            <div className="text-sm text-Text-Secondary">
-              {mode == 'questionary'
-                ? 'This questionnaire is already answered.'
-                : 'This check-in is already answered.'}
-            </div>
-            <button
-              type="button"
-              onClick={notifyQuestionnaireFinished}
-              className="mt-6 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white"
-            >
-              Return to app
-            </button>
-          </div>
-        ) : (
-          <>
-            {isLoading ? (
-              <>
-                <div className="flex justify-center items-center mt-20">
-                  <Circleloader></Circleloader>
-                </div>
-              </>
-            ) : loadError ? (
-              <div className="py-4">
-                <div className="text-[12px] text-Text-Secondary text-center">
-                  {loadError}
-                </div>
+          {isComplete ? (
+            <div className="flex min-h-full flex-col items-center justify-center px-4 py-10 text-center">
+              <div className="text-sm text-Text-Secondary">
+                {mode == 'questionary'
+                  ? 'This questionnaire is already answered.'
+                  : 'This check-in is already answered.'}
               </div>
-            ) : (
-              <>
-                <PublicSurveyForm
-                  onSubmitClient={(e) => {
-                    submit(e);
-                  }}
-                  isClient={true}
-                  isQuestionary={mode === 'questionary'}
-                  survey={data}
-                  onAutoSaveClient={(e) => {
-                    autoSave(e);
-                  }}
-                />
-              </>
-            )}
-          </>
-        )}
+              <button
+                type="button"
+                onClick={notifyQuestionnaireFinished}
+                className="mt-6 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white"
+              >
+                Return to app
+              </button>
+            </div>
+          ) : (
+            <>
+              {isLoading ? (
+                <>
+                  <div className="flex justify-center items-center mt-20">
+                    <Circleloader></Circleloader>
+                  </div>
+                </>
+              ) : loadError ? (
+                <div className="py-4">
+                  <div className="text-[12px] text-Text-Secondary text-center">
+                    {loadError}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <PublicSurveyForm
+                    onSubmitClient={(e) => {
+                      submit(e);
+                    }}
+                    isClient={true}
+                    isQuestionary={mode === 'questionary'}
+                    survey={data}
+                    onAutoSaveClient={(e) => {
+                      autoSave(e);
+                    }}
+                  />
+                </>
+              )}
+            </>
+          )}
         </div>
       </div>
 

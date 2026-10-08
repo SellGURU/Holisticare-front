@@ -309,8 +309,18 @@ describe('risk contribution chart rows', () => {
   it('maps evidence shares for the donut', () => {
     const rows = riskContributions({
       evidence: [
-        { input: 'LDL Cholesterol', contribution: 30, share_percent: 30, value: 4.2 },
-        { input: 'HDL Cholesterol', contribution: 25, share_percent: 25, value: 0.8 },
+        {
+          input: 'LDL Cholesterol',
+          contribution: 30,
+          share_percent: 30,
+          value: 4.2,
+        },
+        {
+          input: 'HDL Cholesterol',
+          contribution: 25,
+          share_percent: 25,
+          value: 0.8,
+        },
       ],
     });
     expect(rows).toHaveLength(2);

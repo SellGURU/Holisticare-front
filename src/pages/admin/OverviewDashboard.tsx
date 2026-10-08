@@ -63,7 +63,8 @@ const toneClasses: Record<string, string> = {
 
 const OverviewDashboard = () => {
   const navigate = useNavigate();
-  const { selectedClinicEmail, startDate, endDate, clinics } = useAdminContext();
+  const { selectedClinicEmail, startDate, endDate, clinics } =
+    useAdminContext();
   const [loadingCurrent, setLoadingCurrent] = useState(true);
   const [loadingPrevious, setLoadingPrevious] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

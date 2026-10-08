@@ -48,7 +48,8 @@ export const buildPaymentRequestParams = (
     offset,
   };
 
-  if (filters.status.trim()) params.status = filters.status.trim().toLowerCase();
+  if (filters.status.trim())
+    params.status = filters.status.trim().toLowerCase();
   if (filters.customer.trim()) params.customer = filters.customer.trim();
   if (filters.currency.trim()) {
     params.currency = filters.currency.trim().toLowerCase();
@@ -115,7 +116,9 @@ export const formatPaymentAmount = (
   }
 };
 
-export const paymentStatusLabel = (status: string | null | undefined): string => {
+export const paymentStatusLabel = (
+  status: string | null | undefined,
+): string => {
   switch ((status || '').toLowerCase()) {
     case 'succeeded':
       return 'Succeeded';

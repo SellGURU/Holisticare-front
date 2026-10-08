@@ -846,9 +846,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                 <img
                   className={`cursor-pointer rotate-180 ${
                     (activeCard == visibleQuestions.length ||
-                      !isQuestionAnswered(
-                        visibleQuestions[activeCard - 1],
-                      )) &&
+                      !isQuestionAnswered(visibleQuestions[activeCard - 1])) &&
                     'opacity-40'
                   }`}
                   onClick={() => {

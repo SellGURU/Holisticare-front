@@ -52,10 +52,7 @@ function ModelGroup({
         <ul className="mt-3 grid grid-cols-1 items-start gap-3 md:grid-cols-2 xl:grid-cols-3">
           {items.map((item) => (
             <li key={`${item.risk_key}-${item.calculated_at}`}>
-              <HealthRiskScoreCard
-                item={item}
-                kind={kind}
-              />
+              <HealthRiskScoreCard item={item} kind={kind} />
             </li>
           ))}
         </ul>
@@ -110,10 +107,7 @@ export default function HealthRisksPanel({
         id={RISKS_SCORES_AGE_SECTION}
         className="sectionScrollEl TextStyle-Headline-4 text-Text-Primary"
       >
-        <h2
-          id="risks-scores-age-heading"
-          className="text-inherit font-inherit"
-        >
+        <h2 id="risks-scores-age-heading" className="text-inherit font-inherit">
           {RISKS_SCORES_AGE_SECTION}
         </h2>
       </div>

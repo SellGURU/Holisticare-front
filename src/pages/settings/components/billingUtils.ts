@@ -127,9 +127,7 @@ export const subscriptionPeriodSummary = (
 
 const PLAN_ORDER = ['Starter', 'Growth', 'Scale'];
 
-export const normalizedPlanName = (
-  name: string | null | undefined,
-): string => {
+export const normalizedPlanName = (name: string | null | undefined): string => {
   if (name === 'Plus') return 'Starter';
   if (name === 'Pro') return 'Growth';
   return name || '';
@@ -139,7 +137,11 @@ export const hasPaidSubscription = (
   status: string | null | undefined,
 ): boolean => {
   const normalized = (status || '').toLowerCase();
-  return normalized === 'active' || normalized === 'trialing' || normalized === 'past_due';
+  return (
+    normalized === 'active' ||
+    normalized === 'trialing' ||
+    normalized === 'past_due'
+  );
 };
 
 export const isPausedSubscription = (
@@ -175,7 +177,8 @@ export const isPlanCardActive = (
     subscription_status?: string | null;
   } | null,
 ): boolean => {
-  const paid = status?.is_paid ?? hasPaidSubscription(status?.subscription_status);
+  const paid =
+    status?.is_paid ?? hasPaidSubscription(status?.subscription_status);
   if (planName === 'Demo') {
     return !paid;
   }
@@ -258,7 +261,10 @@ export const groupCatalog = (catalog: BillingPlanOption[]) => {
   return Array.from(groups.entries()).sort((left, right) => {
     const leftIndex = PLAN_ORDER.indexOf(left[0]);
     const rightIndex = PLAN_ORDER.indexOf(right[0]);
-    return (leftIndex === -1 ? 99 : leftIndex) - (rightIndex === -1 ? 99 : rightIndex);
+    return (
+      (leftIndex === -1 ? 99 : leftIndex) -
+      (rightIndex === -1 ? 99 : rightIndex)
+    );
   });
 };
 
@@ -289,10 +295,7 @@ export const PLAN_COPY: Record<string, PlanCopy> = {
   Starter: {
     blurb: 'Ideal for smaller practices.',
     includesLabel: 'Plan capacity',
-    includes: [
-      'Up to 35 active clients',
-      '£5 per additional client beyond 35',
-    ],
+    includes: ['Up to 35 active clients', '£5 per additional client beyond 35'],
     footer: 'Cancel anytime',
   },
   Growth: {
@@ -317,7 +320,9 @@ export const PLAN_COPY: Record<string, PlanCopy> = {
   },
 };
 
-export const paymentStatusLabel = (status: string | null | undefined): string => {
+export const paymentStatusLabel = (
+  status: string | null | undefined,
+): string => {
   switch ((status || '').toLowerCase()) {
     case 'succeeded':
       return 'Paid';
@@ -332,7 +337,9 @@ export const paymentStatusLabel = (status: string | null | undefined): string =>
   }
 };
 
-export const refundStatusLabel = (status: string | null | undefined): string => {
+export const refundStatusLabel = (
+  status: string | null | undefined,
+): string => {
   switch ((status || '').toLowerCase()) {
     case 'full':
       return 'Fully refunded';
@@ -359,7 +366,9 @@ export const planChangeKind = (
   return catalogRank(next) > catalogRank(current) ? 'upgrade' : 'downgrade';
 };
 
-export const invoiceStatusLabel = (status: string | null | undefined): string => {
+export const invoiceStatusLabel = (
+  status: string | null | undefined,
+): string => {
   switch ((status || '').toLowerCase()) {
     case 'paid':
       return 'Paid';
@@ -426,15 +435,17 @@ export const planDisplayName = (
   return 'No paid plan';
 };
 
-export const resolveCurrentPlan = (status: {
-  plan_name?: string | null;
-  plan_type?: string | null;
-  subscription_status?: string | null;
-  stripe_price_id?: string | null;
-  interval?: string | null;
-  unit_amount?: number | null;
-  currency?: string | null;
-} | null) => {
+export const resolveCurrentPlan = (
+  status: {
+    plan_name?: string | null;
+    plan_type?: string | null;
+    subscription_status?: string | null;
+    stripe_price_id?: string | null;
+    interval?: string | null;
+    unit_amount?: number | null;
+    currency?: string | null;
+  } | null,
+) => {
   const legacy = LEGACY_PLAN_PRICES[status?.stripe_price_id || ''];
   const name = status?.plan_name || legacy?.name;
   return {

@@ -13,16 +13,17 @@ class Api {
     }
     const { noAuth, ...axiosConfig } = config || {};
     const token = getTokenFromLocalStorage();
-    const headers = noAuth || !token
-      ? {
-          'Content-Type': 'application/json',
-          ...(config?.headers || {}),
-        }
-      : {
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json',
-          ...(config?.headers || {}),
-        };
+    const headers =
+      noAuth || !token
+        ? {
+            'Content-Type': 'application/json',
+            ...(config?.headers || {}),
+          }
+        : {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json',
+            ...(config?.headers || {}),
+          };
     const response = axios.post(this.base_url + url, data, {
       ...axiosConfig,
       headers,
@@ -40,16 +41,17 @@ class Api {
   protected static patch(url: string, data?: any, config?: any) {
     const { noAuth, ...axiosConfig } = config || {};
     const token = getTokenFromLocalStorage();
-    const headers = noAuth || !token
-      ? {
-          'Content-Type': 'application/json',
-          ...(config?.headers || {}),
-        }
-      : {
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json',
-          ...(config?.headers || {}),
-        };
+    const headers =
+      noAuth || !token
+        ? {
+            'Content-Type': 'application/json',
+            ...(config?.headers || {}),
+          }
+        : {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json',
+            ...(config?.headers || {}),
+          };
     return axios.patch(this.base_url + url, data, {
       ...axiosConfig,
       headers,
@@ -59,12 +61,13 @@ class Api {
   protected static delete(url: string, config?: any) {
     const { noAuth, ...axiosConfig } = config || {};
     const token = getTokenFromLocalStorage();
-    const headers = noAuth || !token
-      ? config?.headers || {}
-      : {
-          Authorization: 'Bearer ' + token,
-          ...(config?.headers || {}),
-        };
+    const headers =
+      noAuth || !token
+        ? config?.headers || {}
+        : {
+            Authorization: 'Bearer ' + token,
+            ...(config?.headers || {}),
+          };
     return axios.delete(this.base_url + url, {
       ...axiosConfig,
       headers,
@@ -74,13 +77,14 @@ class Api {
   protected static get(url: string, config?: any) {
     const { noAuth, holisticareHealthCheck, ...axiosConfig } = config || {};
     const token = getTokenFromLocalStorage();
-    const headers = noAuth || !token
-      ? config?.headers || {}
-      : {
-          Authorization: 'Bearer ' + token,
-          'Content-Type':
-            config?.headers?.['Content-Type'] || 'application/json',
-        };
+    const headers =
+      noAuth || !token
+        ? config?.headers || {}
+        : {
+            Authorization: 'Bearer ' + token,
+            'Content-Type':
+              config?.headers?.['Content-Type'] || 'application/json',
+          };
     const response = axios.get(this.base_url + url, {
       ...axiosConfig,
       headers,

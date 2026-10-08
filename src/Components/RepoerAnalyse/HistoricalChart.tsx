@@ -189,7 +189,9 @@ const HistoricalChart = ({
                 >
                   <div
                     className="w-full h-full opacity-15"
-                    style={{ backgroundColor: resolveColor(el.status, el.color) }}
+                    style={{
+                      backgroundColor: resolveColor(el.status, el.color),
+                    }}
                   ></div>
                   <div
                     className="w-full h-full absolute border-r-[5px] top-0"

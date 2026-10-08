@@ -1,5 +1,6 @@
-export const isCatalogEnabled = (item: { is_enabled?: boolean } | null | undefined) =>
-  item?.is_enabled !== false;
+export const isCatalogEnabled = (
+  item: { is_enabled?: boolean } | null | undefined,
+) => item?.is_enabled !== false;
 
 export type EnabledFilter = 'All' | 'Enabled' | 'Disabled';
 

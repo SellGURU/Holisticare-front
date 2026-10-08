@@ -24,11 +24,16 @@ const DetailRow = ({
 }) => (
   <div className="grid grid-cols-[140px_minmax(0,1fr)] gap-3 py-2">
     <div className="text-[11px] text-Text-Secondary">{label}</div>
-    <div className="break-all text-[12px] text-Text-Primary">{value || '—'}</div>
+    <div className="break-all text-[12px] text-Text-Primary">
+      {value || '—'}
+    </div>
   </div>
 );
 
-const PaymentDetailDrawer = ({ payment, onClose }: PaymentDetailDrawerProps) => {
+const PaymentDetailDrawer = ({
+  payment,
+  onClose,
+}: PaymentDetailDrawerProps) => {
   const entries = metadataEntries(payment.metadata);
 
   return (
@@ -40,7 +45,9 @@ const PaymentDetailDrawer = ({ payment, onClose }: PaymentDetailDrawerProps) => 
               Payment details
             </h3>
             <p className="text-[11px] text-Text-Secondary">
-              {formatPaymentDate(payment.stripe_created_at || payment.created_at)}
+              {formatPaymentDate(
+                payment.stripe_created_at || payment.created_at,
+              )}
             </p>
             <span
               className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium ${paymentStatusBadgeClass(payment.status)}`}
@@ -79,7 +86,10 @@ const PaymentDetailDrawer = ({ payment, onClose }: PaymentDetailDrawerProps) => 
             label="Currency"
             value={(payment.currency || '').toUpperCase()}
           />
-          <DetailRow label="Status" value={paymentStatusLabel(payment.status)} />
+          <DetailRow
+            label="Status"
+            value={paymentStatusLabel(payment.status)}
+          />
           <DetailRow label="Payment Method" value={payment.payment_method} />
           <DetailRow label="Description" value={payment.description} />
           <DetailRow

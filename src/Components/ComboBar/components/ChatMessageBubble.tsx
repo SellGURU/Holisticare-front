@@ -53,13 +53,11 @@ export function ChatMessageBubble({
   const time = formatChatTime(message.timestamp);
   const avatarName = message.name || (coach ? 'Coach' : 'Client');
   const avatarSrc = coach
-    ? readJson<{ selectedImage?: string }>('brandInfoData', {})?.selectedImage ||
-      `https://ui-avatars.com/api/?name=${avatarName}`
+    ? readJson<{ selectedImage?: string }>('brandInfoData', {})
+        ?.selectedImage || `https://ui-avatars.com/api/?name=${avatarName}`
     : `https://ui-avatars.com/api/?name=${avatarName}`;
   const columnWidth =
-    layout === 'wide'
-      ? 'w-[min(100%-48px,500px)]'
-      : 'w-[min(100%-38px,232px)]';
+    layout === 'wide' ? 'w-[min(100%-48px,500px)]' : 'w-[min(100%-38px,232px)]';
 
   return (
     <div
@@ -307,7 +305,11 @@ function ChatMessageActions({
           }`}
         >
           {canReact && (
-            <div className="flex items-center justify-between px-2 py-1" role="group" aria-label="React">
+            <div
+              className="flex items-center justify-between px-2 py-1"
+              role="group"
+              aria-label="React"
+            >
               {CHAT_REACTION_EMOJIS.map((emoji) => (
                 <button
                   key={emoji}
@@ -365,7 +367,11 @@ function ChatMessageActions({
             </button>
           )}
           {canDelete && confirmDelete && (
-            <div className="px-3 py-1.5 flex items-center justify-between gap-2" role="group" aria-label="Confirm delete">
+            <div
+              className="px-3 py-1.5 flex items-center justify-between gap-2"
+              role="group"
+              aria-label="Confirm delete"
+            >
               <button
                 type="button"
                 className="text-[11px] text-red-500 font-medium"

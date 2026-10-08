@@ -21,7 +21,9 @@ import {
   unreadPollIntervalMs,
 } from './chatMessageUtils';
 
-function message(partial: Partial<ChatMessage> & { conversation_id: number }): ChatMessage {
+function message(
+  partial: Partial<ChatMessage> & { conversation_id: number },
+): ChatMessage {
   return {
     date: '',
     time: '',
@@ -42,9 +44,9 @@ describe('sortMessagesChronologically', () => {
       message({ conversation_id: 1, timestamp: 10 }),
       message({ conversation_id: 2, timestamp: 10 }),
     ];
-    expect(sortMessagesChronologically(items).map((item) => item.conversation_id)).toEqual([
-      1, 2, 3,
-    ]);
+    expect(
+      sortMessagesChronologically(items).map((item) => item.conversation_id),
+    ).toEqual([1, 2, 3]);
   });
 });
 
@@ -53,15 +55,26 @@ describe('groupMessagesByDay', () => {
     const now = new Date(2026, 9, 5, 12, 0, 0);
     const groups = groupMessagesByDay(
       [
-        message({ conversation_id: 1, timestamp: new Date(2026, 9, 4, 23, 0).getTime() }),
-        message({ conversation_id: 2, timestamp: new Date(2026, 9, 5, 1, 0).getTime() }),
-        message({ conversation_id: 3, timestamp: new Date(2026, 9, 5, 9, 0).getTime() }),
+        message({
+          conversation_id: 1,
+          timestamp: new Date(2026, 9, 4, 23, 0).getTime(),
+        }),
+        message({
+          conversation_id: 2,
+          timestamp: new Date(2026, 9, 5, 1, 0).getTime(),
+        }),
+        message({
+          conversation_id: 3,
+          timestamp: new Date(2026, 9, 5, 9, 0).getTime(),
+        }),
       ],
       now,
     );
     expect(groups.map((group) => group.label)).toEqual(['Yesterday', 'Today']);
     expect(groups[0].messages).toHaveLength(1);
-    expect(groups[1].messages.map((item) => item.conversation_id)).toEqual([2, 3]);
+    expect(groups[1].messages.map((item) => item.conversation_id)).toEqual([
+      2, 3,
+    ]);
   });
 });
 
@@ -97,10 +110,14 @@ describe('composer and delete helpers', () => {
   });
 
   it('allows delete only for sent coach messages', () => {
-    expect(canDeleteChatMessage(message({ conversation_id: 1, sender_type: 'patient' }))).toBe(
-      false,
-    );
-    expect(canDeleteChatMessage(message({ conversation_id: 2, deleted: true }))).toBe(false);
+    expect(
+      canDeleteChatMessage(
+        message({ conversation_id: 1, sender_type: 'patient' }),
+      ),
+    ).toBe(false);
+    expect(
+      canDeleteChatMessage(message({ conversation_id: 2, deleted: true })),
+    ).toBe(false);
     expect(canDeleteChatMessage(message({ conversation_id: 3 }))).toBe(true);
     expect(
       canDeleteChatMessage(message({ conversation_id: 4, clientKey: 'tmp-1' })),
@@ -158,10 +175,14 @@ describe('reply navigation', () => {
 describe('canReactToChatMessage', () => {
   it('lets the coach react only to the client message', () => {
     expect(
-      canReactToChatMessage(message({ conversation_id: 1, sender_type: 'patient' })),
+      canReactToChatMessage(
+        message({ conversation_id: 1, sender_type: 'patient' }),
+      ),
     ).toBe(true);
     expect(
-      canReactToChatMessage(message({ conversation_id: 2, sender_type: 'user' })),
+      canReactToChatMessage(
+        message({ conversation_id: 2, sender_type: 'user' }),
+      ),
     ).toBe(false);
     expect(
       canReactToChatMessage(
@@ -205,11 +226,21 @@ describe('live poll merge', () => {
   it('adds only new incoming messages and keeps in-flight sends', () => {
     const current = [
       message({ conversation_id: 1, timestamp: 10 }),
-      message({ conversation_id: 99, timestamp: 30, clientKey: 'tmp-1', isSending: true }),
+      message({
+        conversation_id: 99,
+        timestamp: 30,
+        clientKey: 'tmp-1',
+        isSending: true,
+      }),
     ];
     const incoming = [
       message({ conversation_id: 1, timestamp: 10 }),
-      message({ conversation_id: 2, timestamp: 20, sender_type: 'patient', name: 'Ann A' }),
+      message({
+        conversation_id: 2,
+        timestamp: 20,
+        sender_type: 'patient',
+        name: 'Ann A',
+      }),
     ];
     const added = livePollAddedMessages(current, incoming);
     const merged = mergeChatMessages(current, incoming);

@@ -62,15 +62,17 @@ export function mapFormulaOptions(raw: any): IntelligenceFormulaOptions {
       label: item?.label || 'Age',
       unit: item?.unit || 'years',
     })),
-    questionnaires: questionnaires.map((item: any) => ({
-      token: String(item?.token || ''),
-      form_unique_id: item?.form_unique_id,
-      question_id: item?.question_id,
-      form_title: item?.form_title || '',
-      question_label: item?.question_label || item?.token || '',
-      value_type: item?.value_type || 'string',
-      stale: Boolean(item?.stale),
-    })).filter((item: { token: string }) => item.token),
+    questionnaires: questionnaires
+      .map((item: any) => ({
+        token: String(item?.token || ''),
+        form_unique_id: item?.form_unique_id,
+        question_id: item?.question_id,
+        form_title: item?.form_title || '',
+        question_label: item?.question_label || item?.token || '',
+        value_type: item?.value_type || 'string',
+        stale: Boolean(item?.stale),
+      }))
+      .filter((item: { token: string }) => item.token),
   };
 }
 
@@ -107,7 +109,8 @@ async function listClinicCatalogBiomarkers(): Promise<ClinicBiomarkerOption[]> {
 
 export function clinicIntelligenceApi(): IntelligenceApi {
   return {
-    listDomains: (domainType) => HealthRiskArchitectureApi.getDomains(domainType),
+    listDomains: (domainType) =>
+      HealthRiskArchitectureApi.getDomains(domainType),
     createDomain: (payload) => HealthRiskArchitectureApi.createDomain(payload),
     updateDomain: (id, payload) =>
       HealthRiskArchitectureApi.updateDomain(id, payload),
@@ -129,7 +132,8 @@ export function adminDefaultIntelligenceApi(): IntelligenceApi {
   return {
     listDomains: (domainType) => AdminApi.listIntelligenceDefaults(domainType),
     createDomain: (payload) => AdminApi.createIntelligenceDefault(payload),
-    updateDomain: (id, payload) => AdminApi.updateIntelligenceDefault(id, payload),
+    updateDomain: (id, payload) =>
+      AdminApi.updateIntelligenceDefault(id, payload),
     deleteDomain: (id, domainType) =>
       AdminApi.deleteIntelligenceDefault(id, domainType),
     validateFormula: (formula_code, options) =>

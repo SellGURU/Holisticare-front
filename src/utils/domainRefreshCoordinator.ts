@@ -14,15 +14,15 @@ export type QueryRefreshPlan = {
 };
 
 const QUERY_DOMAINS: Partial<Record<ReportQueryName, DomainName[]>> = {};
-(Object.entries(DOMAIN_QUERY_MAP) as Array<[DomainName, ReportQueryName[]]>).forEach(
-  ([domain, queries]) => {
-    for (const query of queries) {
-      const list = QUERY_DOMAINS[query] || [];
-      if (!list.includes(domain)) list.push(domain);
-      QUERY_DOMAINS[query] = list;
-    }
-  },
-);
+(
+  Object.entries(DOMAIN_QUERY_MAP) as Array<[DomainName, ReportQueryName[]]>
+).forEach(([domain, queries]) => {
+  for (const query of queries) {
+    const list = QUERY_DOMAINS[query] || [];
+    if (!list.includes(domain)) list.push(domain);
+    QUERY_DOMAINS[query] = list;
+  }
+});
 
 export function domainsForQuery(query: ReportQueryName): DomainName[] {
   return QUERY_DOMAINS[query] || [];
@@ -35,7 +35,10 @@ export function planRefreshForTerminalDomains(
 ): QueryRefreshPlan {
   const domainsToRefresh = domains.filter(
     (domain) =>
-      !shouldSkipRefetchForAppliedRevision(outcomes[domain], lastApplied[domain]),
+      !shouldSkipRefetchForAppliedRevision(
+        outcomes[domain],
+        lastApplied[domain],
+      ),
   );
   const revisions: Partial<Record<DomainName, string | null>> = {};
   for (const domain of domainsToRefresh) {

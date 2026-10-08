@@ -827,13 +827,17 @@ const ClientCard: FC<ClientCardProps> = ({
                     compressImageToDataUrl(file)
                       .then((url) => setEditPhoto(url))
                       .catch(() =>
-                        setPhotoError('Could not read this image. Please try another photo.'),
+                        setPhotoError(
+                          'Could not read this image. Please try another photo.',
+                        ),
                       );
                   }}
                 />
               </div>
               {photoError ? (
-                <div className="mt-1 text-[10px] text-[#FC5474]">{photoError}</div>
+                <div className="mt-1 text-[10px] text-[#FC5474]">
+                  {photoError}
+                </div>
               ) : null}
             </div>
             <div>

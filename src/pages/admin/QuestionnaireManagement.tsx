@@ -90,7 +90,10 @@ const QuestionnaireManagement = () => {
           }}
           className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-white px-4 py-2 text-[12px] text-Text-Primary"
         >
-          <RefreshCw size={14} className={loadingTemplates ? 'animate-spin' : ''} />
+          <RefreshCw
+            size={14}
+            className={loadingTemplates ? 'animate-spin' : ''}
+          />
           Refresh
         </button>
       }
@@ -100,7 +103,9 @@ const QuestionnaireManagement = () => {
           type="button"
           onClick={() => setTab('templates')}
           className={`rounded-full px-4 py-2 ${
-            tab === 'templates' ? 'bg-[#005F73] text-white' : 'text-Text-Primary'
+            tab === 'templates'
+              ? 'bg-[#005F73] text-white'
+              : 'text-Text-Primary'
           }`}
         >
           Default Templates

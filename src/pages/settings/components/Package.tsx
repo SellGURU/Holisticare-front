@@ -84,7 +84,10 @@ const ghostButton =
 const linkButton =
   'text-[11px] text-Primary-DeepTeal underline-offset-2 transition-colors hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Primary-DeepTeal disabled:cursor-not-allowed disabled:opacity-60';
 
-const stopEvent = (event?: { preventDefault?: () => void; stopPropagation?: () => void }) => {
+const stopEvent = (event?: {
+  preventDefault?: () => void;
+  stopPropagation?: () => void;
+}) => {
   event?.preventDefault?.();
   event?.stopPropagation?.();
 };
@@ -97,7 +100,9 @@ const PackagePage = () => {
   const [loading, setLoading] = useState(true);
   const [actingPrice, setActingPrice] = useState('');
   const [openingPortal, setOpeningPortal] = useState(false);
-  const [intervalByPlan, setIntervalByPlan] = useState<Record<string, string>>({});
+  const [intervalByPlan, setIntervalByPlan] = useState<Record<string, string>>(
+    {},
+  );
   const [payments, setPayments] = useState<ClinicPayment[]>([]);
   const [paymentsTotal, setPaymentsTotal] = useState(0);
   const [paymentsHasMore, setPaymentsHasMore] = useState(false);
@@ -128,11 +133,15 @@ const PackagePage = () => {
     try {
       const res = await BillingApi.listPayments(20, offset);
       const body = res.data;
-      setPayments((prev) => (append ? [...prev, ...(body.items || [])] : body.items || []));
+      setPayments((prev) =>
+        append ? [...prev, ...(body.items || [])] : body.items || [],
+      );
       setPaymentsTotal(body.total || 0);
       setPaymentsHasMore(Boolean(body.has_more));
     } catch (err) {
-      setPaymentsError(billingErrorMessage(err, 'Failed to load payment history.'));
+      setPaymentsError(
+        billingErrorMessage(err, 'Failed to load payment history.'),
+      );
     } finally {
       setPaymentsLoading(false);
     }
@@ -227,9 +236,7 @@ const PackagePage = () => {
       ['Demo', [] as BillingPlanOption[]],
       ...plans,
       ['Scale', [] as BillingPlanOption[]],
-    ] as Array<
-      [string, BillingPlanOption[]]
-    >;
+    ] as Array<[string, BillingPlanOption[]]>;
   }, [status?.catalog]);
 
   const paid =
@@ -279,7 +286,10 @@ const PackagePage = () => {
     );
   };
 
-  const scrollToPlans = (event?: { preventDefault?: () => void; stopPropagation?: () => void }) => {
+  const scrollToPlans = (event?: {
+    preventDefault?: () => void;
+    stopPropagation?: () => void;
+  }) => {
     stopEvent(event);
     const section = document.getElementById(AVAILABLE_PLANS_ID);
     if (section) scrollWithinParent(section, { behavior: 'smooth' });
@@ -542,7 +552,10 @@ const PackagePage = () => {
                     {daysRemainingLabel(daysLeft)}
                   </div>
                   <div className="mt-2 text-[12px] text-Text-Secondary">
-                    {formatPeriodRange(status?.current_period_end, currentPlan.interval)}
+                    {formatPeriodRange(
+                      status?.current_period_end,
+                      currentPlan.interval,
+                    )}
                   </div>
                 </div>
                 <div className="text-[12px] text-Text-Secondary">
@@ -580,7 +593,8 @@ const PackagePage = () => {
                     Payment
                   </div>
                   <div className="mt-1 text-[12px] text-Text-Secondary">
-                    Cards on the clinic Stripe customer. Portal remains available as a fallback.
+                    Cards on the clinic Stripe customer. Portal remains
+                    available as a fallback.
                   </div>
                 </div>
                 {status?.can_manage ? (
@@ -608,7 +622,10 @@ const PackagePage = () => {
                         {cardLabel(defaultCard.brand, defaultCard.last4)}
                       </div>
                       <div className="text-[11px] text-Text-Secondary">
-                        {cardExpiryLabel(defaultCard.exp_month, defaultCard.exp_year)}
+                        {cardExpiryLabel(
+                          defaultCard.exp_month,
+                          defaultCard.exp_year,
+                        )}
                         {defaultCard.is_default ? ' · Default' : ''}
                       </div>
                     </div>
@@ -667,7 +684,9 @@ const PackagePage = () => {
                                 runAction(
                                   `default-${method.id}`,
                                   () =>
-                                    BillingApi.setDefaultPaymentMethod(method.id),
+                                    BillingApi.setDefaultPaymentMethod(
+                                      method.id,
+                                    ),
                                   'Default card updated.',
                                 )
                                   .then(() => loadMethods())
@@ -684,7 +703,8 @@ const PackagePage = () => {
                                 stopEvent(event);
                                 runAction(
                                   `delete-${method.id}`,
-                                  () => BillingApi.deletePaymentMethod(method.id),
+                                  () =>
+                                    BillingApi.deletePaymentMethod(method.id),
                                   'Card removed.',
                                   'Remove this card?',
                                 )
@@ -732,8 +752,8 @@ const PackagePage = () => {
                   {paid ? 'Change plan' : 'Choose a plan'}
                 </div>
                 <div className="mt-1 max-w-3xl text-[13px] leading-5 text-Text-Secondary">
-                  Starter supports up to 35 active clients, Growth supports up to
-                  100, and Scale is tailored for clinics with 250+ clients.
+                  Starter supports up to 35 active clients, Growth supports up
+                  to 100, and Scale is tailored for clinics with 250+ clients.
                 </div>
               </div>
               <div
@@ -767,7 +787,10 @@ const PackagePage = () => {
                       ? 'Free'
                       : isCustom
                         ? 'Custom'
-                        : formatPriceAmount(option?.unit_amount, option?.currency);
+                        : formatPriceAmount(
+                            option?.unit_amount,
+                            option?.currency,
+                          );
                     const showToggle = !isDemo && options.length > 1;
                     const acting =
                       actingPrice === option?.price_id ||
@@ -811,8 +834,9 @@ const PackagePage = () => {
                                 {isCustom
                                   ? 'pricing'
                                   : `/ ${
-                                      intervalLabel(option?.interval).toLowerCase() ||
-                                      'month'
+                                      intervalLabel(
+                                        option?.interval,
+                                      ).toLowerCase() || 'month'
                                     }`}
                               </span>
                             )}
@@ -820,7 +844,8 @@ const PackagePage = () => {
                           {showToggle ? (
                             <div className="mt-4 inline-flex w-fit rounded-full bg-backgroundColor-Main p-1">
                               {options.map((item) => {
-                                const active = item.price_id === option?.price_id;
+                                const active =
+                                  item.price_id === option?.price_id;
                                 return (
                                   <button
                                     key={item.price_id}
@@ -915,7 +940,8 @@ const PackagePage = () => {
                 </motion.div>
               </div>
               <div className="mt-4 rounded-[14px] bg-[#F3FAF8] px-4 py-3 text-center text-[13px] font-medium leading-5 text-Primary-DeepTeal">
-                Choose annual billing and receive 15% off the total yearly price.
+                Choose annual billing and receive 15% off the total yearly
+                price.
               </div>
             </section>
           ) : null}
@@ -1016,7 +1042,10 @@ const PackagePage = () => {
                   </div>
                   <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
                     <div className="text-[13px] font-medium text-Text-Primary">
-                      {formatPriceAmount(upcoming.amount_due, upcoming.currency)}
+                      {formatPriceAmount(
+                        upcoming.amount_due,
+                        upcoming.currency,
+                      )}
                     </div>
                     <div className="text-[11px] text-Text-Secondary">
                       {formatPeriodEnd(upcoming.period_end || upcoming.created)}
@@ -1080,8 +1109,11 @@ const PackagePage = () => {
                               Download
                             </a>
                           ) : null}
-                          {!invoice.hosted_invoice_url && !invoice.invoice_pdf ? (
-                            <span className="text-[11px] text-Text-Secondary">—</span>
+                          {!invoice.hosted_invoice_url &&
+                          !invoice.invoice_pdf ? (
+                            <span className="text-[11px] text-Text-Secondary">
+                              —
+                            </span>
                           ) : null}
                         </div>
                       </div>
@@ -1134,7 +1166,9 @@ const PackagePage = () => {
                       ).catch(() => {});
                     }}
                   >
-                    {actingAction === 'cancel' ? 'Canceling...' : 'Cancel at period end'}
+                    {actingAction === 'cancel'
+                      ? 'Canceling...'
+                      : 'Cancel at period end'}
                   </button>
                 )}
                 {paused ? (

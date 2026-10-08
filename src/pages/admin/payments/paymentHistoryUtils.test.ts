@@ -37,7 +37,9 @@ describe('paymentHistoryUtils', () => {
 
   it('reads and syncs URL search params', () => {
     const filters = filtersFromSearchParams(
-      new URLSearchParams('status=failed&customer=ada@example.com&currency=eur'),
+      new URLSearchParams(
+        'status=failed&customer=ada@example.com&currency=eur',
+      ),
     );
     expect(filters.status).toBe('failed');
     expect(filters.customer).toBe('ada@example.com');

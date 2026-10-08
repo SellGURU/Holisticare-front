@@ -5,16 +5,19 @@ export function resolveLabFileDeleteId(
   return id || null;
 }
 
-export function lastRowDeleteEventDetail(
-  fileId?: string | number | null,
-): { file_id: string | null } {
+export function lastRowDeleteEventDetail(fileId?: string | number | null): {
+  file_id: string | null;
+} {
   return { file_id: resolveLabFileDeleteId(fileId) };
 }
 
 export type LabDeleteResponse = {
   file_id?: string | null;
   operation_id?: string | number | null;
-  outcomes?: Record<string, { state?: string | null; data_revision?: string | null }>;
+  outcomes?: Record<
+    string,
+    { state?: string | null; data_revision?: string | null }
+  >;
 };
 
 export function parseLabDeleteResponse(data: unknown): LabDeleteResponse {

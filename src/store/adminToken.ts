@@ -16,9 +16,11 @@ export function getAdminPermissions(): Record<string, unknown> {
 export function hasAdminPermission(key: string): boolean {
   const value = getAdminPermissions()[key];
   if (value === true || value === 1) return true;
-  return String(value ?? '')
-    .trim()
-    .toLowerCase() === 'true';
+  return (
+    String(value ?? '')
+      .trim()
+      .toLowerCase() === 'true'
+  );
 }
 
 export function getAdminToken() {

@@ -84,9 +84,9 @@ describe('healthPlanCache', () => {
 
     invalidateHealthPlanQueryKeys('111', ['outofrefs']);
 
-    expect(hasCached(HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs('111'))).toBe(
-      false,
-    );
+    expect(
+      hasCached(HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs('111')),
+    ).toBe(false);
     expect(hasCached(HEALTH_PLAN_CACHE_KEYS.overviewTreatmentPlan('111'))).toBe(
       true,
     );
@@ -137,9 +137,9 @@ describe('healthPlanCache', () => {
       HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories('99', true),
       staleFetcher,
     );
-    expect(hasCached(HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories('99', true))).toBe(
-      false,
-    );
+    expect(
+      hasCached(HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories('99', true)),
+    ).toBe(false);
 
     invalidateHealthPlanCache('99');
 

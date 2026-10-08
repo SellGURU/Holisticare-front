@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  isCatalogEnabled,
-  matchesEnabledFilter,
-} from './catalogEnabled';
+import { isCatalogEnabled, matchesEnabledFilter } from './catalogEnabled';
 
 describe('catalogEnabled', () => {
   it('treats missing and true as enabled', () => {

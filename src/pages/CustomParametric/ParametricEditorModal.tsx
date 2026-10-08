@@ -80,7 +80,8 @@ export default function ParametricEditorModal({
     return catalog.map((item) => {
       const itemUid = item.biomarker_uid || '';
       const alreadyAttached =
-        attachedSet.has(itemUid) && itemUid !== (domain?.catalogBiomarkerUid || '');
+        attachedSet.has(itemUid) &&
+        itemUid !== (domain?.catalogBiomarkerUid || '');
       return {
         ...item,
         has_parametric: alreadyAttached,
@@ -99,10 +100,11 @@ export default function ParametricEditorModal({
     if (!formulaCode.trim()) return;
     setValidating(true);
     setValidation(null);
-    intelligenceApi.validateFormula(formulaCode, {
-      domain_type: 'PARAMETRIC_BIOMARKER',
-      catalog_biomarker_uid: uid || undefined,
-    })
+    intelligenceApi
+      .validateFormula(formulaCode, {
+        domain_type: 'PARAMETRIC_BIOMARKER',
+        catalog_biomarker_uid: uid || undefined,
+      })
       .then((res) => setValidation(res.data || null))
       .catch((err) =>
         setValidation({
@@ -155,7 +157,11 @@ export default function ParametricEditorModal({
             Saved to this clinic's Parametric Biomarkers
           </p>
           <div className="flex gap-2">
-            <button type="button" className={v2OutlineBtnClass} onClick={onClose}>
+            <button
+              type="button"
+              className={v2OutlineBtnClass}
+              onClick={onClose}
+            >
               Cancel
             </button>
             <button
@@ -164,11 +170,7 @@ export default function ParametricEditorModal({
               onClick={handleSave}
               disabled={!uid || saving || !formulaCode.trim() || formulaInvalid}
             >
-              {saving
-                ? 'Saving…'
-                : isEdit
-                  ? 'Save formula'
-                  : 'Attach formula'}
+              {saving ? 'Saving…' : isEdit ? 'Save formula' : 'Attach formula'}
             </button>
           </div>
         </div>
@@ -240,17 +242,17 @@ export default function ParametricEditorModal({
               {validating ? 'Validating…' : 'Validate Formula'}
             </button>
           </div>
-            <FormulaCodeEditor
-              value={formulaCode}
-              onChange={(next) => {
-                setFormulaCode(next);
-                setValidation(null);
-              }}
-              catalog={catalog}
-              placeholder={DEFAULT_FORMULA}
-              rows={8}
-              textareaClassName="min-h-[180px] resize-y"
-            />
+          <FormulaCodeEditor
+            value={formulaCode}
+            onChange={(next) => {
+              setFormulaCode(next);
+              setValidation(null);
+            }}
+            catalog={catalog}
+            placeholder={DEFAULT_FORMULA}
+            rows={8}
+            textareaClassName="min-h-[180px] resize-y"
+          />
           {validation ? (
             validation.syntax_valid ? (
               <p className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-[12px] text-emerald-800">

@@ -37,7 +37,10 @@ interface ClinicMobileUsersPanelProps {
   }) => void;
 }
 
-const withLocalExpiry = (user: MobileUserRow, nowMs = Date.now()): MobileUserRow => ({
+const withLocalExpiry = (
+  user: MobileUserRow,
+  nowMs = Date.now(),
+): MobileUserRow => ({
   ...user,
   tempExpiresAtMs: expiryMsFromRemaining(
     user.temp_password_remaining_seconds,
@@ -68,7 +71,9 @@ const ClinicMobileUsersPanel = ({
         ),
       );
     } catch (err: any) {
-      toast.error(err?.response?.data?.detail || 'Failed to load mobile users.');
+      toast.error(
+        err?.response?.data?.detail || 'Failed to load mobile users.',
+      );
     } finally {
       setLoading(false);
     }
@@ -85,7 +90,10 @@ const ClinicMobileUsersPanel = ({
 
   useEffect(() => {
     if (!hasActive) return undefined;
-    const timer = window.setInterval(() => setNowTick((value) => value + 1), 1000);
+    const timer = window.setInterval(
+      () => setNowTick((value) => value + 1),
+      1000,
+    );
     return () => window.clearInterval(timer);
   }, [hasActive]);
 
@@ -108,7 +116,9 @@ const ClinicMobileUsersPanel = ({
         clinicId,
         user.mobile_user_id,
       );
-      const expiresAtMs = expiryMsFromRemaining(res.data?.expires_in_seconds || 60);
+      const expiresAtMs = expiryMsFromRemaining(
+        res.data?.expires_in_seconds || 60,
+      );
       setUsers((current) =>
         current.map((item) =>
           item.mobile_user_id === user.mobile_user_id
@@ -199,7 +209,9 @@ const ClinicMobileUsersPanel = ({
           ) : (
             <div className="divide-y divide-Gray-50">
               {visibleUsers.map((user) => {
-                const activeSeconds = remainingSecondsFromMs(user.tempExpiresAtMs);
+                const activeSeconds = remainingSecondsFromMs(
+                  user.tempExpiresAtMs,
+                );
                 const busy = grantingId === user.mobile_user_id;
                 return (
                   <div
@@ -212,7 +224,9 @@ const ClinicMobileUsersPanel = ({
                       </div>
                       <div className="mt-1 text-[11px] text-Text-Secondary">
                         {user.login_email || 'No email'}
-                        {user.member_id != null ? ` · member ${user.member_id}` : ''}
+                        {user.member_id != null
+                          ? ` · member ${user.member_id}`
+                          : ''}
                       </div>
                     </div>
                     <button

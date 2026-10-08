@@ -60,9 +60,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
               kind === 'video' ||
               kind.startsWith('video') ||
               kind.startsWith('image');
-            return (
-              isMedia && (file.Content.url || file.Content.file_id)
-            );
+            return isMedia && (file.Content.url || file.Content.file_id);
           }).map((file: File) => ({
             url: file.Content.url,
             file_id: file.Content.file_id,

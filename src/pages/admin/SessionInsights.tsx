@@ -109,7 +109,8 @@ const buildAllBackendErrorsClipboardText = (entries: BackendErrorEntry[]) =>
 
 const SessionInsights = () => {
   const navigate = useNavigate();
-  const { selectedClinicEmail, startDate, endDate, clinics } = useAdminContext();
+  const { selectedClinicEmail, startDate, endDate, clinics } =
+    useAdminContext();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [analytics, setAnalytics] = useState<any>(null);
@@ -922,7 +923,8 @@ const SessionInsights = () => {
                         </div>
                         <div className="mt-1 text-[11px] text-Text-Secondary">
                           {session.eventCount} events ·{' '}
-                          {formatVisitDuration(session.totalActiveTimeMs)} active
+                          {formatVisitDuration(session.totalActiveTimeMs)}{' '}
+                          active
                           {sessionAuth.logoutReason
                             ? ` · ${logoutReasonLabel(sessionAuth.logoutReason)}`
                             : ''}

@@ -24,12 +24,7 @@ export const clinicMatches = (clinic: AdminClinicOption, query: string) => {
   const tokens = normalize(query).split(/\s+/).filter(Boolean);
   if (tokens.length === 0) return true;
   const email = clinic.primary_email || '';
-  const haystack = [
-    clinic.name,
-    clinic.clinic_id,
-    email,
-    email.split('@')[0],
-  ]
+  const haystack = [clinic.name, clinic.clinic_id, email, email.split('@')[0]]
     .map(normalize)
     .join(' ');
   return tokens.every((token) => haystack.includes(token));
@@ -112,7 +107,10 @@ const ClinicSearchSelect = ({
             <X size={14} />
           </button>
         ) : (
-          <ChevronDown size={14} className="ml-1 shrink-0 text-Text-Secondary" />
+          <ChevronDown
+            size={14}
+            className="ml-1 shrink-0 text-Text-Secondary"
+          />
         )}
       </div>
       {open && !disabled ? (

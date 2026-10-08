@@ -489,7 +489,10 @@ const CustomBiomarkers = () => {
                 <option value="Disabled">Disabled</option>
               </select>
 
-              {(searchInput || panelFilter || typeFilter || enabledFilter !== 'All') && (
+              {(searchInput ||
+                panelFilter ||
+                typeFilter ||
+                enabledFilter !== 'All') && (
                 <button
                   type="button"
                   onClick={clearFilters}

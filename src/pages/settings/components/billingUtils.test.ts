@@ -77,7 +77,9 @@ describe('billingUtils', () => {
   });
 
   it('builds the current plan label', () => {
-    expect(currentPlanLabel('Growth', 'month', 'paying')).toBe('Growth · Monthly');
+    expect(currentPlanLabel('Growth', 'month', 'paying')).toBe(
+      'Growth · Monthly',
+    );
     expect(currentPlanLabel(null, null, 'demo')).toBe('Demo');
     expect(currentPlanLabel(null, null, 'paying')).toBe('No paid plan');
   });
@@ -115,8 +117,12 @@ describe('billingUtils', () => {
     expect(billingPeriodDays('year')).toBe(365);
     expect(remainingPeriodProgress(9, 'month')).toBe(30);
     expect(remainingPeriodProgress(null, 'month')).toBe(0);
-    expect(subscriptionPeriodSummary(future, 'active')).toContain('days until renewal');
-    expect(subscriptionPeriodSummary(future, 'canceled')).toContain('access left');
+    expect(subscriptionPeriodSummary(future, 'active')).toContain(
+      'days until renewal',
+    );
+    expect(subscriptionPeriodSummary(future, 'canceled')).toContain(
+      'access left',
+    );
     expect(paymentStatusLabel('succeeded')).toBe('Paid');
     expect(paymentStatusLabel('refunded')).toBe('Refunded');
     expect(refundStatusLabel('partial')).toBe('Partially refunded');
@@ -141,9 +147,7 @@ describe('billingUtils', () => {
     expect(groups.map(([name]) => name)).toEqual(['Starter', 'Growth']);
     expect(normalizedPlanName('Plus')).toBe('Starter');
     expect(normalizedPlanName('Pro')).toBe('Growth');
-    expect(currentPlanLabel('Pro', 'month', 'paying')).toBe(
-      'Growth · Monthly',
-    );
+    expect(currentPlanLabel('Pro', 'month', 'paying')).toBe('Growth · Monthly');
     expect(PLAN_COPY.Demo.blurb).toContain('Free demo');
     expect(PLAN_COPY.Starter.includes).toContain('Up to 35 active clients');
     expect(PLAN_COPY.Starter.includes).toContain(
@@ -175,14 +179,22 @@ describe('billingUtils', () => {
       currency: 'gbp',
     });
     expect(planPriceCaption(29900, 'gbp', 'month')).toContain('/ monthly');
-    expect(periodEndCaption('2026-03-15T00:00:00.000Z', false)).toContain('Renews');
-    expect(periodEndCaption('2026-03-15T00:00:00.000Z', true)).toContain('Access ends');
+    expect(periodEndCaption('2026-03-15T00:00:00.000Z', false)).toContain(
+      'Renews',
+    );
+    expect(periodEndCaption('2026-03-15T00:00:00.000Z', true)).toContain(
+      'Access ends',
+    );
     expect(daysRemainingLabel(12)).toBe('12 days left');
     expect(daysRemainingLabel(1)).toBe('1 day left');
     expect(daysRemainingLabel(0)).toBe('Ends today');
     expect(daysRemainingLabel(null)).toContain('after Stripe');
-    expect(periodProgressCaption(40, 'month')).toBe('40% of 30-day period remaining');
-    expect(formatPeriodRange('2026-03-31T00:00:00.000Z', 'month')).toContain('2026');
+    expect(periodProgressCaption(40, 'month')).toBe(
+      '40% of 30-day period remaining',
+    );
+    expect(formatPeriodRange('2026-03-31T00:00:00.000Z', 'month')).toContain(
+      '2026',
+    );
     expect(cardExpiryLabel(12, 2027)).toBe('Expires 12/2027');
     expect(cardExpiryLabel(null, null)).toBe('Card');
     expect(collectionNotice(true, false, null)).toContain('paused');
@@ -199,14 +211,21 @@ describe('billingUtils', () => {
     expect(planActionLabel(true, false, false, 'Growth', 'upgrade')).toBe(
       'Upgrade to Growth',
     );
-    expect(planActionLabel(true, true, false, 'Growth', 'same')).toBe('Current plan');
+    expect(planActionLabel(true, true, false, 'Growth', 'same')).toBe(
+      'Current plan',
+    );
     expect(planActionLabel(true, false, true, 'Starter', 'downgrade')).toBe(
       'Updating...',
     );
     expect(
-      invoiceRowCaption({ number: 'INV-22', created: '2026-03-15T00:00:00.000Z' }),
+      invoiceRowCaption({
+        number: 'INV-22',
+        created: '2026-03-15T00:00:00.000Z',
+      }),
     ).toContain('INV-22');
-    expect(invoiceAmountValue({ amount_paid: 0, amount_due: 16000 })).toBe(16000);
+    expect(invoiceAmountValue({ amount_paid: 0, amount_due: 16000 })).toBe(
+      16000,
+    );
     expect(
       paymentRowCaption({
         stripe_created_at: '2026-03-15T00:00:00.000Z',
@@ -320,11 +339,15 @@ describe('billingUtils', () => {
         cancel_at_period_end: fixture.cancelAtEnd,
       };
       expect(hasPaidSubscription(fixture.status)).toBe(fixture.paid);
-      expect(showLifecycleControls(true, fixture.paid, Boolean(fixture.paused))).toBe(
-        fixture.showLifecycle,
+      expect(
+        showLifecycleControls(true, fixture.paid, Boolean(fixture.paused)),
+      ).toBe(fixture.showLifecycle);
+      expect(isPlanCardActive('Demo', undefined, status)).toBe(
+        fixture.demoActive,
       );
-      expect(isPlanCardActive('Demo', undefined, status)).toBe(fixture.demoActive);
-      expect(isPlanCardActive('Starter', plusId, status)).toBe(fixture.plusActive);
+      expect(isPlanCardActive('Starter', plusId, status)).toBe(
+        fixture.plusActive,
+      );
       expect(billingRecoveryAction(fixture.status)).toBe(fixture.recovery);
     }
 
@@ -335,12 +358,18 @@ describe('billingUtils', () => {
     expect(trialEndCaption('2026-04-01T00:00:00.000Z')).toContain('Trial ends');
     expect(terminalAccessNotice('canceled')).toContain('canceled');
     expect(terminalAccessNotice('unpaid')).toContain('unpaid');
-    expect(shouldRetryCheckoutRefresh({ is_paid: false, subscription_status: 'incomplete' })).toBe(
-      true,
-    );
-    expect(shouldRetryCheckoutRefresh({ is_paid: true, subscription_status: 'active' })).toBe(
-      false,
-    );
+    expect(
+      shouldRetryCheckoutRefresh({
+        is_paid: false,
+        subscription_status: 'incomplete',
+      }),
+    ).toBe(true);
+    expect(
+      shouldRetryCheckoutRefresh({
+        is_paid: true,
+        subscription_status: 'active',
+      }),
+    ).toBe(false);
     expect(showLifecycleControls(true, false, true)).toBe(true);
     expect(showLifecycleControls(true, false, false)).toBe(false);
   });

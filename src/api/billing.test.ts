@@ -54,7 +54,9 @@ describe('BillingApi', () => {
     const urls = axiosMock.post.mock.calls.map((call: unknown[]) => call[0]);
     expect(urls).toContain('http://backend.test/billing/refresh');
     expect(urls).toContain('http://backend.test/billing/subscription/upgrade');
-    expect(urls).toContain('http://backend.test/billing/subscription/downgrade');
+    expect(urls).toContain(
+      'http://backend.test/billing/subscription/downgrade',
+    );
     expect(urls).toContain('http://backend.test/billing/subscription/cancel');
     expect(urls).toContain('http://backend.test/billing/subscription/resume');
     expect(urls).toContain('http://backend.test/billing/subscription/pause');

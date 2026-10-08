@@ -33,15 +33,16 @@ const KIND_LABEL: Record<ReturnType<typeof questionFormulaKind>, string> = {
   text: 'text',
 };
 
-const NUMBER_CHIPS: Array<{ label: string; snippet: string; offset?: number }> = [
-  { label: '+', snippet: ' + ' },
-  { label: '−', snippet: ' - ' },
-  { label: '×', snippet: ' * ' },
-  { label: '÷', snippet: ' / ' },
-  { label: '( )', snippet: '()', offset: 1 },
-  { label: 'sum( )', snippet: 'sum()', offset: 1 },
-  { label: 'avg( )', snippet: 'avg()', offset: 1 },
-];
+const NUMBER_CHIPS: Array<{ label: string; snippet: string; offset?: number }> =
+  [
+    { label: '+', snippet: ' + ' },
+    { label: '−', snippet: ' - ' },
+    { label: '×', snippet: ' * ' },
+    { label: '÷', snippet: ' / ' },
+    { label: '( )', snippet: '()', offset: 1 },
+    { label: 'sum( )', snippet: 'sum()', offset: 1 },
+    { label: 'avg( )', snippet: 'avg()', offset: 1 },
+  ];
 
 const TEXT_CHIPS: Array<{ label: string; snippet: string; offset?: number }> = [
   { label: 'if_( )', snippet: 'if_(, , )', offset: 5 },
@@ -168,7 +169,10 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
     setSelectedIds(new Set());
   };
 
-  const startAdd = (preset?: Partial<ScoringRuleType>, kind: 'number' | 'text' = 'number') => {
+  const startAdd = (
+    preset?: Partial<ScoringRuleType>,
+    kind: 'number' | 'text' = 'number',
+  ) => {
     setDraft({ ...emptyRule, ...preset });
     setEditIndex(-1);
     setSelectedIds(new Set());
@@ -250,7 +254,9 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
   };
 
   const applyTextTemplate = () => {
-    const yesNo = questions.findIndex((q) => questionFormulaKind(q) === 'yesno');
+    const yesNo = questions.findIndex(
+      (q) => questionFormulaKind(q) === 'yesno',
+    );
     const id = yesNo >= 0 ? ensureId(yesNo) : 'q_smoke';
     startAdd(
       {
@@ -279,11 +285,16 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
     const query = partial.query.toLowerCase();
     return questions
       .map((question, index) => ({
-        id: question.id && ID_REGEX.test(question.id) ? question.id : `q${question.order ?? index + 1}`,
+        id:
+          question.id && ID_REGEX.test(question.id)
+            ? question.id
+            : `q${question.order ?? index + 1}`,
         question,
         index,
       }))
-      .filter((item) => item.id.toLowerCase().startsWith(query) || query === 'q')
+      .filter(
+        (item) => item.id.toLowerCase().startsWith(query) || query === 'q',
+      )
       .slice(0, 6);
   }, [partial, questions, suggestOpen]);
 
@@ -397,7 +408,9 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => onChange(scoring.filter((_, i) => i !== index))}
+                  onClick={() =>
+                    onChange(scoring.filter((_, i) => i !== index))
+                  }
                   className="text-[11px] text-red-500"
                 >
                   Remove

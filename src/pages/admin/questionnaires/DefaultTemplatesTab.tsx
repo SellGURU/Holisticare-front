@@ -50,11 +50,15 @@ const DefaultTemplatesTab = ({
     const term = search.trim().toLowerCase();
     if (!term) return templates;
     return templates.filter((row) =>
-      [row.title, row.description, String(row.id)].join(' ').toLowerCase().includes(term),
+      [row.title, row.description, String(row.id)]
+        .join(' ')
+        .toLowerCase()
+        .includes(term),
     );
   }, [templates, search]);
 
-  const fetchForm = (id: string) => AdminApi.getQuestionnaireTemplate(Number(id));
+  const fetchForm = (id: string) =>
+    AdminApi.getQuestionnaireTemplate(Number(id));
 
   const fetchCatalog = useCallback(
     () =>
@@ -97,7 +101,11 @@ const DefaultTemplatesTab = ({
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Delete this default template? Clinics already using a copy keep theirs.')) {
+    if (
+      !window.confirm(
+        'Delete this default template? Clinics already using a copy keep theirs.',
+      )
+    ) {
       return;
     }
     setBusyId(id);
@@ -119,9 +127,12 @@ const DefaultTemplatesTab = ({
     <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="text-lg font-semibold text-Text-Primary">Default templates</div>
+          <div className="text-lg font-semibold text-Text-Primary">
+            Default templates
+          </div>
           <div className="text-[12px] text-Text-Secondary">
-            Master library copied into new clinics. {filtered.length} of {templates.length} shown.
+            Master library copied into new clinics. {filtered.length} of{' '}
+            {templates.length} shown.
           </div>
         </div>
         <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center">
@@ -180,14 +191,18 @@ const DefaultTemplatesTab = ({
               filtered.map((row) => (
                 <tr key={row.id}>
                   <td className="px-3 py-3">
-                    <div className="font-medium text-Text-Primary">{row.title}</div>
+                    <div className="font-medium text-Text-Primary">
+                      {row.title}
+                    </div>
                     {row.description ? (
                       <div className="mt-1 text-[11px] text-Text-Secondary">
                         {row.description}
                       </div>
                     ) : null}
                   </td>
-                  <td className="px-3 py-3 text-Text-Primary">{row.questions_count}</td>
+                  <td className="px-3 py-3 text-Text-Primary">
+                    {row.questions_count}
+                  </td>
                   <td className="px-3 py-3 text-Text-Secondary">
                     {formatDate(row.created_at)}
                   </td>
@@ -286,7 +301,10 @@ const DefaultTemplatesTab = ({
         />
       </MainModal>
 
-      <MainModal isOpen={Boolean(copySource)} onClose={() => setCopySource(null)}>
+      <MainModal
+        isOpen={Boolean(copySource)}
+        onClose={() => setCopySource(null)}
+      >
         {copySource ? (
           <CopyQuestionnaireModal
             clinics={clinics}

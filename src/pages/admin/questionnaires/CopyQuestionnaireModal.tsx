@@ -137,7 +137,10 @@ const CopyQuestionnaireModal = ({
       source_clinic_id?: number;
       unique_id?: string;
     };
-    if (source?.kind === 'template' || (!lockedSource && sourceKind === 'template')) {
+    if (
+      source?.kind === 'template' ||
+      (!lockedSource && sourceKind === 'template')
+    ) {
       const resolvedTemplateId =
         source?.kind === 'template' ? source.templateId : Number(templateId);
       if (!resolvedTemplateId) {
@@ -148,7 +151,8 @@ const CopyQuestionnaireModal = ({
     } else {
       const clinicId =
         source?.kind === 'clinic' ? source.clinicId : Number(sourceClinicId);
-      const uniqueId = source?.kind === 'clinic' ? source.uniqueId : sourceUniqueId;
+      const uniqueId =
+        source?.kind === 'clinic' ? source.uniqueId : sourceUniqueId;
       if (!clinicId || !uniqueId) {
         toast.error('Select a source questionnaire.');
         return;
@@ -171,7 +175,9 @@ const CopyQuestionnaireModal = ({
         onAuthFailure();
         return;
       }
-      toast.error(formatApiErrorMessage(err) || 'Failed to copy questionnaire.');
+      toast.error(
+        formatApiErrorMessage(err) || 'Failed to copy questionnaire.',
+      );
     } finally {
       setSaving(false);
     }
@@ -179,7 +185,9 @@ const CopyQuestionnaireModal = ({
 
   return (
     <div className="w-[90vw] max-w-[480px] rounded-[20px] bg-white p-4">
-      <div className="text-sm font-medium text-Text-Primary">Copy questionnaire</div>
+      <div className="text-sm font-medium text-Text-Primary">
+        Copy questionnaire
+      </div>
       <div className="mt-1 text-[12px] text-Text-Secondary">
         {source
           ? `Copy “${source.title}” into another clinic.`
@@ -188,10 +196,14 @@ const CopyQuestionnaireModal = ({
 
       {!lockedSource ? (
         <>
-          <label className="mt-4 block text-[12px] text-Text-Secondary">Source</label>
+          <label className="mt-4 block text-[12px] text-Text-Secondary">
+            Source
+          </label>
           <select
             value={sourceKind}
-            onChange={(event) => setSourceKind(event.target.value as 'template' | 'clinic')}
+            onChange={(event) =>
+              setSourceKind(event.target.value as 'template' | 'clinic')
+            }
             className="mt-1 w-full rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
           >
             <option value="template">Default template</option>
@@ -250,7 +262,9 @@ const CopyQuestionnaireModal = ({
                       />
                     </div>
                     {formsError ? (
-                      <div className="px-3 py-2 text-[12px] text-red-600">{formsError}</div>
+                      <div className="px-3 py-2 text-[12px] text-red-600">
+                        {formsError}
+                      </div>
                     ) : filteredForms.length === 0 ? (
                       <div className="px-3 py-2 text-[12px] text-Text-Secondary">
                         {sourceForms.length === 0
@@ -291,7 +305,9 @@ const CopyQuestionnaireModal = ({
         </>
       ) : null}
 
-      <label className="mt-4 block text-[12px] text-Text-Secondary">Target clinic</label>
+      <label className="mt-4 block text-[12px] text-Text-Secondary">
+        Target clinic
+      </label>
       <div className="mt-1">
         <ClinicSearchSelect
           clinics={targetClinics}

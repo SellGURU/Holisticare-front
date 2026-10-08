@@ -192,7 +192,9 @@ const BiomarkerRow = ({
 
   const onsave = (values: any, meta: BiomarkerIdentityMeta) => {
     setLoading(true);
-    BiomarkersApi.saveBiomarkersList(buildUpdateChartBoundsRequest(values, meta))
+    BiomarkersApi.saveBiomarkersList(
+      buildUpdateChartBoundsRequest(values, meta),
+    )
       .then((response) => {
         const payload = response?.data || {};
         const savedBiomarker = payload.updated_biomarker || values;

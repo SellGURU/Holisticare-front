@@ -92,7 +92,10 @@ export function extractBearerToken(headers: unknown): string | null {
   if (typeof record.get === 'function') {
     raw = raw ?? record.get('Authorization') ?? record.get('authorization');
   }
-  if ((raw == null || typeof raw !== 'string') && typeof record.toJSON === 'function') {
+  if (
+    (raw == null || typeof raw !== 'string') &&
+    typeof record.toJSON === 'function'
+  ) {
     try {
       const json = record.toJSON();
       raw = json?.Authorization ?? json?.authorization ?? raw;

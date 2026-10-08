@@ -119,7 +119,11 @@ describe('adminIntelligenceApi', () => {
     const second = adminIntelligenceApi(2);
     await first.listDomains('RISK');
     await second.listDomains('SCORING');
-    expect(AdminApi.listIntelligenceDomains).toHaveBeenNthCalledWith(1, 1, 'RISK');
+    expect(AdminApi.listIntelligenceDomains).toHaveBeenNthCalledWith(
+      1,
+      1,
+      'RISK',
+    );
     expect(AdminApi.listIntelligenceDomains).toHaveBeenNthCalledWith(
       2,
       2,
@@ -158,7 +162,9 @@ describe('mapFormulaOptions', () => {
       data: {
         capability: { multi_source_formulas: true },
         formula_options: {
-          questionnaires: [{ token: 'q_drink__form2', question_label: 'Drink?' }],
+          questionnaires: [
+            { token: 'q_drink__form2', question_label: 'Drink?' },
+          ],
         },
       },
     });

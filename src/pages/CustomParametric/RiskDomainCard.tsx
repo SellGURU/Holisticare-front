@@ -1,8 +1,5 @@
 import { Clock, Copy, Eye, Pencil, Trash2 } from 'lucide-react';
-import {
-  HEALTH_RISK_DEFAULT_ICON,
-  HEALTH_RISK_ICONS,
-} from './healthRiskIcons';
+import { HEALTH_RISK_DEFAULT_ICON, HEALTH_RISK_ICONS } from './healthRiskIcons';
 import type { RiskDomainViewModel } from './types';
 
 const GROUP_COLORS: Record<string, string> = {

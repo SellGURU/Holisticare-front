@@ -25,7 +25,11 @@ const persistHealthPlanCache = (): void => {
   const payload: Record<string, CacheEntry<unknown>> = {};
   for (const [key, entry] of store) {
     if (!key.startsWith(HEALTHPLAN_PREFIX)) continue;
-    if (key.includes(':patient-info:') && entry?.data && typeof entry.data === 'object') {
+    if (
+      key.includes(':patient-info:') &&
+      entry?.data &&
+      typeof entry.data === 'object'
+    ) {
       payload[key] = {
         ...entry,
         data: { ...(entry.data as Record<string, unknown>), picture: '' },

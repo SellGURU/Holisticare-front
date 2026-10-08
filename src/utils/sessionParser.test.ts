@@ -18,7 +18,8 @@ const sessionRecord = (
     userId,
     startedAt,
     endedAt,
-    totalActiveTimeMs: new Date(endedAt).getTime() - new Date(startedAt).getTime(),
+    totalActiveTimeMs:
+      new Date(endedAt).getTime() - new Date(startedAt).getTime(),
     events: events.map((event, index) => ({
       id: `${index}`,
       eventName: event.eventName,

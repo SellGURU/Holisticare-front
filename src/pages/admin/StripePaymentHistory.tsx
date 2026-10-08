@@ -466,7 +466,9 @@ const StripePaymentHistory = () => {
                           {paymentStatusLabel(payment.status)}
                         </span>
                       </td>
-                      <td className="px-2 py-2">{payment.payment_method || '—'}</td>
+                      <td className="px-2 py-2">
+                        {payment.payment_method || '—'}
+                      </td>
                       <td className="px-2 py-2 font-mono text-[11px]">
                         {payment.stripe_payment_id ||
                           payment.stripe_payment_intent_id ||

@@ -26,7 +26,9 @@ describe('activityIdentity', () => {
   });
 
   it('encodes digest bytes to 16 hex chars', () => {
-    const bytes = new Uint8Array([0xde, 0xad, 0xbe, 0xef, 0x00, 0x01, 0x02, 0x03]).buffer;
+    const bytes = new Uint8Array([
+      0xde, 0xad, 0xbe, 0xef, 0x00, 0x01, 0x02, 0x03,
+    ]).buffer;
     expect(bytesToHex16(bytes)).toBe('deadbeef00010203');
   });
 });

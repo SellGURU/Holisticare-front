@@ -805,10 +805,14 @@ score * 100`;
                   {validationResult.biomarkers_not_in_clinic &&
                     validationResult.biomarkers_not_in_clinic.length > 0 && (
                       <div className="text-xs p-2 rounded-md bg-amber-50 text-amber-800">
-                        <span className="font-medium">Clinic configuration:</span>{' '}
-                        These biomarkers are not in your clinic’s biomarker list (chart_bounds):{' '}
+                        <span className="font-medium">
+                          Clinic configuration:
+                        </span>{' '}
+                        These biomarkers are not in your clinic’s biomarker list
+                        (chart_bounds):{' '}
                         {validationResult.biomarkers_not_in_clinic.join(', ')}.
-                        Add them in Custom Biomarker so zone detection works correctly at runtime.
+                        Add them in Custom Biomarker so zone detection works
+                        correctly at runtime.
                       </div>
                     )}
                 </>

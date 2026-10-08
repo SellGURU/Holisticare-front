@@ -276,7 +276,10 @@ const sessionLogout = (session: ParsedSession) => {
     (event) => event.eventName === 'session_end',
   );
   if (logoutEvents.length === 0) {
-    return { loggedOutAt: null as string | null, logoutReason: null as string | null };
+    return {
+      loggedOutAt: null as string | null,
+      logoutReason: null as string | null,
+    };
   }
 
   const latest = logoutEvents[logoutEvents.length - 1];
@@ -394,7 +397,8 @@ export const getLatestAuthMoments = (
     lastLogoutReason: lastLogoutVisit?.logoutReason || null,
     lastVisit,
     appearsActive: Boolean(
-      lastLoginAt && (logoutMs == null || (loginMs != null && loginMs > logoutMs)),
+      lastLoginAt &&
+        (logoutMs == null || (loginMs != null && loginMs > logoutMs)),
     ),
   };
 };

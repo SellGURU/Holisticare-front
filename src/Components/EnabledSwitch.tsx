@@ -19,9 +19,7 @@ const EnabledSwitch = ({
       role="switch"
       aria-checked={enabled}
       disabled={disabled}
-      title={
-        title || (enabled ? 'Disable for new use' : 'Enable for new use')
-      }
+      title={title || (enabled ? 'Disable for new use' : 'Enable for new use')}
       onClick={(event) => {
         event.stopPropagation();
         if (disabled) return;

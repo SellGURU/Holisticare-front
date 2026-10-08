@@ -33,7 +33,17 @@ export const inferValueKind = (
     return valueKind;
   }
   const typeText = String(valueType || '').toLowerCase();
-  if (['string', 'text', 'qualitative', 'categorical', 'datetime', 'date', 'time'].includes(typeText)) {
+  if (
+    [
+      'string',
+      'text',
+      'qualitative',
+      'categorical',
+      'datetime',
+      'date',
+      'time',
+    ].includes(typeText)
+  ) {
     return 'qualitative';
   }
   if (value != null && !isNumericLike(value)) return 'qualitative';
@@ -458,7 +468,11 @@ export type HistoricalChartAvailability =
   | { canPlot: true }
   | { canPlot: false; reason: string };
 
-const looksLikeTimestamp = (value: unknown, valueType?: string, unit?: string) => {
+const looksLikeTimestamp = (
+  value: unknown,
+  valueType?: string,
+  unit?: string,
+) => {
   const typeText = String(valueType || unit || '').toLowerCase();
   if (['datetime', 'date', 'time', 'timestamp'].includes(typeText)) return true;
   const text = String(value ?? '').toLowerCase();
@@ -466,13 +480,18 @@ const looksLikeTimestamp = (value: unknown, valueType?: string, unit?: string) =
 };
 
 /** Historical trend needs a series. Timestamps and single readings stay as the current value. */
-export const getHistoricalChartAvailability = (active: {
-  values?: unknown[];
-  value_type?: string;
-  value_kind?: string;
-  chart_bounds?: unknown;
-  unit?: string;
-} | null | undefined): HistoricalChartAvailability => {
+export const getHistoricalChartAvailability = (
+  active:
+    | {
+        values?: unknown[];
+        value_type?: string;
+        value_kind?: string;
+        chart_bounds?: unknown;
+        unit?: string;
+      }
+    | null
+    | undefined,
+): HistoricalChartAvailability => {
   const values = Array.isArray(active?.values) ? active.values : [];
   if (!values.length) {
     return {
@@ -487,9 +506,9 @@ export const getHistoricalChartAvailability = (active: {
         'This result is a timestamp, so a trend line is not available. The current reading is shown above.',
     };
   }
-  const bounds = (Array.isArray(active?.chart_bounds)
-    ? active.chart_bounds
-    : []) as ChartBound[];
+  const bounds = (
+    Array.isArray(active?.chart_bounds) ? active.chart_bounds : []
+  ) as ChartBound[];
   const kind = inferValueKind(
     bounds,
     values[0],

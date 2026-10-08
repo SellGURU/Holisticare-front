@@ -206,7 +206,9 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                           <EnabledSwitch
                             enabled={isCatalogEnabled(row.original)}
                             disabled={isDemo}
-                            onChange={(next) => onToggleEnabled(row.original, next)}
+                            onChange={(next) =>
+                              onToggleEnabled(row.original, next)
+                            }
                           />
                           <img
                             onClick={() => handlePreview(row.original)}

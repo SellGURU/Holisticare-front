@@ -71,7 +71,9 @@ export function intelligenceCopySummaryMessage(
     `Copied ${summary.copied} ${formulaLabel} across ${summary.clinics_targeted} ${clinicLabel}.`,
   ];
   if (summary.skipped_existing > 0) {
-    parts.push(`${summary.skipped_existing} already existed and were left unchanged.`);
+    parts.push(
+      `${summary.skipped_existing} already existed and were left unchanged.`,
+    );
   }
   if (summary.skipped_unavailable > 0) {
     parts.push(

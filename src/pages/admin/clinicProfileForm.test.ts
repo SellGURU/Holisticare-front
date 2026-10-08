@@ -33,9 +33,9 @@ describe('clinic profile form helpers', () => {
   });
 
   it('validates logo type and size', () => {
-    expect(
-      validateLogoFile({ name: 'logo.gif', size: 100 } as File),
-    ).toBe('File has an unsupported format.');
+    expect(validateLogoFile({ name: 'logo.gif', size: 100 } as File)).toBe(
+      'File has an unsupported format.',
+    );
     expect(
       validateLogoFile({ name: 'logo.png', size: 5 * 1024 * 1024 } as File),
     ).toBe('File exceeds 4 MB.');
@@ -82,9 +82,12 @@ describe('clinic profile form helpers', () => {
     expect(clinicProfilePreviewSrc(profile, 'data:image/png;base64,abc')).toBe(
       'data:image/png;base64,abc',
     );
-    expect(clinicProfilePreviewSrc({ logo: '', blob_logo_link: 'https://blob/x.png' })).toBe(
-      'https://blob/x.png',
-    );
+    expect(
+      clinicProfilePreviewSrc({
+        logo: '',
+        blob_logo_link: 'https://blob/x.png',
+      }),
+    ).toBe('https://blob/x.png');
   });
 
   it('prefills name and login email from the clinic list when API fields are empty', () => {

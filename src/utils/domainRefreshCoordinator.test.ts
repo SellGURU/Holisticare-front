@@ -21,10 +21,12 @@ describe('domain refresh coordinator', () => {
     expect(plan.queries).toEqual(
       expect.arrayContaining(['outofrefs', 'categories', 'concerningResults']),
     );
-    expect(plan.queries.filter((query) => query === 'categories').length).toBe(1);
-    expect(plan.queries.filter((query) => query === 'clientSummary').length).toBe(
+    expect(plan.queries.filter((query) => query === 'categories').length).toBe(
       1,
     );
+    expect(
+      plan.queries.filter((query) => query === 'clientSummary').length,
+    ).toBe(1);
   });
 
   it('refetches category cards as soon as biomarkers are ready', () => {
@@ -57,14 +59,10 @@ describe('domain refresh coordinator', () => {
   });
 
   it('records revisions only after a successful apply', () => {
-    const next = markRevisionsApplied(
-      {},
-      ['outofrefs', 'categories'],
-      {
-        biomarkers: 'b1',
-        category_insights: 'c1',
-      },
-    );
+    const next = markRevisionsApplied({}, ['outofrefs', 'categories'], {
+      biomarkers: 'b1',
+      category_insights: 'c1',
+    });
     expect(next.biomarkers).toBe('b1');
     expect(next.category_insights).toBe('c1');
     expect(next.client_summary).toBeUndefined();
@@ -75,10 +73,18 @@ describe('domain refresh coordinator', () => {
     const outcomes: OperationOutcomes = {
       biomarkers: { state: 'ready', data_revision: 'b1' },
     };
-    const first = planRefreshForTerminalDomains(['biomarkers'], outcomes, lastApplied);
+    const first = planRefreshForTerminalDomains(
+      ['biomarkers'],
+      outcomes,
+      lastApplied,
+    );
     expect(first.queries).toContain('outofrefs');
     expect(shouldApplyFetchResult(1, 2)).toBe(false);
-    const retry = planRefreshForTerminalDomains(['biomarkers'], outcomes, lastApplied);
+    const retry = planRefreshForTerminalDomains(
+      ['biomarkers'],
+      outcomes,
+      lastApplied,
+    );
     expect(retry.queries).toEqual(first.queries);
   });
 

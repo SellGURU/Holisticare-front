@@ -163,7 +163,14 @@ describe('resolveGlobalStatusPin', () => {
     const pin = resolveGlobalStatusPin(
       ['BorderlineRange'],
       ['209'],
-      [{ low: 'Normal', high: 'Normal', status: 'HealthyRange', label: 'Normal' }],
+      [
+        {
+          low: 'Normal',
+          high: 'Normal',
+          status: 'HealthyRange',
+          label: 'Normal',
+        },
+      ],
       'qualitative',
     );
     expect(pin).not.toBeNull();
@@ -257,12 +264,12 @@ describe('historical chart layout', () => {
   });
 
   it('formats open and closed range labels', () => {
-    expect(formatHistoricalBoundLabel({ low: 40, high: null, status: 'High' })).toBe(
-      '40<',
-    );
-    expect(formatHistoricalBoundLabel({ low: null, high: 16, status: 'Low' })).toBe(
-      '16>',
-    );
+    expect(
+      formatHistoricalBoundLabel({ low: 40, high: null, status: 'High' }),
+    ).toBe('40<');
+    expect(
+      formatHistoricalBoundLabel({ low: null, high: 16, status: 'Low' }),
+    ).toBe('16>');
     expect(
       formatHistoricalBoundLabel({ low: 18, high: 25, status: 'Healthy' }),
     ).toBe('18-25');
@@ -286,7 +293,9 @@ describe('getHistoricalChartAvailability', () => {
     const result = getHistoricalChartAvailability({
       values: ['209 datetime'],
       value_type: 'datetime',
-      chart_bounds: [{ low: null, high: null, status: 'HealthyRange', label: 'Normal' }],
+      chart_bounds: [
+        { low: null, high: null, status: 'HealthyRange', label: 'Normal' },
+      ],
     });
     expect(result.canPlot).toBe(false);
     if (!result.canPlot) {

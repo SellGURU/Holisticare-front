@@ -33,8 +33,8 @@ describe('lab-only category merge', () => {
     };
 
     const merged = applyClientSummaryCategories(prev, incoming);
-    const names = merged.subcategories.map((c: { subcategory: string }) =>
-      c.subcategory,
+    const names = merged.subcategories.map(
+      (c: { subcategory: string }) => c.subcategory,
     );
     expect(names).toContain('Activity');
     expect(names).toContain('Thyroid Function');
@@ -124,9 +124,9 @@ describe('lab-only category merge', () => {
       total_category: 1,
     };
     expect(shouldApplyCategoryResponse(incoming)).toBe(true);
-    expect(applyClientSummaryCategories(null, incoming).subcategories).toHaveLength(
-      1,
-    );
+    expect(
+      applyClientSummaryCategories(null, incoming).subcategories,
+    ).toHaveLength(1);
   });
 
   it('builds client summary cards from the same reference biomarkers as the header', () => {
@@ -334,7 +334,12 @@ describe('filterCategoryCardsToVisibleBiomarkers', () => {
       },
     ];
     const kept = filterCategoryCardsToVisibleBiomarkers(cards, [
-      { subcategory: 'Blood', name: 'Glucose', outofref: false, status: ['HealthyRange'] },
+      {
+        subcategory: 'Blood',
+        name: 'Glucose',
+        outofref: false,
+        status: ['HealthyRange'],
+      },
     ]);
     expect(kept.map((card) => card.subcategory)).toEqual(['Blood']);
     expect(kept[0].num_of_biomarkers).toBe(1);

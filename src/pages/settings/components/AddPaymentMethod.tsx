@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from '@stripe/react-stripe-js';
 import { loadStripe, type Stripe } from '@stripe/stripe-js';
 import { toast } from 'react-toastify';
 import BillingApi from '../../../api/billing';
@@ -149,7 +154,9 @@ const AddPaymentMethod = ({
           />
         </Elements>
       ) : (
-        <div className="text-[12px] text-Text-Secondary">Preparing card form...</div>
+        <div className="text-[12px] text-Text-Secondary">
+          Preparing card form...
+        </div>
       )}
     </div>
   );

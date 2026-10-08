@@ -1,9 +1,6 @@
 import { Check } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  MODEL_CATEGORIES,
-  resolveModelCategory,
-} from './modelCategories';
+import { MODEL_CATEGORIES, resolveModelCategory } from './modelCategories';
 import ParametricDomainsPanel from './ParametricDomainsPanel';
 import RiskDomainsPanel from './RiskDomainsPanel';
 

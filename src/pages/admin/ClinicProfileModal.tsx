@@ -114,13 +114,17 @@ const ClinicProfileModal = ({
   };
 
   const handleSave = async () => {
-    const errors = validateClinicProfileDraft(profile, draft, { ownerEditable });
+    const errors = validateClinicProfileDraft(profile, draft, {
+      ownerEditable,
+    });
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
       return;
     }
 
-    const payload = buildClinicProfilePayload(profile, draft, { ownerEditable });
+    const payload = buildClinicProfilePayload(profile, draft, {
+      ownerEditable,
+    });
     if (Object.keys(payload).length === 0) {
       onClose();
       return;

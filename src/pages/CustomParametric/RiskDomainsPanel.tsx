@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import { BookOpen, Loader2, Network, Plus, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
@@ -32,7 +38,8 @@ const KIND_COPY: Record<
   SCORING: {
     noun: 'score',
     nounTitle: 'Score',
-    empty: 'Create a formula-based health score for one or more catalog biomarkers.',
+    empty:
+      'Create a formula-based health score for one or more catalog biomarkers.',
   },
   AGING: {
     noun: 'age clock',
@@ -79,7 +86,8 @@ export default function RiskDomainsPanel({
   const fetchDomains = useCallback(() => {
     setLoading(true);
     setLoadError(false);
-    intelligenceApi.listDomains(modelKind)
+    intelligenceApi
+      .listDomains(modelKind)
       .then((res) => setRawDomains(Array.isArray(res.data) ? res.data : []))
       .catch(() => {
         setRawDomains([]);
@@ -126,10 +134,11 @@ export default function RiskDomainsPanel({
 
   const handleToggleActive = (domain: RiskDomainViewModel, next: boolean) => {
     setTogglingId(domain.id);
-    intelligenceApi.updateDomain(domain.id, {
-      is_enabled: next,
-      domain_type: modelKind,
-    })
+    intelligenceApi
+      .updateDomain(domain.id, {
+        is_enabled: next,
+        domain_type: modelKind,
+      })
       .then(() => fetchDomains())
       .catch((err) => toast.error(apiErrorMessage(err, 'Update failed')))
       .finally(() => setTogglingId(null));
@@ -138,99 +147,99 @@ export default function RiskDomainsPanel({
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
       <div className="min-w-0 flex-1">
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <h2 className="text-[16px] font-bold text-gray-900">
-            {nounTitle} Domains
-          </h2>
-          {domains.length > 0 ? (
-            <span className="rounded bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-400">
-              {activeCount} active of {domains.length}
-            </span>
-          ) : null}
-        </div>
-        <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-          <div className="relative min-w-0 flex-1 sm:flex-none">
-            <Search className="absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-gray-400" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search domains or biomarkers…"
-              className="h-9 w-full rounded-xl border border-Gray-50 bg-white pl-8 pr-3 text-[12px] text-Text-Primary sm:w-[220px]"
-            />
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
+            <h2 className="text-[16px] font-bold text-gray-900">
+              {nounTitle} Domains
+            </h2>
+            {domains.length > 0 ? (
+              <span className="rounded bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-400">
+                {activeCount} active of {domains.length}
+              </span>
+            ) : null}
           </div>
-          <ButtonPrimary size="small" onClick={openCreate}>
-            <Plus className="size-3.5" />
-            Create {nounTitle} Domain
-          </ButtonPrimary>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-200/80 bg-white py-16 text-[12px] text-gray-500">
-          <Loader2 className="size-4 animate-spin" />
-          Loading {noun} domains…
-        </div>
-      ) : loadError ? (
-        <EmptyPanel
-          title={`Could not load ${noun} domains`}
-          description="Check your connection and try again."
-        />
-      ) : domains.length === 0 ? (
-        <EmptyPanel
-          title={`No ${noun} domains yet`}
-          description={copy.empty}
-          action={
+          <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <div className="relative min-w-0 flex-1 sm:flex-none">
+              <Search className="absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-gray-400" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search domains or biomarkers…"
+                className="h-9 w-full rounded-xl border border-Gray-50 bg-white pl-8 pr-3 text-[12px] text-Text-Primary sm:w-[220px]"
+              />
+            </div>
             <ButtonPrimary size="small" onClick={openCreate}>
               <Plus className="size-3.5" />
               Create {nounTitle} Domain
             </ButtonPrimary>
-          }
-        />
-      ) : filtered.length === 0 ? (
-        <EmptyPanel
-          title={`No matching ${noun} domains`}
-          description="Try a different search term."
-        />
-      ) : (
-        <>
-          <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
-            {filtered.map((domain) => (
-              <RiskDomainCard
-                key={domain.id}
-                domain={domain}
-                onToggleActive={handleToggleActive}
-                onView={setViewDomain}
-                onEdit={openEdit}
-                onDuplicate={openDuplicate}
-                onDelete={setDeleteDomain}
-                toggleDisabled={togglingId === domain.id}
-              />
-            ))}
           </div>
+        </div>
 
-          <div className="mt-4 flex flex-col gap-2 px-1 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-[11px] text-gray-400">
-              Showing {filtered.length} of {domains.length} {noun} domains
-            </p>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-gray-400">
-              <span className="flex items-center gap-1.5">
-                <span className="size-2 rounded-full bg-Primary-DeepTeal" />{' '}
-                Active: {activeCount}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="size-2 rounded-full bg-gray-300" /> Inactive:{' '}
-                {domains.length - activeCount}
-              </span>
-              <span className="h-3 w-px bg-gray-200" />
-              <span className="flex items-center gap-1.5">
-                <span className="size-2 rounded-full bg-gray-400" /> Pre-defined:{' '}
-                {domains.filter((d) => d.isSystemDefault).length}
-              </span>
-            </div>
+        {loading ? (
+          <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-200/80 bg-white py-16 text-[12px] text-gray-500">
+            <Loader2 className="size-4 animate-spin" />
+            Loading {noun} domains…
           </div>
-        </>
-      )}
+        ) : loadError ? (
+          <EmptyPanel
+            title={`Could not load ${noun} domains`}
+            description="Check your connection and try again."
+          />
+        ) : domains.length === 0 ? (
+          <EmptyPanel
+            title={`No ${noun} domains yet`}
+            description={copy.empty}
+            action={
+              <ButtonPrimary size="small" onClick={openCreate}>
+                <Plus className="size-3.5" />
+                Create {nounTitle} Domain
+              </ButtonPrimary>
+            }
+          />
+        ) : filtered.length === 0 ? (
+          <EmptyPanel
+            title={`No matching ${noun} domains`}
+            description="Try a different search term."
+          />
+        ) : (
+          <>
+            <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
+              {filtered.map((domain) => (
+                <RiskDomainCard
+                  key={domain.id}
+                  domain={domain}
+                  onToggleActive={handleToggleActive}
+                  onView={setViewDomain}
+                  onEdit={openEdit}
+                  onDuplicate={openDuplicate}
+                  onDelete={setDeleteDomain}
+                  toggleDisabled={togglingId === domain.id}
+                />
+              ))}
+            </div>
+
+            <div className="mt-4 flex flex-col gap-2 px-1 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-[11px] text-gray-400">
+                Showing {filtered.length} of {domains.length} {noun} domains
+              </p>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-gray-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="size-2 rounded-full bg-Primary-DeepTeal" />{' '}
+                  Active: {activeCount}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="size-2 rounded-full bg-gray-300" /> Inactive:{' '}
+                  {domains.length - activeCount}
+                </span>
+                <span className="h-3 w-px bg-gray-200" />
+                <span className="flex items-center gap-1.5">
+                  <span className="size-2 rounded-full bg-gray-400" />{' '}
+                  Pre-defined: {domains.filter((d) => d.isSystemDefault).length}
+                </span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       <aside className="w-full shrink-0 lg:sticky lg:top-4 lg:w-64">

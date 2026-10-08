@@ -49,10 +49,12 @@ describe('processingCompletion contract', () => {
     expect(uniqueQueriesForDomains(became)).toEqual(
       expect.arrayContaining(['outofrefs', 'categories']),
     );
-    expect(allOutcomesTerminal({
-      biomarkers: { state: 'ready' },
-      category_insights: { state: 'pending' },
-    })).toBe(false);
+    expect(
+      allOutcomesTerminal({
+        biomarkers: { state: 'ready' },
+        category_insights: { state: 'pending' },
+      }),
+    ).toBe(false);
   });
 
   it('allows category ready while optional narrative is still pending', () => {
@@ -118,7 +120,9 @@ describe('processingCompletion contract', () => {
     };
     const became = domainsThatBecameTerminal(previous, next);
     const queries = uniqueQueriesForDomains(became);
-    expect(became).toEqual(expect.arrayContaining(['biomarkers', 'category_insights']));
+    expect(became).toEqual(
+      expect.arrayContaining(['biomarkers', 'category_insights']),
+    );
     expect(queries).toEqual(
       expect.arrayContaining(['outofrefs', 'categories', 'concerningResults']),
     );

@@ -8,7 +8,14 @@ import type {
   ChatReplyPreview,
 } from './chatTypes';
 
-export const CHAT_REACTION_EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'] as const;
+export const CHAT_REACTION_EMOJIS = [
+  '👍',
+  '❤️',
+  '😂',
+  '😮',
+  '😢',
+  '🙏',
+] as const;
 
 export const CHAT_PAGE_SIZE = 40;
 export const CHAT_LIVE_POLL_MS = 5000;
@@ -42,9 +49,12 @@ export function sortMessagesChronologically(
   items: ChatMessage[],
 ): ChatMessage[] {
   return [...items].sort((left, right) => {
-    const timeDelta = Number(left.timestamp || 0) - Number(right.timestamp || 0);
+    const timeDelta =
+      Number(left.timestamp || 0) - Number(right.timestamp || 0);
     if (timeDelta !== 0) return timeDelta;
-    return Number(left.conversation_id || 0) - Number(right.conversation_id || 0);
+    return (
+      Number(left.conversation_id || 0) - Number(right.conversation_id || 0)
+    );
   });
 }
 
@@ -122,7 +132,9 @@ function asPresenceParty(value: unknown): ChatPresence['you'] | null {
   };
 }
 
-export function presenceFromHistoryResponse(data: unknown): ChatPresence | null {
+export function presenceFromHistoryResponse(
+  data: unknown,
+): ChatPresence | null {
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     return null;
   }
@@ -142,7 +154,11 @@ export function normalizeHistoryResponse(data: unknown): ChatHistoryPage {
       presence: null,
     };
   }
-  if (data && typeof data === 'object' && Array.isArray((data as ChatHistoryPage).messages)) {
+  if (
+    data &&
+    typeof data === 'object' &&
+    Array.isArray((data as ChatHistoryPage).messages)
+  ) {
     const page = data as ChatHistoryPage;
     return {
       messages: page.messages,

@@ -33,7 +33,12 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
     const newOptions = [...options];
     newOptions[index] = value;
     setOptions(newOptions);
-    if (onScoresChange && oldLabel && oldLabel !== value && oldLabel in scores) {
+    if (
+      onScoresChange &&
+      oldLabel &&
+      oldLabel !== value &&
+      oldLabel in scores
+    ) {
       const next = { ...scores };
       if (value.trim()) {
         next[value] = next[oldLabel];

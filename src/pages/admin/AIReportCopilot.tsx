@@ -100,12 +100,8 @@ const toneLead: Record<ReportTone, string> = {
 
 const AIReportCopilot = () => {
   const navigate = useNavigate();
-  const {
-    clinics,
-    selectedClinicEmail,
-    startDate,
-    endDate,
-  } = useAdminContext();
+  const { clinics, selectedClinicEmail, startDate, endDate } =
+    useAdminContext();
   const [loading, setLoading] = useState(false);
   const [savedReports, setSavedReports] = useState<ClinicReport[]>([]);
   const [generatedReport, setGeneratedReport] = useState('');

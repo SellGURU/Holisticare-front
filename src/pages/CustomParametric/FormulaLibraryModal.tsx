@@ -11,10 +11,7 @@ import {
   type FormulaLibraryTemplate,
   type LibraryDomainType,
 } from './formulaLibrary';
-import {
-  HEALTH_RISK_DEFAULT_ICON,
-  HEALTH_RISK_ICONS,
-} from './healthRiskIcons';
+import { HEALTH_RISK_DEFAULT_ICON, HEALTH_RISK_ICONS } from './healthRiskIcons';
 import {
   v2FieldClass,
   v2OutlineBtnClass,
@@ -48,7 +45,8 @@ export default function FormulaLibraryModal({
     setTab(initialKind || 'RISK');
     setSearch('');
     setLoading(true);
-    intelligenceApi.getFormulaLibrary()
+    intelligenceApi
+      .getFormulaLibrary()
       .then((res) => {
         const rows = res.data?.templates;
         setTemplates(Array.isArray(rows) ? rows : []);
@@ -84,7 +82,8 @@ export default function FormulaLibraryModal({
   const importTemplate = (item: FormulaLibraryTemplate) => {
     if (!item.catalog_ok || item.already_imported) return;
     setImportingId(item.id);
-    intelligenceApi.importFormulaLibrary(item.id)
+    intelligenceApi
+      .importFormulaLibrary(item.id)
       .then((res) => {
         const imported = Number(res.data?.imported || 0);
         if (imported > 0) {

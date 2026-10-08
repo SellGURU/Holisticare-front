@@ -41,9 +41,7 @@ const maybeExpirePortalSession = (
     return;
   }
   const sentToken = extractBearerToken(config?.headers);
-  if (
-    isStalePortalAuthFailure(sentToken, getTokenFromLocalStorage())
-  ) {
+  if (isStalePortalAuthFailure(sentToken, getTokenFromLocalStorage())) {
     return;
   }
   if (status === 401 || tokenError) {
@@ -262,10 +260,7 @@ axios.interceptors.response.use(
       error.response?.data?.detail ?? backendMessage,
     );
 
-    if (
-      !ignorePortalAuth &&
-      (error.response?.status === 401 || tokenError)
-    ) {
+    if (!ignorePortalAuth && (error.response?.status === 401 || tokenError)) {
       maybeExpirePortalSession(
         config,
         tokenError,

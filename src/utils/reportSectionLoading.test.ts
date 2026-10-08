@@ -72,7 +72,10 @@ describe('report section loading contract', () => {
   });
 
   it('does not skeleton existing Need Focus, Detailed Analysis, or Holistic Plan during processing', () => {
-    const processingRefresh = { isInitialRequest: false, hasDisplayedData: true };
+    const processingRefresh = {
+      isInitialRequest: false,
+      hasDisplayedData: true,
+    };
     expect(shouldShowSectionSkeleton(processingRefresh)).toBe(false);
     expect(
       shouldShowSectionSkeleton({

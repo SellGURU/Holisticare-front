@@ -18,9 +18,7 @@ import {
 } from '../../utils/htmlReportDownload';
 
 const prepareReportHtmlForDisplay = (raw: string, publicView: boolean) => {
-  const cleaned = wrapHeroTitleWithBrand(
-    sanitizeWellnessReportDisclaimer(raw),
-  );
+  const cleaned = wrapHeroTitleWithBrand(sanitizeWellnessReportDisclaimer(raw));
   return publicView ? rewriteHolisticPlanResourceLinks(cleaned) : cleaned;
 };
 

@@ -59,7 +59,12 @@ export const UNRESOLVED_DOMAIN_STATES = new Set<string>([
 
 /** Declarative domain → report queries. No biomarker names. */
 export const DOMAIN_QUERY_MAP: Record<DomainName, ReportQueryName[]> = {
-  biomarkers: ['outofrefs', 'detailedAnalysis', 'concerningResults', 'categories'],
+  biomarkers: [
+    'outofrefs',
+    'detailedAnalysis',
+    'concerningResults',
+    'categories',
+  ],
   category_insights: ['categories'],
   client_summary: ['clientSummary'],
   per_biomarker_insights: ['perBiomarkerNarratives'],
@@ -86,7 +91,9 @@ export function queriesForDomain(domain: string): ReportQueryName[] {
 }
 
 /** Shared query list for one poll wave so sibling domain terminals do not cancel each other. */
-export function uniqueQueriesForDomains(domains: DomainName[]): ReportQueryName[] {
+export function uniqueQueriesForDomains(
+  domains: DomainName[],
+): ReportQueryName[] {
   const seen = new Set<ReportQueryName>();
   const queries: ReportQueryName[] = [];
   for (const domain of domains) {

@@ -28,9 +28,7 @@ export const normalizeHolisticPlanState = (state: unknown): string => {
 };
 
 /** Last generated plan in an ASC-by-date list (skips Draft and Upcoming). */
-export const pickLatestGeneratedHolisticPlan = <
-  T extends { state?: unknown },
->(
+export const pickLatestGeneratedHolisticPlan = <T extends { state?: unknown }>(
   plans: T[] | null | undefined,
 ): T | null => {
   if (!Array.isArray(plans) || plans.length === 0) return null;

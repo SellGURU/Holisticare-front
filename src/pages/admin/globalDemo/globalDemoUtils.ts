@@ -1,8 +1,14 @@
-import type { GlobalDemoCandidate, GlobalDemoClientItem } from '../../../types/admin';
+import type {
+  GlobalDemoCandidate,
+  GlobalDemoClientItem,
+} from '../../../types/admin';
 
 export const DEMO_TEMPLATE_MANAGE_PERMISSION = 'demo_template_manage';
 
-export function maskIdentifier(value: string | number | null | undefined, visible = 4): string {
+export function maskIdentifier(
+  value: string | number | null | undefined,
+  visible = 4,
+): string {
   const text = String(value ?? '').trim();
   if (!text) return '••••';
   if (text.length <= visible) return '•'.repeat(Math.max(text.length, 2));
@@ -14,9 +20,11 @@ export function hasDemoTemplateManage(
 ): boolean {
   const value = permissions?.[DEMO_TEMPLATE_MANAGE_PERMISSION];
   if (value === true || value === 1) return true;
-  return String(value ?? '')
-    .trim()
-    .toLowerCase() === 'true';
+  return (
+    String(value ?? '')
+      .trim()
+      .toLowerCase() === 'true'
+  );
 }
 
 export function isCandidateSelectable(candidate: GlobalDemoCandidate): boolean {

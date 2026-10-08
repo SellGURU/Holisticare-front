@@ -18,11 +18,7 @@ class BillingApi extends Api {
   }
 
   static checkout(price_id: string) {
-    return this.post(
-      '/billing/checkout',
-      { price_id },
-      { noPending: true },
-    );
+    return this.post('/billing/checkout', { price_id }, { noPending: true });
   }
 
   static portal() {

@@ -90,9 +90,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
     )
       .then((data) => {
         setAiMessages(
-          sortMessagesChronologically(
-            normalizeHistoryResponse(data).messages,
-          ),
+          sortMessagesChronologically(normalizeHistoryResponse(data).messages),
         );
       })
       .catch(() => {})
@@ -223,9 +221,9 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setisSearchOpen(false);
     },
   });
-  const [searchedMessages, setSearchedMessages] = useState<ChatMessage[] | null>(
-    null,
-  );
+  const [searchedMessages, setSearchedMessages] = useState<
+    ChatMessage[] | null
+  >(null);
   const [searchedAiMessages, setSearchedAiMessages] = useState<
     ChatMessage[] | null
   >(null);
@@ -283,7 +281,11 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   return (
     <>
       <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
-        {(aiMode ? isLoading : coachThread.isLoading && coachThread.messageData.length < 1) ? (
+        {(
+          aiMode
+            ? isLoading
+            : coachThread.isLoading && coachThread.messageData.length < 1
+        ) ? (
           <>
             <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
               <Circleloader />
@@ -402,7 +404,9 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
             <div
               id="userChat"
               ref={!aiMode ? coachThread.listRef : undefined}
-              onScroll={!aiMode ? () => void coachThread.handleScroll() : undefined}
+              onScroll={
+                !aiMode ? () => void coachThread.handleScroll() : undefined
+              }
               className="flex h-full flex-col overflow-auto p-4"
             >
               {!aiMode && coachGroups.length > 0 && (
@@ -427,7 +431,8 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                           }}
                           layout="wide"
                           highlighted={
-                            coachThread.highlightedId === message.conversation_id
+                            coachThread.highlightedId ===
+                            message.conversation_id
                           }
                           onReply={coachThread.setReplyingTo}
                           onDelete={coachThread.handleDelete}

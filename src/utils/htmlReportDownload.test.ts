@@ -16,9 +16,9 @@ describe('shouldShowHtmlReportDownload', () => {
 
 describe('isDownloadablePdfBlob', () => {
   it('accepts application/pdf', () => {
-    expect(isDownloadablePdfBlob(new Blob(['%PDF'], { type: 'application/pdf' }))).toBe(
-      true,
-    );
+    expect(
+      isDownloadablePdfBlob(new Blob(['%PDF'], { type: 'application/pdf' })),
+    ).toBe(true);
   });
 
   it('rejects json error payloads', () => {
@@ -40,9 +40,12 @@ describe('pdfBlobFromResponseData', () => {
   });
 
   it('raises the backend detail from a JSON error blob', async () => {
-    const input = new Blob([JSON.stringify({ detail: 'No PDF report found for this patient.' })], {
-      type: 'application/json',
-    });
+    const input = new Blob(
+      [JSON.stringify({ detail: 'No PDF report found for this patient.' })],
+      {
+        type: 'application/json',
+      },
+    );
     await expect(pdfBlobFromResponseData(input)).rejects.toThrow(
       'No PDF report found for this patient.',
     );

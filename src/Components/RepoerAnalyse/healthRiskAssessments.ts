@@ -50,8 +50,9 @@ export function resolveReportActiveTypes(
   snapshotTypes: string[] | null,
   fallbackTypes: string[] | null = null,
 ): string[] {
-  const normalize = (items: string[]) =>
-    [...new Set(items.map((item) => item.toUpperCase()).filter(Boolean))];
+  const normalize = (items: string[]) => [
+    ...new Set(items.map((item) => item.toUpperCase()).filter(Boolean)),
+  ];
   if (snapshotTypes != null) return normalize(snapshotTypes);
   if (fallbackTypes != null) return normalize(fallbackTypes);
   return [];
@@ -94,9 +95,7 @@ export function presentScores(
 ): HealthRiskAssessment[] {
   return assessments.filter(
     (item) =>
-      isCalculatedRisk(item) &&
-      isScoreModel(item) &&
-      Number(item.score) > 0,
+      isCalculatedRisk(item) && isScoreModel(item) && Number(item.score) > 0,
   );
 }
 
@@ -108,8 +107,7 @@ export function presentAges(
   );
 }
 
-export const FORMULA_ISSUE_MARK =
-  'Formula screening, not a diagnosis.';
+export const FORMULA_ISSUE_MARK = 'Formula screening, not a diagnosis.';
 
 export function scorePercentValue(
   score: number | null | undefined,
@@ -121,9 +119,7 @@ export function scorePercentValue(
 export function isElevatedRisk(item: HealthRiskAssessment): boolean {
   if (!isCalculatedRisk(item)) return false;
   const severity = String(item.severity || '').toLowerCase();
-  if (
-    /high|moderat|severe|critical|urgent/.test(severity)
-  ) {
+  if (/high|moderat|severe|critical|urgent/.test(severity)) {
     return true;
   }
   if (/low|optimal|none|minimal|normal/.test(severity)) {
@@ -164,14 +160,17 @@ export function planAffectingRisks(
 }
 
 export function formulaIssueBody(item: HealthRiskAssessment): string {
-  const name = String(item.display_name || item.risk_key || 'Clinic risk').trim();
+  const name = String(
+    item.display_name || item.risk_key || 'Clinic risk',
+  ).trim();
   const severity = String(item.severity || 'Calculated').trim();
   if (isAgeModel(item)) {
     const years = item.score;
     const ageText =
       years == null || Number.isNaN(Number(years))
         ? '—'
-        : Number.isInteger(years) || Math.abs(Number(years) - Math.round(Number(years))) < 0.05
+        : Number.isInteger(years) ||
+            Math.abs(Number(years) - Math.round(Number(years))) < 0.05
           ? String(Math.round(Number(years)))
           : Number(years).toFixed(2);
     return `${name} — ${severity} (age ${ageText}). ${FORMULA_ISSUE_MARK}`;
@@ -180,7 +179,8 @@ export function formulaIssueBody(item: HealthRiskAssessment): string {
   const scoreText =
     percent == null
       ? '—'
-      : Number.isInteger(percent) || Math.abs(percent - Math.round(percent)) < 0.05
+      : Number.isInteger(percent) ||
+          Math.abs(percent - Math.round(percent)) < 0.05
         ? String(Math.round(percent))
         : percent.toFixed(2);
   return `${name} — ${severity} (score ${scoreText}). ${FORMULA_ISSUE_MARK}`;
@@ -194,18 +194,26 @@ export function isFormulaRiskIssue(text: string | undefined): boolean {
 
 function riskMatchTokens(item: HealthRiskAssessment): string[] {
   const blob = `${item.display_name || ''} ${item.risk_key || ''}`;
-  return blob
-    .toLowerCase()
-    .replace(/_/g, ' ')
-    .match(/[a-z0-9]+/g)
-    ?.filter(
-      (word) =>
-        word.length >= 4 &&
-        !/\d/.test(word) &&
-        !['risk', 'assessment', 'score', 'health', 'the', 'of', 'and'].includes(
-          word,
-        ),
-    ) ?? [];
+  return (
+    blob
+      .toLowerCase()
+      .replace(/_/g, ' ')
+      .match(/[a-z0-9]+/g)
+      ?.filter(
+        (word) =>
+          word.length >= 4 &&
+          !/\d/.test(word) &&
+          ![
+            'risk',
+            'assessment',
+            'score',
+            'health',
+            'the',
+            'of',
+            'and',
+          ].includes(word),
+      ) ?? []
+  );
 }
 
 function issueMatchesDefinedRisk(text: string, tokens: string[]): boolean {
@@ -241,7 +249,9 @@ export function mergeFormulaRisksIntoType2(
   const keyAreas = type2['Key areas to address'] || {};
   for (const cat of categories) {
     for (const item of keyAreas[cat] || []) {
-      const raw = String(item).replace(/^Issue\s+\d+:\s*/i, '').trim();
+      const raw = String(item)
+        .replace(/^Issue\s+\d+:\s*/i, '')
+        .trim();
       if (!raw || isFormulaRiskIssue(raw)) continue;
       if (tokenSets.some((tokens) => issueMatchesDefinedRisk(raw, tokens))) {
         continue;

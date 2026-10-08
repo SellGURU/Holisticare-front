@@ -41,7 +41,8 @@ export default function ParametricDomainsPanel({
 
   const fetchDomains = useCallback(() => {
     setLoading(true);
-    intelligenceApi.listDomains('PARAMETRIC_BIOMARKER')
+    intelligenceApi
+      .listDomains('PARAMETRIC_BIOMARKER')
       .then((res) => setRawDomains(Array.isArray(res.data) ? res.data : []))
       .catch(() => setRawDomains([]))
       .finally(() => setLoading(false));
@@ -136,12 +137,13 @@ export default function ParametricDomainsPanel({
                 hideDuplicate
                 onToggleActive={(item, next) => {
                   setTogglingId(item.id);
-                  intelligenceApi.updateDomain(item.id, {
-                    is_enabled: next,
-                    catalog_biomarker_uid:
-                      item.catalogBiomarkerUid || undefined,
-                    domain_type: 'PARAMETRIC_BIOMARKER',
-                  })
+                  intelligenceApi
+                    .updateDomain(item.id, {
+                      is_enabled: next,
+                      catalog_biomarker_uid:
+                        item.catalogBiomarkerUid || undefined,
+                      domain_type: 'PARAMETRIC_BIOMARKER',
+                    })
                     .then(() => fetchDomains())
                     .catch((err) =>
                       toast.error(

@@ -562,9 +562,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                     <div className="flex flex-col justify-center items-center">
                       <img src="/icons/EmptyState-biomarkerbox.svg" alt="" />
                       <div className="TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary max-w-[280px]">
-                        No biomarkers are visible in this category.
-                        Disabled catalog items are hidden here, and leftover
-                        notes are not shown.
+                        No biomarkers are visible in this category. Disabled
+                        catalog items are hidden here, and leftover notes are
+                        not shown.
                       </div>
                     </div>
                   </div>

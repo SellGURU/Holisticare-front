@@ -212,9 +212,9 @@ describe('findOrphanMappingsForCard', () => {
         variations: ['Lymphocytes (Absolute)'],
       },
     ];
-    expect(findOrphanMappingsForCard(mappings, catalog[0], catalog)).toHaveLength(
-      1,
-    );
+    expect(
+      findOrphanMappingsForCard(mappings, catalog[0], catalog),
+    ).toHaveLength(1);
   });
 
   it('ignores archived mappings', () => {
@@ -236,9 +236,9 @@ describe('findOrphanMappingsForCard', () => {
         archived: true,
       },
     ];
-    expect(findOrphanMappingsForCard(mappings, catalog[0], catalog)).toHaveLength(
-      0,
-    );
+    expect(
+      findOrphanMappingsForCard(mappings, catalog[0], catalog),
+    ).toHaveLength(0);
   });
 });
 

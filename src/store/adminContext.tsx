@@ -122,10 +122,7 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
       const normalizedClinics = nextClinics.map(
         (clinic: Record<string, unknown>) => {
           const email = String(
-            clinic.clinic_email ||
-              clinic.primary_email ||
-              clinic.email ||
-              '',
+            clinic.clinic_email || clinic.primary_email || clinic.email || '',
           ).trim();
           const name = String(
             clinic.clinic_name || clinic.name || email || '',

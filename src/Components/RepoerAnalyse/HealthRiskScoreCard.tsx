@@ -13,7 +13,11 @@ function severityTone(
 ) {
   const key = String(severity || '').toLowerCase();
   if (kind === 'age') {
-    if (key.includes('accelerat') || key.includes('poor') || key.includes('high')) {
+    if (
+      key.includes('accelerat') ||
+      key.includes('poor') ||
+      key.includes('high')
+    ) {
       return {
         ring: '#EF4444',
         chip: 'bg-red-50 text-red-700',
@@ -41,8 +45,19 @@ function severityTone(
     };
   }
   const highIsBad = kind === 'risk';
-  if (key.includes('high') || key.includes('critical') || key.includes('severe') || key.includes('poor')) {
-    if (!highIsBad && (key.includes('high') || key.includes('optimal') || key.includes('excellent') || key.includes('good'))) {
+  if (
+    key.includes('high') ||
+    key.includes('critical') ||
+    key.includes('severe') ||
+    key.includes('poor')
+  ) {
+    if (
+      !highIsBad &&
+      (key.includes('high') ||
+        key.includes('optimal') ||
+        key.includes('excellent') ||
+        key.includes('good'))
+    ) {
       return {
         ring: '#10B981',
         chip: 'bg-emerald-50 text-emerald-800',
@@ -55,7 +70,11 @@ function severityTone(
       wash: 'from-red-50/80 to-white',
     };
   }
-  if (key.includes('moderat') || key.includes('medium') || key.includes('low')) {
+  if (
+    key.includes('moderat') ||
+    key.includes('medium') ||
+    key.includes('low')
+  ) {
     if (!highIsBad && key.includes('low')) {
       return {
         ring: '#F59E0B',
@@ -76,7 +95,11 @@ function severityTone(
       wash: 'from-amber-50/80 to-white',
     };
   }
-  if (key.includes('optimal') || key.includes('good') || key.includes('excellent')) {
+  if (
+    key.includes('optimal') ||
+    key.includes('good') ||
+    key.includes('excellent')
+  ) {
     return {
       ring: '#10B981',
       chip: 'bg-emerald-50 text-emerald-800',
@@ -186,7 +209,8 @@ export default function HealthRiskScoreCard({
   kind?: 'risk' | 'score' | 'age';
 }) {
   const tone = severityTone(item.severity, kind);
-  const percent = kind === 'age' ? ageRingPercent(item) : scoreBarPercent(item.score);
+  const percent =
+    kind === 'age' ? ageRingPercent(item) : scoreBarPercent(item.score);
   const parts = kind === 'age' ? [] : riskContributions(item);
   const evidence = item.evidence || [];
   const chrono = evidence.find((row) =>
@@ -255,7 +279,9 @@ export default function HealthRiskScoreCard({
         {evidence.slice(0, 6).map((ev, index) => (
           <li key={`${ev.input}-${index}`}>
             {ev.input}
-            {ev.value != null ? `: ${ev.value}${ev.unit ? ` ${ev.unit}` : ''}` : ''}
+            {ev.value != null
+              ? `: ${ev.value}${ev.unit ? ` ${ev.unit}` : ''}`
+              : ''}
           </li>
         ))}
       </ul>
@@ -287,7 +313,9 @@ export default function HealthRiskScoreCard({
             ref={frontRef}
             className={`${compact ? 'p-2.5' : 'p-3'} [backface-visibility:hidden]`}
           >
-            <div className={`flex items-center ${compact ? 'flex-col text-center gap-2' : 'gap-3'}`}>
+            <div
+              className={`flex items-center ${compact ? 'flex-col text-center gap-2' : 'gap-3'}`}
+            >
               <div className="relative shrink-0">
                 <Donut
                   percent={percent}
@@ -299,7 +327,9 @@ export default function HealthRiskScoreCard({
                     {scoreLabel}
                   </span>
                   <span className="mt-0.5 text-[8px] tracking-wide text-Text-Secondary uppercase">
-                    {kind === 'age' ? 'years' : `% ${kind === 'score' ? 'score' : 'risk'}`}
+                    {kind === 'age'
+                      ? 'years'
+                      : `% ${kind === 'score' ? 'score' : 'risk'}`}
                   </span>
                 </div>
               </div>
@@ -335,7 +365,11 @@ export default function HealthRiskScoreCard({
                     className="mt-2 inline-flex items-center gap-1 text-[10px] font-medium text-Primary-DeepTeal"
                   >
                     Show details
-                    <img src="/icons/arrow-down-new.svg" alt="" className="size-3" />
+                    <img
+                      src="/icons/arrow-down-new.svg"
+                      alt=""
+                      className="size-3"
+                    />
                   </button>
                 ) : null}
               </div>
