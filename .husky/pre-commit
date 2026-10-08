@@ -1,4 +1,12 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# Cursor or another Git GUI may keep an older PATH after Node is installed.
+if ! command -v npm >/dev/null 2>&1; then
+  node_dir="$(cygpath -u 'C:\Program Files\nodejs' 2>/dev/null || printf '%s' '/c/Program Files/nodejs')"
+  if [ -f "$node_dir/npm.cmd" ]; then
+    export PATH="$node_dir:$PATH"
+  fi
+fi
+
 npm test

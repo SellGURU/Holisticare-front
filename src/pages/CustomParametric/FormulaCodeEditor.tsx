@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
+  BookOpen,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+} from 'lucide-react';
+import {
   filterInsertable,
   insertBiomarkerToken,
   shouldOfferBiomarkerSuggestions,
@@ -420,6 +427,279 @@ export default function FormulaCodeEditor({
             )
             .join(', ')}
         </p>
+      ) : null}
+
+      <FormulaDocumentation
+        catalog={catalog}
+        profileItems={profileItems}
+        questionnaireItems={questionnaireItems}
+        multiSourceEnabled={formulaOptions?.multiSourceEnabled !== false}
+      />
+    </div>
+  );
+}
+
+function FormulaDocumentation({
+  catalog,
+  profileItems,
+  questionnaireItems,
+  multiSourceEnabled,
+}: {
+  catalog: Array<{ name: string; unit?: string }>;
+  profileItems: FormulaInsertableItem[];
+  questionnaireItems: FormulaInsertableItem[];
+  multiSourceEnabled: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>(
+    'idle',
+  );
+
+  const documentationText = useMemo(() => {
+    const biomarkers = catalog.length
+      ? catalog
+          .map(
+            (item) =>
+              `- Biomarker.${item.name.replace(/\s/g, '_')}${item.unit ? ` (${item.unit})` : ''}`,
+          )
+          .join('\n')
+      : '- No biomarkers are currently available.';
+    const profiles = profileItems.length
+      ? profileItems
+          .map(
+            (item) =>
+              `- Profile.${item.token}${item.unit ? ` (${item.unit})` : ''}`,
+          )
+          .join('\n')
+      : '- Profile.age';
+    const questionnaires =
+      multiSourceEnabled && questionnaireItems.length
+        ? questionnaireItems
+            .map(
+              (item) =>
+                `- Questionnaire.${item.token} — ${item.label}${item.valueType ? ` [${item.valueType}]` : ''}`,
+            )
+            .join('\n')
+        : '- No questionnaire fields are currently available.';
+
+    return `HOLISTICARE FORMULA DOCUMENTATION
+
+SYNTAX
+- Write one Python-style expression; do not use imports, assignments, loops, classes, or custom functions.
+- Use exact field tokens from the lists below: Biomarker.<token>, Profile.<token>, or Questionnaire.<token>.
+- Supported arithmetic: +, -, *, /, ** and parentheses.
+- Supported comparisons and logic: <, <=, >, >=, ==, !=, and, or, not.
+- Conditional expression: value_if_true if condition else value_if_false.
+- Literals: numbers, quoted strings, True, False, None.
+
+SUPPORTED FUNCTIONS
+- sum(...), avg(...), min(...), max(...)
+- round(value, digits), abs(value), sqrt(value)
+- ln(value), log(value), exp(value)
+- if_(condition, value_if_true, value_if_false)
+- status_weight(value, optimal_threshold, high_risk_threshold)
+- phenoage(albumin, creatinine, glucose, crp, lymphocytes, mcv, rdw, alp, wbc, age)
+
+IMPORTANT RULES
+- The final result must be one finite numeric value.
+- Copy field tokens exactly; never invent or rename them.
+- Keep units consistent and convert them inside the expression when required.
+- Protect division with max(denominator, 0.001) when the denominator may be zero.
+- Questionnaire answers must be numeric, scored, or explicitly compared to a quoted value.
+- Risk formulas normally return 0–100 with higher = worse.
+- Health scores normally return 0–100 with higher = better.
+- Parametric biomarkers return a value in the biomarker's declared unit.
+- Use round(expression, 2) for a two-decimal result.
+
+COMPLEX EXAMPLES
+
+1. Weighted multi-biomarker risk:
+round((
+  status_weight(Biomarker.C_Reactive_Protein_high_sensitivity, 1.0, 3.0) * 0.45 +
+  status_weight(Biomarker.Homocysteine, 8, 15) * 0.20 +
+  status_weight(Biomarker.Fibrinogen, 250, 400) * 0.15 +
+  status_weight(Biomarker.Erythrocyte_Sedimentation_Rate, 8, 30) * 0.10 +
+  status_weight(Biomarker.White_Blood_Cells, 6000, 11000) * 0.10
+) * 100, 2)
+
+2. Health score where higher is better:
+round((1 - (
+  status_weight(Biomarker.Hb_A1c, 5.2, 6.5) * 0.6 +
+  status_weight(Biomarker.Glucose, 90, 126) * 0.4
+)) * 100, 2)
+
+3. Biomarker risk plus questionnaire modifier, capped at 100:
+min(
+  status_weight(Biomarker.Homocysteine, 8, 15) * 85 +
+  if_(Questionnaire.smoking_status == "Current", 15, 0),
+  100
+)
+
+4. Age-dependent thresholds:
+round(status_weight(
+  Biomarker.Example,
+  10 if Profile.age < 50 else 12,
+  20 if Profile.age < 50 else 24
+) * 100, 2)
+
+5. Safe parametric ratio:
+round(Biomarker.Weight / max((Biomarker.Height / 100) ** 2, 0.0001), 2)
+
+6. PhenoAge with required unit conversions:
+round(phenoage(
+  Biomarker.Albumin * 0.0665,
+  Biomarker.Creatinine,
+  Biomarker.Glucose / 18,
+  max(Biomarker.C_Reactive_Protein_high_sensitivity / 10, 0.001),
+  Biomarker.Lymphocytes,
+  Biomarker.Mean_Corpuscular_Volume,
+  Biomarker.Red_Cell_Distribution_Width,
+  Biomarker.Alkaline_Phosphatase,
+  Biomarker.White_Blood_Cells / 1000,
+  Profile.age
+), 2)
+
+AVAILABLE BIOMARKERS
+${biomarkers}
+
+AVAILABLE PROFILE FIELDS
+${profiles}
+
+AVAILABLE QUESTIONNAIRE FIELDS
+${questionnaires}
+
+FORMULA REQUIREMENT
+[Describe the desired calculation, output range, thresholds, weights, and units here.]`;
+  }, [
+    catalog,
+    multiSourceEnabled,
+    profileItems,
+    questionnaireItems,
+  ]);
+
+  const copyDocumentation = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(documentationText);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = documentationText;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        const copied = document.execCommand('copy');
+        textarea.remove();
+        if (!copied) throw new Error('Copy command failed');
+      }
+      setCopyState('copied');
+      window.setTimeout(() => setCopyState('idle'), 2000);
+    } catch {
+      setCopyState('failed');
+    }
+  };
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50/60">
+      <div className="flex items-center justify-between gap-2 px-3 py-2">
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          className="flex min-w-0 items-center gap-2 text-left text-[11px] font-semibold text-gray-700 hover:text-gray-950"
+        >
+          <BookOpen className="size-3.5 shrink-0 text-[#059669]" />
+          <span>Formula documentation</span>
+          {open ? (
+            <ChevronUp className="size-3.5 shrink-0 text-gray-400" />
+          ) : (
+            <ChevronDown className="size-3.5 shrink-0 text-gray-400" />
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={copyDocumentation}
+          className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-gray-200 bg-white px-2 text-[10px] font-medium text-gray-600 hover:border-emerald-300 hover:text-emerald-700"
+          title="Copy the formula rules and this clinic's available fields"
+        >
+          {copyState === 'copied' ? (
+            <Check className="size-3 text-emerald-600" />
+          ) : (
+            <Copy className="size-3" />
+          )}
+          {copyState === 'copied'
+            ? 'Copied'
+            : copyState === 'failed'
+              ? 'Copy failed'
+              : 'Copy documentation'}
+        </button>
+      </div>
+
+      {open ? (
+        <div className="max-h-[380px] space-y-4 overflow-y-auto border-t border-gray-200 bg-white px-3 py-3 text-[11px] leading-relaxed text-gray-600">
+          <section>
+            <h4 className="font-semibold text-gray-900">Syntax and fields</h4>
+            <p>
+              Write one Python-style expression using exact{' '}
+              <code>Biomarker.*</code>, <code>Profile.*</code>, or{' '}
+              <code>Questionnaire.*</code> tokens. Operators include{' '}
+              <code>+ - * / **</code>, comparisons, boolean logic, and
+              conditional expressions.
+            </p>
+          </section>
+
+          <section>
+            <h4 className="font-semibold text-gray-900">
+              Supported functions
+            </h4>
+            <p className="mt-1 font-mono text-[10px]">
+              sum · avg · min · max · round · abs · sqrt · ln · log · exp ·
+              if_ · status_weight · phenoage
+            </p>
+          </section>
+
+          <section>
+            <h4 className="font-semibold text-gray-900">Important rules</h4>
+            <ul className="mt-1 list-disc space-y-0.5 pl-4">
+              <li>Return one finite numeric result.</li>
+              <li>Keep units and clinical direction consistent.</li>
+              <li>Guard division by zero and other invalid operations.</li>
+              <li>Use only fields available in this clinic.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h4 className="font-semibold text-gray-900">Complex examples</h4>
+            <div className="mt-1 space-y-1.5">
+              <pre className="overflow-x-auto rounded-md bg-gray-950 p-2 text-[10px] leading-relaxed text-gray-100 whitespace-pre-wrap">
+                {`round((
+  status_weight(Biomarker.C_Reactive_Protein_high_sensitivity, 1, 3) * 0.6 +
+  status_weight(Biomarker.Homocysteine, 8, 15) * 0.4
+) * 100, 2)`}
+              </pre>
+              <pre className="overflow-x-auto rounded-md bg-gray-950 p-2 text-[10px] leading-relaxed text-gray-100 whitespace-pre-wrap">
+                {`min(
+  status_weight(Biomarker.Homocysteine, 8, 15) * 85 +
+  if_(Questionnaire.smoking_status == "Current", 15, 0),
+  100
+)`}
+              </pre>
+              <pre className="overflow-x-auto rounded-md bg-gray-950 p-2 text-[10px] leading-relaxed text-gray-100 whitespace-pre-wrap">
+                {`round(status_weight(
+  Biomarker.Example,
+  10 if Profile.age < 50 else 12,
+  20 if Profile.age < 50 else 24
+) * 100, 2)`}
+              </pre>
+            </div>
+          </section>
+
+          <p className="rounded-md border border-emerald-100 bg-emerald-50 p-2 text-emerald-800">
+            “Copy documentation” also includes the full examples and all{' '}
+            <strong>{catalog.length} biomarkers</strong>, profile fields, and
+            questionnaire fields available in this clinic.
+          </p>
+        </div>
       ) : null}
     </div>
   );

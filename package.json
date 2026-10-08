@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "test": "yarn format",
+    "test": "npm run format",
     "test:unit": "vitest run",
     "test:e2e:cleanup": "playwright test e2e/cleanup-smoke.spec.ts",
     "cleanup:verify:web": "yarn test:e2e:cleanup",
