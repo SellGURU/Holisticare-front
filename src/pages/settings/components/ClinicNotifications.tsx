@@ -43,7 +43,8 @@ export const ClinicNotifications = () => {
       })
       .catch((err) => {
         toast.error(
-          err?.response?.data?.detail || 'Failed to load notification settings.',
+          err?.response?.data?.detail ||
+            'Failed to load notification settings.',
         );
       })
       .finally(() => setLoading(false));
@@ -53,11 +54,7 @@ export const ClinicNotifications = () => {
     load();
   }, []);
 
-  const toggle = (
-    channel: 'email' | 'push',
-    key: string,
-    checked: boolean,
-  ) => {
+  const toggle = (channel: 'email' | 'push', key: string, checked: boolean) => {
     setSettings((current) => ({
       ...current,
       [channel]: { ...current[channel], [key]: checked },

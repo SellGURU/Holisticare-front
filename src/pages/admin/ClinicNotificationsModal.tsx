@@ -46,7 +46,8 @@ const ClinicNotificationsModal = ({
       .then((res) => setSettings(readSettings(res.data)))
       .catch((err) => {
         toast.error(
-          err?.response?.data?.detail || 'Failed to load notification settings.',
+          err?.response?.data?.detail ||
+            'Failed to load notification settings.',
         );
       })
       .finally(() => setLoading(false));
@@ -68,7 +69,8 @@ const ClinicNotificationsModal = ({
       })
       .catch((err: any) => {
         toast.error(
-          err?.response?.data?.detail || 'Failed to save notification settings.',
+          err?.response?.data?.detail ||
+            'Failed to save notification settings.',
         );
       })
       .finally(() => setSaving(false));

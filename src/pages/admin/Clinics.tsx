@@ -117,9 +117,8 @@ const Clinics = () => {
   const [nowTick, setNowTick] = useState(0);
   const [mobileClinic, setMobileClinic] = useState<ClinicRow | null>(null);
   const [profileClinic, setProfileClinic] = useState<ClinicRow | null>(null);
-  const [notificationClinic, setNotificationClinic] = useState<ClinicRow | null>(
-    null,
-  );
+  const [notificationClinic, setNotificationClinic] =
+    useState<ClinicRow | null>(null);
   const [demoByClinic, setDemoByClinic] = useState<
     Record<number, DemoClinicSummary>
   >({});
