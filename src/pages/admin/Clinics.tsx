@@ -7,6 +7,7 @@ import {
   Pencil,
   RefreshCw,
   Search,
+  Bell,
   ShieldCheck,
   ShieldOff,
   Smartphone,
@@ -19,6 +20,7 @@ import { removeAdminToken } from '../../store/adminToken';
 import AdminActionButton from './AdminActionButton';
 import AdminShellLayout from './AdminShellLayout';
 import ClinicMobileUsersPanel from './ClinicMobileUsersPanel';
+import ClinicNotificationsModal from './ClinicNotificationsModal';
 import ClinicProfileModal from './ClinicProfileModal';
 import type { ClinicProfileData } from './clinicProfileForm';
 import {
@@ -115,6 +117,9 @@ const Clinics = () => {
   const [nowTick, setNowTick] = useState(0);
   const [mobileClinic, setMobileClinic] = useState<ClinicRow | null>(null);
   const [profileClinic, setProfileClinic] = useState<ClinicRow | null>(null);
+  const [notificationClinic, setNotificationClinic] = useState<ClinicRow | null>(
+    null,
+  );
   const [demoByClinic, setDemoByClinic] = useState<
     Record<number, DemoClinicSummary>
   >({});
@@ -541,6 +546,13 @@ const Clinics = () => {
                     <td className="px-3 py-3">
                       <div className="flex min-w-[168px] flex-col gap-1.5">
                         <AdminActionButton
+                          icon={Bell}
+                          label="Notifications"
+                          disabled={busy}
+                          title="Patient email and push settings"
+                          onClick={() => setNotificationClinic(clinic)}
+                        />
+                        <AdminActionButton
                           icon={Pencil}
                           label="Edit profile"
                           disabled={busy}
@@ -649,6 +661,13 @@ const Clinics = () => {
             </div>
           </div>
         </div>
+      )}
+      {notificationClinic && (
+        <ClinicNotificationsModal
+          clinicId={notificationClinic.clinic_id}
+          clinicName={notificationClinic.name}
+          onClose={() => setNotificationClinic(null)}
+        />
       )}
       {profileClinic && (
         <ClinicProfileModal

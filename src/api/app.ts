@@ -542,6 +542,22 @@ class Application extends Api {
     );
     return response;
   };
+  static remindQuestionary = (data: {
+    member_id: string | number;
+    q_unique_id: string;
+    f_unique_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/remind_questionary`, data);
+  };
+  static getClinicNotificationSettings = () => {
+    return this.get(`/settings/notification_settings`);
+  };
+  static updateClinicNotificationSettings = (data: {
+    email: Record<string, boolean>;
+    push: Record<string, boolean>;
+  }) => {
+    return this.patch(`/settings/notification_settings`, data);
+  };
   static getNotes = (data: { member_id: string | number | undefined }) => {
     const response = this.post(`/health_profile/notes/show_notes`, data);
     return response;

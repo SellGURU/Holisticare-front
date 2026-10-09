@@ -7,6 +7,7 @@ import { ClinicPreferences } from './components/ClinicPreferences';
 import { ClinicProfile } from './components/ClinicProfile';
 import { ChangePassword } from '../../Components/changePassword';
 import { PrivacySettings } from './components/PrivacySettings';
+import { ClinicNotifications } from './components/ClinicNotifications';
 import { fetchBrandInfo } from '../../utils/brandInfoCache';
 import { useApp } from '../../hooks';
 
@@ -23,6 +24,7 @@ const Setting: React.FC = () => {
   const mobileMenuItems = useMemo(() => {
     const items = [
       { title: 'Clinic Profile', isActive: isAdmin },
+      { title: 'Notifications', isActive: isAdmin },
       { title: 'Clinic Preferences', isActive: true },
       { title: 'Change Password', isActive: loginWithGoogle === false },
       { title: 'Privacy', isActive: true },
@@ -69,6 +71,8 @@ const Setting: React.FC = () => {
         return isAdmin ? <ClinicProfile /> : <ClinicPreferences />;
       case 'Clinic Preferences':
         return <ClinicPreferences />;
+      case 'Notifications':
+        return isAdmin ? <ClinicNotifications /> : <ClinicPreferences />;
       case 'Zapier':
         return <Zappier />;
       case 'Update Your Profile':

@@ -70,6 +70,27 @@ class AdminApi {
     });
   }
 
+  static getClinicNotificationSettings(id: number) {
+    return axios.get(
+      `${getBaseUrl()}/admin/clinics/${id}/notification-settings`,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static updateClinicNotificationSettings(
+    id: number,
+    data: {
+      email: Record<string, boolean>;
+      push: Record<string, boolean>;
+    },
+  ) {
+    return axios.patch(
+      `${getBaseUrl()}/admin/clinics/${id}/notification-settings`,
+      data,
+      { headers: withAuthHeaders() },
+    );
+  }
+
   static updateClinicProfile(
     id: number,
     data: {

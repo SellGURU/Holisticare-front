@@ -28,6 +28,7 @@ const ActionModal: FC<ActionModalProps> = ({
     OnClose();
   };
   const [sureRemove, setSureRemove] = useState<boolean>(false);
+  const [reminding, setReminding] = useState(false);
   useModalAutoClose({
     refrence: modalRef,
     close: CloseAction,
@@ -124,6 +125,28 @@ const ActionModal: FC<ActionModalProps> = ({
               <img className="size-5" src="/icons/user-add-green.svg" alt="" />
               Assign to Client
             </div>
+            {el.assinged_to_client ? (
+              <div
+                onClick={() => {
+                  if (reminding) return;
+                  setReminding(true);
+                  Application.remindQuestionary({
+                    member_id: member_id,
+                    q_unique_id: el.unique_id,
+                    f_unique_id: el.forms_unique_id,
+                  })
+                    .then(() => {
+                      OnClose();
+                    })
+                    .catch(() => {})
+                    .finally(() => setReminding(false));
+                }}
+                className={`${reminding ? 'opacity-50' : 'opacity-100'} border-b border-Secondary-SelverGray flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 cursor-pointer`}
+              >
+                <img className="size-5" src="/icons/notification.svg" alt="" />
+                Remind
+              </div>
+            ) : null}
           </>
         )}
         {!sureRemove ? (

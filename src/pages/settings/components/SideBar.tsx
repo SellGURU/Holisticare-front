@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       Account: [
         {
           title: 'Notifications',
-          isActive: false,
+          isActive: isAdmin,
         },
         {
           title: 'Privacy',
