@@ -166,7 +166,11 @@ const ActionModal: FC<ActionModalProps> = ({
                 }}
                 className={`${reminding ? 'opacity-50 pointer-events-none' : 'opacity-100'} border-b border-Secondary-SelverGray flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 cursor-pointer`}
               >
-                <img className="size-5" src="/icons/notification-green.svg" alt="" />
+                <img
+                  className="size-5"
+                  src="/icons/notification-green.svg"
+                  alt=""
+                />
                 Remind
               </div>
             ) : null}
