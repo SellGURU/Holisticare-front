@@ -40,7 +40,7 @@ export const EMAIL_ROWS: {
   { key: 'report_shared', label: 'Report shared with client' },
   { key: 'chat_messages', label: 'Coach chat message' },
   { key: 'patient_welcome', label: 'New patient welcome' },
-  { key: 'mobile_access', label: 'Mobile app access' },
+  { key: 'mobile_access', label: 'Patient Credentials & App Access' },
 ];
 
 export const PUSH_ROWS: {
