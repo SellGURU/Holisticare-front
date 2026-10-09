@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Application from '../../../api/app';
 // import { uploadToAzure } from '../../../help';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
@@ -161,6 +162,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   isLoadingQuestionnaires,
 }) => {
   const isDemo = useIsDemo();
+  const { t } = useTranslation('reports');
+  const demoLockedTitle = isDemo ? t('demoLocked') : undefined;
   const { uploadLabReportFile } = useLabReportUpload();
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
@@ -2347,11 +2350,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   </div>
                   <div className="w-full gap-2 flex justify-center mt-[46px] ">
                     <ButtonSecondary
-                      title={
-                        isDemo
-                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
-                          : undefined
-                      }
+                      title={demoLockedTitle}
                       onClick={() => {
                         if (isDemo) return;
                         onGenderate('discard');
@@ -2363,11 +2362,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       Discard Changes
                     </ButtonSecondary>
                     <ButtonSecondary
-                      title={
-                        isDemo
-                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
-                          : undefined
-                      }
+                      title={demoLockedTitle}
                       style={{
                         // width: '150px',
                         borderRadius: '20px',
@@ -2398,10 +2393,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       className=" text-center text-base font-medium text-Text-Primary"
                       id="health-plan-title"
                     >
-                      Provide Data to Generate Health Plan
+                      {t('provideDataTitle')}
                     </div>
                     <div className="text-xs text-Text-Primary text-center">
-                      Choose one methods below to provide a personalized plan.
+                      {t('provideDataSubtitle')}
                     </div>
                   </div>
                   <div className="flex  w-full items-center gap-2 xs:gap-6">
@@ -2410,25 +2405,23 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         if (isDemo) return;
                         publish('openLabDataSidePanel', {});
                       }}
-                      title={
-                        isDemo
-                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
-                          : undefined
-                      }
+                      title={demoLockedTitle}
                       className={`${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {isSaveClicked &&
                         extractedBiomarkers.length + addedBiomarkers.length >
                           0 && (
-                          <div className="w-[144px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
+                          <div className="w-fit whitespace-nowrap py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
                             <img
                               className="size-4"
                               src="/icons/tick-circle-upload.svg"
                               alt=""
                             />
-                            {extractedBiomarkers.length +
-                              addedBiomarkers.length}{' '}
-                            Biomarker added!
+                            {t('biomarkersAdded', {
+                              count:
+                                extractedBiomarkers.length +
+                                addedBiomarkers.length,
+                            })}
                           </div>
                         )}
 
@@ -2437,7 +2430,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         className="text-[#000000] text-[10px] md:text-xs font-medium mt-3"
                         id="upload-biomarkers-card"
                       >
-                        Upload Lab Report or Add Biomarkers
+                        {t('uploadCardTitle')}
                       </div>
                       <img
                         className="mt-3 size-10 xs:size-[57px]"
@@ -2448,8 +2441,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         style={{ textAlignLast: 'center' }}
                         className="text-[10px] md:text-xs mt-3 text-justify"
                       >
-                        Upload your client's lab test file and edit or add
-                        biomarkers manually.
+                        {t('uploadCardBody')}
                       </div>
                       <div
                         className={` text-[8px]  xs:text-[10px]  md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute ${
@@ -2459,7 +2451,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                             : 'bottom-6'
                         } `}
                       >
-                        Enter or Upload Biomarkers
+                        {t('uploadCardAction')}
                       </div>
                     </div>
                     <div
@@ -2474,15 +2466,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         publish('QuestionaryTrackingCall', {});
                         // }
                       }}
-                      title={
-                        isDemo
-                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
-                          : undefined
-                      }
+                      title={demoLockedTitle}
                       className={`${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {questionnaires.length > 0 && (
-                        <div className="w-[167px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
+                        <div className="w-fit whitespace-nowrap py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
                           <img
                             className="size-4"
                             src="/icons/tick-circle-upload.svg"
@@ -2494,14 +2482,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                               ? '...'
                               : questionnaires.length}
                           </span>
-                          Questionnaire filled out!
+                          {t('questionnairesFilled')}
                         </div>
                       )}
                       <div
                         className="text-[#000000] text-center text-[10px] md:text-xs font-medium mt-3"
                         id="questionnaire-card"
                       >
-                        Fill Health Questionnaire
+                        {t('questionnaireCardTitle')}
                       </div>
                       <img
                         className=" mt-3 xs:mt-5 size-[37px] xs:size-[49px]"
@@ -2512,21 +2500,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         style={{ textAlignLast: 'center' }}
                         className="text-[10px] md:text-xs mt-3 text-justify"
                       >
-                        Provide data (lifestyle, medical history, ...) for a
-                        more accurate plan.
+                        {t('questionnaireCardBody')}
                       </div>
                       <div className="text-[8px]  xs:text-[10px]  md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
-                        Fill Questionnaire
+                        {t('questionnaireCardAction')}
                       </div>
                     </div>
                   </div>
                   <div className="w-full flex justify-center mt-4">
                     <ButtonSecondary
-                      title={
-                        isDemo
-                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
-                          : undefined
-                      }
+                      title={demoLockedTitle}
                       style={{
                         width: '250px',
                         borderRadius: '20px',
@@ -2537,7 +2520,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       }}
                     >
                       <img src="/icons/tick-square.svg" alt="" />
-                      Continue to Health Plan
+                      {t('continueToHealthPlan')}
                     </ButtonSecondary>
                   </div>
                 </div>

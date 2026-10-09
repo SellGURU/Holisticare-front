@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import Sidebar from './components/SideBar';
+import { LanguageAndRegion } from './components/LanguageAndRegion';
+import { localeSelectorEnabled } from '../../i18n';
+import { navKey } from '../../i18n/wave1Resources';
 import SearchBox from '../../Components/SearchBox';
 import { Zappier } from './components/Zappier';
 import { ClinicPreferences } from './components/ClinicPreferences';
@@ -12,7 +16,9 @@ import { fetchBrandInfo } from '../../utils/brandInfoCache';
 import { useApp } from '../../hooks';
 
 const Setting: React.FC = () => {
+  const { t } = useTranslation(['settings', 'nav']);
   const { accountRole } = useApp();
+  const showLanguage = localeSelectorEnabled();
   const isAdmin =
     String(accountRole || '')
       .trim()
@@ -26,11 +32,12 @@ const Setting: React.FC = () => {
       { title: 'Clinic Profile', isActive: isAdmin },
       { title: 'Notifications', isActive: isAdmin },
       { title: 'Clinic Preferences', isActive: true },
+      { title: 'Language & Region', isActive: showLanguage },
       { title: 'Change Password', isActive: loginWithGoogle === false },
       { title: 'Privacy', isActive: true },
     ];
     return items.filter((item) => item.isActive);
-  }, [isAdmin, loginWithGoogle]);
+  }, [isAdmin, loginWithGoogle, showLanguage]);
 
   const getShowBrandInfo = () => {
     fetchBrandInfo()
@@ -71,6 +78,8 @@ const Setting: React.FC = () => {
         return isAdmin ? <ClinicProfile /> : <ClinicPreferences />;
       case 'Clinic Preferences':
         return <ClinicPreferences />;
+      case 'Language & Region':
+        return showLanguage ? <LanguageAndRegion /> : <ClinicPreferences />;
       case 'Notifications':
         return isAdmin ? <ClinicNotifications /> : <ClinicPreferences />;
       case 'Zapier':
@@ -91,7 +100,7 @@ const Setting: React.FC = () => {
   return (
     <div>
       <div className="flex md:fixed z-[48] top-13 w-full md:pr-6 pr-3 pl-3  md:pl-[194px] py-4 left-0  justify-between ">
-        <div className=" text-base font-medium text-Text-Primary">Setting</div>
+        <div className=" text-base font-medium text-Text-Primary">{t('settings:title')}</div>
         <div className="hidden">
           <SearchBox
             ClassName="rounded-lg"
@@ -115,7 +124,9 @@ const Setting: React.FC = () => {
                       : 'border-Gray-50 text-[#888888] bg-backgroundColor-Card'
                   }`}
                 >
-                  {item.title}
+                  {t(`settings:menu.${navKey(item.title)}`, {
+                    defaultValue: item.title,
+                  })}
                 </button>
               ))}
             </div>

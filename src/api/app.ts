@@ -1158,6 +1158,9 @@ class Application extends Api {
   static updateSettingData = (data: any) => {
     return this.post('/setting/update_clinic_preference', data);
   };
+  static updateClinicLocale = (data: { content_locale: string }) => {
+    return this.post('/setting/clinic_locale', data);
+  };
   static getToneList = (data: any) => {
     return this.post('/setting/tone_list', data);
   };

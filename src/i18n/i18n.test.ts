@@ -7,6 +7,7 @@ import {
   createI18nInstance,
   enabledUiLocales,
   resolveEnabledUiLocale,
+  textDirection,
   uiLocaleFallbackChain,
 } from './index';
 import { createMissingKeyTelemetry } from './missingKeyTelemetry';
@@ -24,14 +25,35 @@ describe('UI locale foundation', () => {
     expect(resolveEnabledUiLocale('not_a_locale', ['en', 'fr'])).toBe('en');
   });
 
-  it('excludes the pseudo locale from production', () => {
-    expect(enabledUiLocales(true)).toEqual(['en']);
-    expect(enabledUiLocales(false)).toContain(PSEUDO_LOCALE);
+  it('uses rtl only for Arabic tags', () => {
+    expect(textDirection('ar')).toBe('rtl');
+    expect(textDirection('ar-SA')).toBe('rtl');
+    expect(textDirection('fr-CA')).toBe('ltr');
   });
 
-  it('never renders a missing raw key', () => {
+  it('excludes the pseudo locale from production', () => {
+    expect(enabledUiLocales(true, false)).toEqual(['en']);
+    expect(enabledUiLocales(false, true)).toEqual(
+      expect.arrayContaining(['en', 'es', 'fr', 'ar', PSEUDO_LOCALE]),
+    );
+  });
+
+  it('never renders a missing raw key', async () => {
     const instance = createI18nInstance(true);
     expect(instance.t('not.a.real.key')).toBe('Content unavailable');
+    expect(instance.t('nav:client_list')).toBe('Client List');
+    expect(instance.t('reports:provideDataTitle')).toBe(
+      'Provide Data to Generate Health Plan',
+    );
+    await instance.changeLanguage('es');
+    expect(instance.t('reports:health')).toBe('Salud');
+    expect(instance.t('reports:sectionLabels.client_summary')).toBe(
+      'Resumen del cliente',
+    );
+    await instance.changeLanguage('en');
+    expect(
+      instance.t('nav:not_extracted', { defaultValue: 'Client List' }),
+    ).toBe('Client List');
   });
 
   it('supports all Arabic ICU plural categories in an isolated fixture', async () => {

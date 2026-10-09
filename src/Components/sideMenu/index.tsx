@@ -6,11 +6,14 @@ import { version } from '../../../package.json';
 import { menus } from './menu';
 import { subscribe } from '../../utils/event';
 import PortalLink from '../PortalLink';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../hooks';
+import { navKey } from '../../i18n/wave1Resources';
 interface sideMenuProps {
   onClose: () => void;
 }
 const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
+  const { t } = useTranslation('nav');
   const location = useLocation();
   const { permisions, accountRole } = useApp();
 
@@ -126,7 +129,11 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                     menuCategory.items.length > 0 &&
                     hasVisibleItem && (
                       <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
-                        <>{menuCategory.category}</>
+                        <>
+                          {t(navKey(menuCategory.category), {
+                            defaultValue: menuCategory.category,
+                          })}
+                        </>
                       </div>
                     )}
                   {menuCategory.items.map((menu) => (
@@ -166,7 +173,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                                   : ' bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent block '
                               }`}
                             >
-                              {menu.name}
+                              {t(navKey(menu.name), { defaultValue: menu.name })}
                             </div>
                             {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
                             {/* { activeMenu.name === graph.name && graph.name} */}
@@ -204,7 +211,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                                         : 'text-Text-Primary block '
                                     }`}
                                   >
-                                    {menu.name}
+                                    {t(navKey(menu.name), { defaultValue: menu.name })}
                                   </div>
                                 </PortalLink>
                               ) : (
@@ -229,7 +236,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                                         : 'text-Text-Primary block '
                                     }`}
                                   >
-                                    {menu.name}
+                                    {t(navKey(menu.name), { defaultValue: menu.name })}
                                   </div>
                                 </div>
                               )}

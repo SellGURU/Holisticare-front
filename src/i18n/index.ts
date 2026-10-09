@@ -5,9 +5,18 @@ import { initReactI18next } from 'react-i18next';
 
 import { createMissingKeyTelemetry } from './missingKeyTelemetry';
 import { englishResources } from './resources';
+import { wave1Resources } from './wave1Resources';
 
 export const PRODUCT_FALLBACK_LOCALE = 'en';
 export const PSEUDO_LOCALE = 'en-XA';
+export const CLINIC_LOCALE_STORAGE_KEY = 'holisticare.clinicContentLocale';
+export const WAVE_1_UI_LOCALES = ['en', 'es', 'fr', 'ar'] as const;
+
+export function localeSelectorEnabled(): boolean {
+  return (
+    !import.meta.env.PROD || import.meta.env.VITE_ENABLE_LOCALE_UI === 'true'
+  );
+}
 
 const rolloutFlags: Readonly<Record<string, boolean>> = {
   es: import.meta.env.VITE_ENABLE_LOCALE_ES === 'true',
@@ -64,11 +73,15 @@ export function uiLocaleFallbackChain(
 
 export function enabledUiLocales(
   isProduction = import.meta.env.PROD,
+  selectorEnabled = localeSelectorEnabled(),
 ): string[] {
   const enabled = [PRODUCT_FALLBACK_LOCALE];
+  if (!isProduction || selectorEnabled) {
+    enabled.push('es', 'fr', 'ar');
+  }
   if (import.meta.env.VITE_ENABLE_I18N_FOUNDATION === 'true') {
     for (const [locale, isEnabled] of Object.entries(rolloutFlags)) {
-      if (isEnabled) enabled.push(locale);
+      if (isEnabled && !enabled.includes(locale)) enabled.push(locale);
     }
   }
   if (!isProduction) enabled.push(PSEUDO_LOCALE);
@@ -94,6 +107,7 @@ export function createI18nInstance(
   const missingKeyTelemetry = createMissingKeyTelemetry();
   const resources: Resource = {
     en: englishResources,
+    ...wave1Resources,
   };
   if (!isProduction) {
     resources[PSEUDO_LOCALE] = pseudoResource(
@@ -107,7 +121,7 @@ export function createI18nInstance(
     lng: PRODUCT_FALLBACK_LOCALE,
     fallbackLng: (locale) => uiLocaleFallbackChain(locale),
     supportedLngs: enabledUiLocales(isProduction),
-    nonExplicitSupportedLngs: false,
+    nonExplicitSupportedLngs: true,
     defaultNS: 'common',
     interpolation: { escapeValue: false },
     returnEmptyString: false,
@@ -121,7 +135,10 @@ export function createI18nInstance(
         console.warn(`Missing translation: ${namespace}:${key} (${locale})`);
       }
     },
-    parseMissingKeyHandler: () => englishResources.common.unavailable,
+    parseMissingKeyHandler: (_key, defaultValue) =>
+      typeof defaultValue === 'string' && defaultValue.length > 0
+        ? defaultValue
+        : englishResources.common.unavailable,
   });
   initializationByInstance.set(instance, initialization);
   return instance;
@@ -129,9 +146,51 @@ export function createI18nInstance(
 
 export const i18n = createI18nInstance();
 
+export function textDirection(locale: string): 'ltr' | 'rtl' {
+  const canonical = canonicalizeUiLocale(locale) ?? PRODUCT_FALLBACK_LOCALE;
+  return canonical === 'ar' || canonical.startsWith('ar-') ? 'rtl' : 'ltr';
+}
+
+export function storedClinicLocale(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return window.localStorage.getItem(CLINIC_LOCALE_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export async function applyUiLocale(locale: string): Promise<string> {
+  const canonical = canonicalizeUiLocale(locale) ?? PRODUCT_FALLBACK_LOCALE;
+  const catalog = resolveEnabledUiLocale(canonical);
+  try {
+    await i18n.changeLanguage(catalog);
+  } catch {
+    // The existing English interface remains available.
+  }
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = canonical;
+    document.documentElement.dir = textDirection(canonical);
+    const announcer = document.getElementById('locale-announcer');
+    if (announcer) {
+      announcer.textContent = i18n.t('accessibility:languageChanged', {
+        language: canonical,
+      });
+    }
+  }
+  try {
+    window.localStorage.setItem(CLINIC_LOCALE_STORAGE_KEY, canonical);
+  } catch {
+    // Persistence is best-effort; the server remains authoritative after login.
+  }
+  return canonical;
+}
+
 export async function initializeI18n(): Promise<void> {
   try {
     await initializationByInstance.get(i18n);
+    const stored = storedClinicLocale();
+    if (stored) await applyUiLocale(stored);
   } catch {
     // Localization is fail-open: the existing English application still renders.
   }

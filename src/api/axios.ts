@@ -169,6 +169,13 @@ const checkHealthAndRedirect = async () => {
 
 axios.interceptors.request.use((config) => {
   (config as any).metadata = { startTime: new Date() };
+  const clinicLocale = window.localStorage.getItem(
+    'holisticare.clinicContentLocale',
+  );
+  if (clinicLocale) {
+    config.headers = config.headers ?? {};
+    config.headers['Accept-Language'] = clinicLocale;
+  }
   return config;
 });
 

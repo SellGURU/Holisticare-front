@@ -1,6 +1,9 @@
 import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useApp } from '../../../hooks';
+import { localeSelectorEnabled } from '../../../i18n';
+import { navKey } from '../../../i18n/wave1Resources';
 
 type SidebarProps = {
   activeMenu: string;
@@ -13,7 +16,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   setActiveMenu,
   loginWithGoogle,
 }) => {
+  const { t } = useTranslation(['settings', 'nav']);
   const { accountRole } = useApp();
+  const showLanguage = localeSelectorEnabled();
   const isAdmin =
     String(accountRole || '')
       .trim()
@@ -32,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         },
         {
           title: 'Language & Region',
-          isActive: false,
+          isActive: showLanguage,
         },
         {
           title: 'Change Password',
@@ -60,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         },
       ],
     }),
-    [isAdmin, loginWithGoogle],
+    [isAdmin, loginWithGoogle, showLanguage],
   );
   const [searchParams, setSearchParams] = useSearchParams();
   const handleMenuClick = (item: string) => {
@@ -91,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {Object.entries(menuItems).map(([category, subItems]) => (
           <div key={category}>
             <h3 className="text-[#B0B0B0] text-[10px] font-normal  my-2">
-              {category}
+              {t(`settings:menu.${navKey(category)}`, { defaultValue: category })}
             </h3>
             <ul className="space-y-3 ">
               {subItems.map((item) => (
@@ -111,7 +116,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   {activeMenu === item.title && (
                     <img alt="" src="/icons/arrow-right-small.svg" />
                   )}
-                  {item.title}
+                  {t(`settings:menu.${navKey(item.title)}`, {
+                    defaultValue: item.title,
+                  })}
                 </li>
               ))}
             </ul>
