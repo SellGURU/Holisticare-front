@@ -33,7 +33,9 @@ function pseudoResource(value: unknown): unknown {
   return value;
 }
 
-export function canonicalizeUiLocale(locale: string | null | undefined): string | null {
+export function canonicalizeUiLocale(
+  locale: string | null | undefined,
+): string | null {
   if (!locale) return null;
   try {
     return Intl.getCanonicalLocales(locale.replace(/_/g, '-'))[0] ?? null;
@@ -42,7 +44,9 @@ export function canonicalizeUiLocale(locale: string | null | undefined): string 
   }
 }
 
-export function uiLocaleFallbackChain(locale: string | null | undefined): string[] {
+export function uiLocaleFallbackChain(
+  locale: string | null | undefined,
+): string[] {
   const canonical = canonicalizeUiLocale(locale);
   if (!canonical) return [PRODUCT_FALLBACK_LOCALE];
 
@@ -58,7 +62,9 @@ export function uiLocaleFallbackChain(locale: string | null | undefined): string
   return chain;
 }
 
-export function enabledUiLocales(isProduction = import.meta.env.PROD): string[] {
+export function enabledUiLocales(
+  isProduction = import.meta.env.PROD,
+): string[] {
   const enabled = [PRODUCT_FALLBACK_LOCALE];
   if (import.meta.env.VITE_ENABLE_I18N_FOUNDATION === 'true') {
     for (const [locale, isEnabled] of Object.entries(rolloutFlags)) {
@@ -75,19 +81,24 @@ export function resolveEnabledUiLocale(
 ): string {
   const enabled = new Set(enabledLocales);
   return (
-    uiLocaleFallbackChain(requestedLocale).find((locale) => enabled.has(locale)) ??
-    PRODUCT_FALLBACK_LOCALE
+    uiLocaleFallbackChain(requestedLocale).find((locale) =>
+      enabled.has(locale),
+    ) ?? PRODUCT_FALLBACK_LOCALE
   );
 }
 
-export function createI18nInstance(isProduction = import.meta.env.PROD): I18nInstance {
+export function createI18nInstance(
+  isProduction = import.meta.env.PROD,
+): I18nInstance {
   const instance = i18next.createInstance();
   const missingKeyTelemetry = createMissingKeyTelemetry();
   const resources: Resource = {
     en: englishResources,
   };
   if (!isProduction) {
-    resources[PSEUDO_LOCALE] = pseudoResource(englishResources) as Resource[string];
+    resources[PSEUDO_LOCALE] = pseudoResource(
+      englishResources,
+    ) as Resource[string];
   }
 
   instance.use(ICU).use(initReactI18next);
@@ -103,7 +114,8 @@ export function createI18nInstance(isProduction = import.meta.env.PROD): I18nIns
     returnNull: false,
     saveMissing: true,
     missingKeyHandler: (locales, namespace, key) => {
-      const locale = canonicalizeUiLocale(locales[0]) ?? PRODUCT_FALLBACK_LOCALE;
+      const locale =
+        canonicalizeUiLocale(locales[0]) ?? PRODUCT_FALLBACK_LOCALE;
       missingKeyTelemetry(locale, namespace, key);
       if (!isProduction) {
         console.warn(`Missing translation: ${namespace}:${key} (${locale})`);

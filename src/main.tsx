@@ -17,17 +17,19 @@ import { initializeI18n } from './i18n';
 initGlobalErrorHandler();
 runPortalBootGuard();
 
-void initializeI18n().finally(() => createRoot(document.getElementById('root')!).render(
-  <AppErrorBoundary>
-    <AppContextProvider>
-      <MainWrapper />
-    </AppContextProvider>
-    <ToastContainer
-      position="top-right"
-      hideProgressBar
-      closeOnClick
-      draggable
-      pauseOnHover
-    />
-  </AppErrorBoundary>,
-));
+void initializeI18n().finally(() =>
+  createRoot(document.getElementById('root')!).render(
+    <AppErrorBoundary>
+      <AppContextProvider>
+        <MainWrapper />
+      </AppContextProvider>
+      <ToastContainer
+        position="top-right"
+        hideProgressBar
+        closeOnClick
+        draggable
+        pauseOnHover
+      />
+    </AppErrorBoundary>,
+  ),
+);

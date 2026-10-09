@@ -54,10 +54,7 @@ export function createMissingKeyTelemetry(
       windowStartedAt = timestamp;
       windowCount = 0;
     }
-    if (
-      windowCount >= MAX_PER_MINUTE ||
-      sessionCount >= MAX_PER_SESSION
-    ) {
+    if (windowCount >= MAX_PER_MINUTE || sessionCount >= MAX_PER_SESSION) {
       return;
     }
 
