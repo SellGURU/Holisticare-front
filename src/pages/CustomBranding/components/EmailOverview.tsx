@@ -27,7 +27,7 @@ const EmailOverview: FC<EmailOverviewProps> = ({ customTheme }) => {
           />
           <div
             className="w-full h-[16px] rounded-tl-[20px] rounded-bl-[20px]"
-            style={{ backgroundColor: customTheme.secondaryColor }}
+            style={{ backgroundColor: customTheme.primaryColor }}
           ></div>
         </div>
         <div
@@ -54,7 +54,7 @@ const EmailOverview: FC<EmailOverviewProps> = ({ customTheme }) => {
         <div className="flex items-center justify-center mt-4">
           <ButtonPrimary
             ClassName="rounded-[20px] !h-[24px] !shadow-Btn"
-            style={{ backgroundColor: customTheme.secondaryColor }}
+            style={{ backgroundColor: customTheme.primaryColor }}
           >
             Access Your Dashboard
           </ButtonPrimary>
@@ -62,7 +62,7 @@ const EmailOverview: FC<EmailOverviewProps> = ({ customTheme }) => {
       </div>
       <div
         className="w-full mt-4 md:mt-0 h-[39px] rounded-b-[20px]"
-        style={{ backgroundColor: customTheme.secondaryColor }}
+        style={{ backgroundColor: customTheme.primaryColor }}
       ></div>
     </div>
   );

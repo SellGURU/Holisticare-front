@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
+
+const REMIND_COOLDOWN_MS = 20_000;
 import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
 import Application from '../../../../api/app';
 import { publish } from '../../../../utils/event';
@@ -29,6 +31,28 @@ const ActionModal: FC<ActionModalProps> = ({
   };
   const [sureRemove, setSureRemove] = useState<boolean>(false);
   const [reminding, setReminding] = useState(false);
+  const remindCooldownRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (remindCooldownRef.current) {
+        clearTimeout(remindCooldownRef.current);
+      }
+    },
+    [],
+  );
+
+  const startRemindCooldown = () => {
+    setReminding(true);
+    if (remindCooldownRef.current) {
+      clearTimeout(remindCooldownRef.current);
+    }
+    remindCooldownRef.current = setTimeout(() => {
+      setReminding(false);
+      remindCooldownRef.current = null;
+    }, REMIND_COOLDOWN_MS);
+  };
+
   useModalAutoClose({
     refrence: modalRef,
     close: CloseAction,
@@ -129,7 +153,7 @@ const ActionModal: FC<ActionModalProps> = ({
               <div
                 onClick={() => {
                   if (reminding) return;
-                  setReminding(true);
+                  startRemindCooldown();
                   Application.remindQuestionary({
                     member_id: member_id,
                     q_unique_id: el.unique_id,
@@ -138,12 +162,11 @@ const ActionModal: FC<ActionModalProps> = ({
                     .then(() => {
                       OnClose();
                     })
-                    .catch(() => {})
-                    .finally(() => setReminding(false));
+                    .catch(() => {});
                 }}
-                className={`${reminding ? 'opacity-50' : 'opacity-100'} border-b border-Secondary-SelverGray flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 cursor-pointer`}
+                className={`${reminding ? 'opacity-50 pointer-events-none' : 'opacity-100'} border-b border-Secondary-SelverGray flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 cursor-pointer`}
               >
-                <img className="size-5" src="/icons/notification.svg" alt="" />
+                <img className="size-5" src="/icons/notification-green.svg" alt="" />
                 Remind
               </div>
             ) : null}

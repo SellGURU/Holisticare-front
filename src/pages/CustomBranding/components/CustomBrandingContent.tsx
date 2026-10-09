@@ -108,7 +108,7 @@ const CustomBrandingContent = () => {
               <td width="60">
                 <img src="{logo_url}" alt="logo" width="24" height="24" style="display:block; border:0;" />
               </td>
-              <td style="background-color:${customTheme.secondaryColor}; height:16px; border-top-left-radius:20px; border-bottom-left-radius:20px"></td>
+              <td bgcolor="{primary_color}" style="background-color:{primary_color}; height:16px; border-top-left-radius:20px; border-bottom-left-radius:20px"></td>
             </tr>
           </table>
         </td>
@@ -136,16 +136,22 @@ const CustomBrandingContent = () => {
       <!-- Button -->
       <tr>
         <td align="center" style="padding-top:0px;padding-bottom:24px">
-          <a href="{dashboard_link}" style="display:inline-block; background-color:${customTheme.secondaryColor}; color:#333; text-decoration:none; font-size:10px; line-height:24px; padding:0 16px; border-radius:20px; box-shadow:0px 2px 6px rgba(0,0,0,0.1);">
-            Access Your Dashboard
-          </a>
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td align="center" bgcolor="{primary_color}" style="background-color:{primary_color}; border-radius:20px;">
+                <a href="{dashboard_link}" style="display:inline-block; padding:8px 16px; font-size:10px; line-height:16px; color:#ffffff !important; text-decoration:none; font-family:Inter,Arial,sans-serif;">
+                  Access Your Dashboard
+                </a>
+              </td>
+            </tr>
+          </table>
           <div style="font-size:10px; color:#7C7C7C; padding-top:8px;">https://app.holisticare.io/?clinic={clinic_slug}</div>
         </td>
       </tr>
 
       <!-- Bottom bar -->
       <tr>
-        <td style="height:39px; background-color:${customTheme.secondaryColor}; border-bottom-left-radius:20px; border-bottom-right-radius:20px;"></td>
+        <td bgcolor="{primary_color}" style="height:39px; background-color:{primary_color}; border-bottom-left-radius:20px; border-bottom-right-radius:20px;"></td>
       </tr>
     </table>
   </body>
