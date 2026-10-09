@@ -376,7 +376,9 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
               src="/icons/export.svg"
               width="12"
             ></SvgIcon>
-            <div className="text-[12px] text-Primary-DeepTeal">{t('export')}</div>
+            <div className="text-[12px] text-Primary-DeepTeal">
+              {t('export')}
+            </div>
           </div>
         </div>
       </div>

@@ -22,19 +22,19 @@ runPortalBootGuard();
 void initializeI18n().finally(() =>
   createRoot(document.getElementById('root')!).render(
     <I18nextProvider i18n={i18n}>
-    <AppErrorBoundary>
-      <AppContextProvider>
-        <ClinicLocaleSync />
-        <MainWrapper />
-      </AppContextProvider>
-      <ToastContainer
-        position="top-right"
-        hideProgressBar
-        closeOnClick
-        draggable
-        pauseOnHover
-      />
-    </AppErrorBoundary>
+      <AppErrorBoundary>
+        <AppContextProvider>
+          <ClinicLocaleSync />
+          <MainWrapper />
+        </AppContextProvider>
+        <ToastContainer
+          position="top-right"
+          hideProgressBar
+          closeOnClick
+          draggable
+          pauseOnHover
+        />
+      </AppErrorBoundary>
     </I18nextProvider>,
   ),
 );

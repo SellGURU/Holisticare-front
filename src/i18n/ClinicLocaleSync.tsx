@@ -23,11 +23,5 @@ export function ClinicLocaleSync() {
     };
   }, []);
 
-  return (
-    <div
-      id="locale-announcer"
-      aria-live="polite"
-      className="sr-only"
-    />
-  );
+  return <div id="locale-announcer" aria-live="polite" className="sr-only" />;
 }

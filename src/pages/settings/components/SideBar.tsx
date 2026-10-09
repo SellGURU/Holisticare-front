@@ -96,7 +96,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         {Object.entries(menuItems).map(([category, subItems]) => (
           <div key={category}>
             <h3 className="text-[#B0B0B0] text-[10px] font-normal  my-2">
-              {t(`settings:menu.${navKey(category)}`, { defaultValue: category })}
+              {t(`settings:menu.${navKey(category)}`, {
+                defaultValue: category,
+              })}
             </h3>
             <ul className="space-y-3 ">
               {subItems.map((item) => (

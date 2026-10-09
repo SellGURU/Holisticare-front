@@ -31,8 +31,8 @@ export function LanguageAndRegion() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const language = languageOf(locale);
-  const regions =
-    LANGUAGES.find((item) => item.language === language)?.regions ?? ['en-US'];
+  const regions = LANGUAGES.find((item) => item.language === language)
+    ?.regions ?? ['en-US'];
 
   useEffect(() => {
     Application.getSettingData({})
@@ -72,9 +72,7 @@ export function LanguageAndRegion() {
         </div>
       ) : (
         <>
-          <h2 className="text-sm font-medium">
-            {t('languageAndRegion')}
-          </h2>
+          <h2 className="text-sm font-medium">{t('languageAndRegion')}</h2>
           <p className="text-[10px] text-[#888888] my-4">{t('help')}</p>
           <div className="flex flex-col md:flex-row gap-4">
             <label className="flex flex-col gap-2 text-xs font-medium w-full md:w-1/2">
@@ -101,7 +99,11 @@ export function LanguageAndRegion() {
               {t('region')}
               <select
                 className="rounded-2xl border border-Gray-50 bg-[#FDFDFD] px-3 py-2"
-                value={regions.some((region) => region === locale) ? locale : regions[0]}
+                value={
+                  regions.some((region) => region === locale)
+                    ? locale
+                    : regions[0]
+                }
                 onChange={(event) => selectLocale(event.target.value)}
               >
                 {regions.map((region) => (

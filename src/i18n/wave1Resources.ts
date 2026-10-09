@@ -133,7 +133,12 @@ const settings = {
     save: 'حفظ اللغة',
     saved: 'تم حفظ اللغة',
     help: 'تتبدل الواجهة فورًا. التقارير ومحتوى الذكاء الاصطناعي المحفوظ سابقًا يبقى كما هو. التوليد الجديد يستخدم هذه اللغة.',
-    languages: { en: 'الإنجليزية', es: 'الإسبانية', fr: 'الفرنسية', ar: 'العربية' },
+    languages: {
+      en: 'الإنجليزية',
+      es: 'الإسبانية',
+      fr: 'الفرنسية',
+      ar: 'العربية',
+    },
     menu: {
       clinic_profile: 'ملف العيادة',
       clinic_preferences: 'تفضيلات العيادة',
@@ -199,7 +204,8 @@ const reports = {
     provideDataTitle: 'Ajoutez des données pour générer le plan de santé',
     provideDataSubtitle:
       'Choisissez l’une des méthodes ci-dessous pour personnaliser le plan.',
-    uploadCardTitle: 'Téléverser un rapport de laboratoire ou ajouter des biomarqueurs',
+    uploadCardTitle:
+      'Téléverser un rapport de laboratoire ou ajouter des biomarqueurs',
     uploadCardBody:
       'Téléversez le fichier de laboratoire du client, puis modifiez ou ajoutez des biomarqueurs manuellement.',
     uploadCardAction: 'Saisir ou téléverser des biomarqueurs',
@@ -247,7 +253,8 @@ const reports = {
     questionnaireCardAction: 'تعبئة الاستبيان',
     questionnairesFilled: 'تمت تعبئة الاستبيانات',
     continueToHealthPlan: 'المتابعة إلى الخطة الصحية',
-    demoLocked: 'نسخة العرض لا تسمح بالإضافة أو التعديل. قم بالترقية للوصول الكامل.',
+    demoLocked:
+      'نسخة العرض لا تسمح بالإضافة أو التعديل. قم بالترقية للوصول الكامل.',
     sectionLabels: {
       client_summary: 'ملخص العميل',
       need_focus_biomarker: 'مؤشر يحتاج إلى متابعة',
