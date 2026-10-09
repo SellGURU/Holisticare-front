@@ -19,12 +19,28 @@ const CustomBrandingContent = () => {
     headLine: '',
     lastUpdate: '',
     slug: '',
+    coachPhoto: null as string | null,
+    coachName: '',
+    coachTitle: '',
+    coachPhone: '',
+    coachEmail: '',
+    coachWebsite: '',
+    coachSocial: '',
   });
   const [defaultPrimaryColor, setDefaultPrimaryColor] = useState('#6CC24A');
   const [defaultSecondaryColor, setDefaultSecondaryColor] = useState('#005F73');
   const [defaultLogo, setDefaultLogo] = useState('');
   const [defaultHeadLine, setDefaultHeadLine] = useState('');
   const [defaultName, setDefaultName] = useState('');
+  const [defaultCoachProfile, setDefaultCoachProfile] = useState({
+    coachPhoto: null as string | null,
+    coachName: '',
+    coachTitle: '',
+    coachPhone: '',
+    coachEmail: '',
+    coachWebsite: '',
+    coachSocial: '',
+  });
   const updateCustomTheme = (key: keyof typeof customTheme, value: any) => {
     setCustomTheme((prevTheme) => ({
       ...prevTheme,
@@ -42,6 +58,19 @@ const CustomBrandingContent = () => {
   const handleDeleteImage = () => {
     updateCustomTheme('selectedImage', null);
   };
+  const handleCoachImageUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      blobToBase64(file).then((resolve: any) => {
+        updateCustomTheme('coachPhoto', resolve);
+      });
+    }
+  };
+  const handleDeleteCoachImage = () => {
+    updateCustomTheme('coachPhoto', null);
+  };
   const handleResetTheme = () => {
     setCustomTheme((prevTheme) => ({
       ...prevTheme,
@@ -50,6 +79,7 @@ const CustomBrandingContent = () => {
       secondaryColor: defaultSecondaryColor,
       headLine: defaultHeadLine,
       selectedImage: defaultLogo,
+      ...defaultCoachProfile,
     }));
   };
   const getShowBrandInfo = () => {
@@ -66,22 +96,39 @@ const CustomBrandingContent = () => {
           selectedImage: res.brand_elements.logo as string | null,
           lastUpdate: res.brand_elements.last_update as string,
           slug: (res.brand_elements.slug as string) || '',
+          coachPhoto: (res.brand_elements.coach_photo as string | null) || null,
+          coachName: (res.brand_elements.coach_name as string) || '',
+          coachTitle: (res.brand_elements.coach_title as string) || '',
+          coachPhone: (res.brand_elements.coach_phone as string) || '',
+          coachEmail: (res.brand_elements.coach_email as string) || '',
+          coachWebsite: (res.brand_elements.coach_website as string) || '',
+          coachSocial: (res.brand_elements.coach_social as string) || '',
         });
         setDefaultLogo(res.brand_elements.logo as string);
         setDefaultHeadLine(res.brand_elements.headline as string);
         setDefaultName(res.brand_elements.name as string);
         setDefaultPrimaryColor(res.brand_elements.primary_color as string);
         setDefaultSecondaryColor(res.brand_elements.secondary_color as string);
+        setDefaultCoachProfile({
+          coachPhoto: (res.brand_elements.coach_photo as string | null) || null,
+          coachName: (res.brand_elements.coach_name as string) || '',
+          coachTitle: (res.brand_elements.coach_title as string) || '',
+          coachPhone: (res.brand_elements.coach_phone as string) || '',
+          coachEmail: (res.brand_elements.coach_email as string) || '',
+          coachWebsite: (res.brand_elements.coach_website as string) || '',
+          coachSocial: (res.brand_elements.coach_social as string) || '',
+        });
         // setDefaultHeadLine()
         setPageLoading(false);
       })
-      .catch((err) => {
-        console.error('Error getting show brand info:', err);
+      .catch(() => {
         setPageLoading(false);
       });
   };
   useEffect(() => {
     getShowBrandInfo();
+    // Brand info is intentionally loaded once when the page opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [loading, setLoading] = useState(false);
   const onSave = () => {
@@ -93,6 +140,13 @@ const CustomBrandingContent = () => {
         headline: customTheme.headLine,
         primary_color: customTheme.primaryColor,
         secondary_color: customTheme.secondaryColor,
+        coach_photo: customTheme.coachPhoto || '',
+        coach_name: customTheme.coachName,
+        coach_title: customTheme.coachTitle,
+        coach_phone: customTheme.coachPhone,
+        coach_email: customTheme.coachEmail,
+        coach_website: customTheme.coachWebsite,
+        coach_social: customTheme.coachSocial,
         html_email: `
 <!DOCTYPE html>
 <html>
@@ -177,13 +231,15 @@ const CustomBrandingContent = () => {
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between w-full h-fit  md:h-[84vh] mt-6 pb-6 ">
+      <div className="grid h-full min-h-0 w-full grid-cols-1 items-stretch gap-5 overflow-y-auto lg:grid-cols-[minmax(320px,380px)_minmax(0,1fr)] lg:overflow-hidden">
         <LeftItemContent
           customTheme={customTheme}
           handleImageUpload={handleImageUpload}
           handleResetTheme={handleResetTheme}
           updateCustomTheme={updateCustomTheme}
           handleDeleteImage={handleDeleteImage}
+          handleCoachImageUpload={handleCoachImageUpload}
+          handleDeleteCoachImage={handleDeleteCoachImage}
           onSave={onSave}
           loading={loading}
           pageLoading={pageLoading}

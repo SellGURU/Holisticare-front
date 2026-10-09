@@ -11,20 +11,31 @@ interface RightItemContentProps {
     selectedImage: string | null;
     name: string;
     headLine: string;
+    slug: string;
+    coachPhoto: string | null;
+    coachName: string;
+    coachTitle: string;
+    coachPhone: string;
+    coachEmail: string;
+    coachWebsite: string;
+    coachSocial: string;
   };
 }
 
 const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
   const [activeToggle, setActiveToggle] = useState('The App Overview');
   return (
-    <div className="md:flex-grow-[1] md:mr-4 w-full h-fit md:h-full bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-2 md:p-4 shadow-100">
-      <div className="w-full h-full">
-        <div className="text-sm font-medium text-Text-Primary">Preview</div>
-        <div className="text-[10px] text-Text-Quadruple mt-3 text-justify">
-          This section shows users a quick, interactive display and allowing you
-          to see a sample before making a full commitment or decision.
+    <section className="flex h-auto w-full min-w-0 max-w-full flex-col overflow-hidden rounded-2xl border border-Gray-50 bg-backgroundColor-Card shadow-100 lg:h-full lg:min-h-0">
+      <div className="flex flex-col gap-4 border-b border-Gray-50 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <div className="text-base font-semibold text-Text-Primary">
+            Live Preview
+          </div>
+          <div className="mt-1 text-[11px] text-Text-Quadruple">
+            Changes appear here instantly before you publish them.
+          </div>
         </div>
-        <div className="w-full mt-6 flex flex-col items-center gap-7 overflow-x-scroll">
+        <div className="w-full lg:w-auto">
           <ToggleCustomBranding
             active={activeToggle}
             setActive={setActiveToggle}
@@ -34,6 +45,10 @@ const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
               'Health Plan Overview',
             ]}
           />
+        </div>
+      </div>
+      <div className="min-h-0 w-full flex-1 overflow-y-auto bg-[#f7f8fa] p-3 sm:p-5 lg:p-6">
+        <div className="mx-auto w-full min-w-0 max-w-[920px]">
           {activeToggle === 'The App Overview' ? (
             <TheAppOverview customTheme={customTheme} />
           ) : activeToggle === 'E-mail Overview' ? (
@@ -189,7 +204,7 @@ const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

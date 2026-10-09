@@ -10,44 +10,28 @@ const ToggleCustomBranding: React.FC<ToggleProps> = ({
   setActive,
 }) => {
   return (
-    <>
-      <div
-        className={` bg-backgroundColor-Main h-7 w-full md:w-[496px] text-nowrap px-1 md:px-2 flex justify-between items-center rounded-[24px] gap-1`}
-      >
-        <div
-          onClick={() => {
-            setActive(value[0]);
-          }}
-          className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[8px] sm:text-[10px] md:text-[12px]`}
+    <div
+      className="grid w-full max-w-[560px] grid-cols-3 gap-1 rounded-xl border border-Gray-50 bg-backgroundColor-Main p-1"
+      role="tablist"
+      aria-label="Branding preview"
+    >
+      {value.map((item) => (
+        <button
+          key={item}
+          type="button"
+          role="tab"
+          aria-selected={active === item}
+          onClick={() => setActive(item)}
+          className={`min-w-0 rounded-lg px-2 py-2 text-[9px] font-medium transition-colors sm:text-[11px] ${
+            active === item
+              ? 'bg-Primary-DeepTeal text-white shadow-sm'
+              : 'text-Text-Quadruple hover:bg-white hover:text-Text-Primary'
+          }`}
         >
-          {value[0]}
-        </div>
-        <div className="w-[1px] h-[17px] bg-[#E5E5E5]"></div>
-        <div
-          onClick={() => {
-            setActive(value[1]);
-          }}
-          className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[8px] sm:text-[10px] md:text-[12px]`}
-        >
-          {value[1]}
-        </div>
-        {value[2] ? (
-          <>
-            <div className="w-[1px] h-[17px] bg-[#E5E5E5]"></div>
-            <div
-              onClick={() => {
-                setActive(value[2]);
-              }}
-              className={` cursor-pointer ${active == value[2] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[8px] sm:text-[10px] md:text-[12px]`}
-            >
-              {value[2]}
-            </div>
-          </>
-        ) : (
-          ''
-        )}
-      </div>
-    </>
+          <span className="block truncate">{item}</span>
+        </button>
+      ))}
+    </div>
   );
 };
 export default ToggleCustomBranding;

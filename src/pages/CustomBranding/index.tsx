@@ -4,9 +4,11 @@ import HeaderCustomBranding from './components/Header';
 const CustomBranding = () => {
   return (
     <>
-      <div className="  md:px-6 pt-8 h-screen md:h-auto pb-[100px] md:pb-0  pr-1 md:pr-0 overflow-auto">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden px-3 pt-6 md:px-6">
         <HeaderCustomBranding />
-        <CustomBrandingContent />
+        <div className="mt-4 min-h-0 flex-1">
+          <CustomBrandingContent />
+        </div>
       </div>
     </>
   );
