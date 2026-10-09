@@ -12,11 +12,12 @@ import MainWrapper from './MainWrapper.tsx';
 import AppContextProvider from './store/app.tsx';
 import { ToastContainer } from 'react-toastify';
 import { runPortalBootGuard } from './utils/bootGuard';
+import { initializeI18n } from './i18n';
 
 initGlobalErrorHandler();
 runPortalBootGuard();
 
-createRoot(document.getElementById('root')!).render(
+void initializeI18n().finally(() => createRoot(document.getElementById('root')!).render(
   <AppErrorBoundary>
     <AppContextProvider>
       <MainWrapper />
@@ -29,4 +30,4 @@ createRoot(document.getElementById('root')!).render(
       pauseOnHover
     />
   </AppErrorBoundary>,
-);
+));
