@@ -25,7 +25,9 @@ export function LocaleSelectFields({
   const language = languageOf(locale);
   const regions = regionsForLanguage(language);
 
-  const rowClass = stacked ? 'flex flex-col gap-4' : 'flex flex-col md:flex-row gap-4';
+  const rowClass = stacked
+    ? 'flex flex-col gap-4'
+    : 'flex flex-col md:flex-row gap-4';
   const fieldClass = stacked
     ? 'flex flex-col gap-2 text-xs font-medium w-full'
     : 'flex flex-col gap-2 text-xs font-medium w-full md:w-1/2';
