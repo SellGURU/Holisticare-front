@@ -1,3 +1,5 @@
+import { uiText } from '../../../i18n/uiText';
+
 export const LAB_PANEL_TITLE = 'Extracted from file';
 
 export const LAB_PANEL_HELPER =
@@ -17,14 +19,44 @@ export const reviewUniverseTotal = (counts: ReviewCategoryCounts) =>
 export const formatLabPanelSubtitle = (total: number) =>
   `${total} biomarker${total === 1 ? '' : 's'} found in this lab file`;
 
-export const formatClientSummarySubtitle = (
+const fillCountTemplate = (
+  template: string,
   total: number,
   categories: number,
 ) =>
-  `${total} biomarker${total === 1 ? '' : 's'} in ${categories} categor${categories === 1 ? 'y' : 'ies'}`;
+  String(uiText(template))
+    .replace(/\{n\}/g, String(total))
+    .replace(/\{c\}/g, String(categories));
 
-export const formatDetailedAnalysisNote = (total: number, categories: number) =>
-  `Total of ${total} Biomarker${total === 1 ? '' : 's'} in ${categories} Categor${categories === 1 ? 'y' : 'ies'}`;
+export const formatClientSummarySubtitle = (
+  total: number,
+  categories: number,
+) => {
+  const template =
+    total === 1 && categories === 1
+      ? '{n} biomarker in {c} category'
+      : total === 1
+        ? '{n} biomarker in {c} categories'
+        : categories === 1
+          ? '{n} biomarkers in {c} category'
+          : '{n} biomarkers in {c} categories';
+  return fillCountTemplate(template, total, categories);
+};
+
+export const formatDetailedAnalysisNote = (
+  total: number,
+  categories: number,
+) => {
+  const template =
+    total === 1 && categories === 1
+      ? 'Total of {n} Biomarker in {c} Category'
+      : total === 1
+        ? 'Total of {n} Biomarker in {c} Categories'
+        : categories === 1
+          ? 'Total of {n} Biomarkers in {c} Category'
+          : 'Total of {n} Biomarkers in {c} Categories';
+  return fillCountTemplate(template, total, categories);
+};
 
 export const resolveOverviewBiomarkerTotals = (
   referenceData: any,

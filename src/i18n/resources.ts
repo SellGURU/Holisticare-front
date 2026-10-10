@@ -1,3 +1,9 @@
+import { generateFlowEn } from './portalNamespaces/generateFlow';
+import { libraryEn } from './portalNamespaces/library';
+import { reportChromeEn } from './portalNamespaces/reportChrome';
+import { shareEn } from './portalNamespaces/share';
+import { uploadEn } from './portalNamespaces/upload';
+
 export const namespaces = [
   'common',
   'nav',
@@ -11,6 +17,11 @@ export const namespaces = [
   'chat',
   'notifications',
   'accessibility',
+  'share',
+  'reportChrome',
+  'generateFlow',
+  'upload',
+  'library',
 ] as const;
 
 export const englishResources = {
@@ -56,12 +67,13 @@ export const englishResources = {
     region: 'Regional format',
     save: 'Save language',
     saved: 'Language saved',
-    help: 'The interface changes immediately. Saved reports and AI content stay unchanged. New generation uses this language.',
+    help: 'The interface changes after you save. Saved reports and AI content stay unchanged. New generation uses this language.',
     languages: {
       en: 'English',
       es: 'Spanish',
       fr: 'French',
       ar: 'Arabic',
+      fa: 'Persian',
     },
     menu: {
       clinic_profile: 'Clinic Profile',
@@ -73,6 +85,8 @@ export const englishResources = {
       general: 'General',
       account: 'Account',
       integrations_and_ai: 'Integrations & AI',
+      integrations: 'Integrations',
+      ai_preferences: 'AI Preferences',
     },
   },
   auth: {
@@ -140,6 +154,11 @@ export const englishResources = {
     languageChanged: 'Language changed to {language}.',
     closeDialog: 'Close dialog',
   },
+  share: shareEn,
+  reportChrome: reportChromeEn,
+  generateFlow: generateFlowEn,
+  upload: uploadEn,
+  library: libraryEn,
 } as const;
 
 export type I18nNamespace = (typeof namespaces)[number];

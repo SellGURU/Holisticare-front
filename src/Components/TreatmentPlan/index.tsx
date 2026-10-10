@@ -28,6 +28,8 @@ import {
   normalizeTreatmentPlanCategories,
   pickLatestGeneratedHolisticPlan,
 } from '../../utils/treatmentPlanShape';
+import { uiText } from '../../i18n/uiText';
+import { useTranslation } from 'react-i18next';
 
 type CardData = {
   id: number;
@@ -66,6 +68,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   disableGenerate,
   onActivePlanChange,
 }) => {
+  const { t } = useTranslation(['reportChrome', 'generateFlow']);
   const isDemo = useIsDemo();
   const resolveStatusColor = (status: string) => {
     switch (status === 'Published' ? 'On Going' : status) {
@@ -351,7 +354,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                 <img src="/icons/diet.svg" alt="" />
               </div>
-              Diet
+              {uiText('Diet')}
             </div>
             <div
               onClick={() => {
@@ -366,7 +369,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                 <img className="size-4" src="/icons/LifeStyle2.svg" alt="" />
               </div>
-              Lifestyle
+              {uiText('Lifestyle')}
             </div>
             <div
               onClick={() => {
@@ -381,7 +384,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                 <img src="/icons/weight.svg" alt="" />
               </div>
-              Activity
+              {uiText('Activity')}
             </div>
             <div
               onClick={() => {
@@ -396,7 +399,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                 <img src="/icons/Supplement.svg" alt="" />
               </div>
-              Supplement
+              {uiText('Supplement')}
             </div>
             <div
               onClick={() => {
@@ -411,7 +414,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                 <img src="/icons/Supplement.svg" alt="" />
               </div>
-              Peptide
+              {uiText('Peptide')}
             </div>
             <div
               onClick={() => {
@@ -426,7 +429,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                 <img src="/icons/others.svg" alt="" />
               </div>
-              Other
+              {uiText('Other')}
             </div>
           </div>
           {TreatMentPlanData.length > 0 && (
@@ -454,7 +457,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <div className="w-full  flex justify-center items-center flex-col">
                   <img src="/icons/no-recommendations.svg" alt="" />
                   <div className="text-Text-Primary text-sm font-medium mt-5">
-                    No recommendations found.
+                    {t('reportChrome:noRecommendations')}
                   </div>
                 </div>
               )}
@@ -477,10 +480,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               <div className="w-full h-full flex flex-col items-center justify-center">
                 <img src="/icons/EmptyState.svg" alt="" className="w-[219px]" />
                 <div className="text-sm font-medium text-Text-Primary -mt-9">
-                  No Holistic Plan Generated Yet
+                  {t('reportChrome:noHolisticPlanYet')}
                 </div>
                 <div className="text-xs text-Text-Primary mt-2 mb-5">
-                  Start creating your Holistic Plan
+                  {t('reportChrome:startHolisticPlan')}
                 </div>
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
@@ -502,7 +505,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     // navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                   }}
                 >
-                  <img src="/icons/tick-square.svg" alt="" /> Generate New
+                  <img src="/icons/tick-square.svg" alt="" />{' '}
+                  {String(uiText('Generate New'))}
                 </ButtonSecondary>
               </div>
             </div>
@@ -523,24 +527,26 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               <></>
               <div
                 id="scrollContainer"
-                className="flex items-center overflow-x-auto hidden-scrollbar  justify-start min-h-[300px] -mt-16 p-4  "
+                className="flex items-center overflow-x-auto hidden-scrollbar justify-start min-h-[300px] -mt-16 p-4 ps-2 pe-6"
               >
                 {cardData.map((card, index: number) => (
                   <div
                     key={card.id}
                     className={` ${card.state == 'Upcoming' && 'opacity-60'} ${
                       index % 2 == 0 ? 'mt-10 ' : 'mt-0'
-                    } relative flex flex-col   items-center -ml-10  `}
+                    } relative flex shrink-0 flex-col items-center ${
+                      index > 0 ? '-ms-10' : ''
+                    } `}
                   >
                     {index % 2 == 0 ? (
                       <img
-                        className="relative min-w-[191px] -bottom-[63px]"
+                        className="relative min-w-[191px] -bottom-[63px] pointer-events-none rtl:-scale-x-100"
                         src="/images/Group (1).svg"
                         alt=""
                       />
                     ) : (
                       <img
-                        className="relative  min-w-[191px] "
+                        className="relative min-w-[191px] pointer-events-none rtl:-scale-x-100"
                         src="/images/Group.svg"
                         alt=""
                       />
@@ -556,49 +562,62 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             isShowDot(card, index) && card.state != 'Draft',
                         });
                       }}
-                      className={`absolute cursor-pointer  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
+                      className={`absolute cursor-pointer mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
                         activeTreatment == card.t_plan_id
                           ? resolveCardBorderColor(card.state)
                           : 'border-Gray-25'
                       }`}
                     >
-                      <div className=" flex w-full justify-center items-center flex-col gap-2">
-                        <div className="flex w-full  justify-center ">
-                          <div className="bg-[#DEF7EC] rounded-full w-[22px] h-[22px] flex items-center justify-center text-xs text-Text-Primary  ">
-                            {index + 1 < 10 && 0}
-                            {index + 1}
-                          </div>
-                          {isShowDot(card, index) && (
-                            <img
-                              onClick={() => setShowModalIndex(index)}
-                              className="-mr-5 ml-3 cursor-pointer"
-                              src="/icons/dots.svg"
-                              alt=""
-                            />
-                          )}
+                      {isShowDot(card, index) && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowModalIndex(index);
+                          }}
+                          className="absolute top-2 end-2 z-10 flex size-6 items-center justify-center rounded-full hover:bg-Gray-50"
+                          aria-label="Plan actions"
+                        >
+                          <img
+                            className="size-4"
+                            src="/icons/dots.svg"
+                            alt=""
+                          />
+                        </button>
+                      )}
+                      <div className="flex w-full max-w-[96px] justify-center items-center flex-col gap-1.5 px-1">
+                        <div className="bg-[#DEF7EC] rounded-full w-[22px] h-[22px] flex items-center justify-center text-[11px] text-Text-Primary tabular-nums">
+                          {index + 1 < 10 && 0}
+                          {index + 1}
                         </div>
 
-                        <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
-                          <img src="/icons/calendar-2.svg" alt="" />
+                        <div
+                          dir="ltr"
+                          className="rounded-full bg-Secondary-SelverGray px-2 py-[2px] flex items-center gap-1 text-[9px] leading-none text-Primary-DeepTeal whitespace-nowrap"
+                        >
+                          <img
+                            className="size-3 shrink-0"
+                            src="/icons/calendar-2.svg"
+                            alt=""
+                          />
                           {card.formatted_date.split(',')[0]}
                         </div>
-                        <div
-                          // style={{ backgroundColor: resolveStatusColor() }}
-                          className={`text-[10px] flex gap-1 items-center`}
-                        >
+                        <div className="text-[8px] leading-tight flex gap-1 items-center justify-center text-center max-w-[92px]">
                           <div
                             style={{
                               backgroundColor: resolveStatusColor(card.state),
                             }}
-                            className={`w-2 h-2 rounded-full `}
+                            className="w-1.5 h-1.5 shrink-0 rounded-full"
                           ></div>
-                          {displayPlanState(card.state)}
+                          <span className="truncate">
+                            {String(uiText(displayPlanState(card.state)))}
+                          </span>
                         </div>
                       </div>
                       {showModalIndex === index && (
                         <div
                           ref={showModalRefrence}
-                          className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] pl-2 pr-1 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-1"
+                          className="absolute top-11 end-0 z-20 w-[96px] rounded-[16px] ps-2 pe-1 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-1"
                         >
                           <div
                             onClick={(e) => {
@@ -617,7 +636,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                           >
                             <img src="/icons/edit-green.svg" alt="" />
-                            Edit
+                            {t('generateFlow:edit')}
                           </div>
                           <div
                             onClick={(e) => {
@@ -634,7 +653,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                           >
                             {deleteConfirmIndex === index ? (
                               <div className="text-[12px] text-Text-Secondary  w-full flex items-center justify-between">
-                                Sure?{' '}
+                                {t('generateFlow:sure')}{' '}
                                 <div className="flex items-center w-full justify-end gap-[2px]">
                                   <img
                                     onClick={(e) => {
@@ -657,7 +676,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             ) : (
                               <>
                                 <img src="/icons/delete-green.svg" alt="" />
-                                Delete
+                                {t('generateFlow:delete')}
                               </>
                             )}
                           </div>
@@ -690,13 +709,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                         : ''
                   }
                   className={` 
-                    relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
+                    relative shrink-0 ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ms-2 flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
                   <>
                     {' '}
                     <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
-                    <div className="text-sm font-medium text-Primary-DeepTeal">
-                      Generate New
+                    <div className="text-[11px] leading-tight text-center font-medium text-Primary-DeepTeal px-2">
+                      {String(uiText('Generate New'))}
                     </div>
                   </>
                   {disableGenerate && (
@@ -740,7 +759,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                     <img src="/icons/diet.svg" alt="" />
                   </div>
-                  Diet
+                  {uiText('Diet')}
                 </div>
                 <div
                   onClick={() => {
@@ -759,7 +778,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       alt=""
                     />
                   </div>
-                  Lifestyle
+                  {uiText('Lifestyle')}
                 </div>
                 <div
                   onClick={() => {
@@ -774,7 +793,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                     <img src="/icons/weight.svg" alt="" />
                   </div>
-                  Activity
+                  {uiText('Activity')}
                 </div>
                 <div
                   onClick={() => {
@@ -789,7 +808,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                     <img src="/icons/Supplement.svg" alt="" />
                   </div>
-                  Supplement
+                  {uiText('Supplement')}
                 </div>
                 <div
                   onClick={() => {
@@ -804,7 +823,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                     <img src="/icons/peptidescolor.svg" alt="" />
                   </div>
-                  Peptide
+                  {uiText('Peptide')}
                 </div>
                 <div
                   onClick={() => {
@@ -819,7 +838,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                     <img src="/icons/others.svg" alt="" />
                   </div>
-                  Other
+                  {uiText('Other')}
                 </div>
               </div>
               {TreatMentPlanData.length > 0 && (
@@ -847,7 +866,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     <div className="w-full flex justify-center items-center flex-col">
                       <img src="/icons/no-recommendations.svg" alt="" />
                       <div className="text-Text-Primary text-sm font-medium mt-5">
-                        No recommendations found.
+                        {t('reportChrome:noRecommendations')}
                       </div>
                     </div>
                   )}

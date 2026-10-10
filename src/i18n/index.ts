@@ -4,13 +4,14 @@ import ICU from 'i18next-icu';
 import { initReactI18next } from 'react-i18next';
 
 import { createMissingKeyTelemetry } from './missingKeyTelemetry';
+import { faResources } from './faResources';
 import { englishResources } from './resources';
 import { wave1Resources } from './wave1Resources';
 
 export const PRODUCT_FALLBACK_LOCALE = 'en';
 export const PSEUDO_LOCALE = 'en-XA';
 export const CLINIC_LOCALE_STORAGE_KEY = 'holisticare.clinicContentLocale';
-export const WAVE_1_UI_LOCALES = ['en', 'es', 'fr', 'ar'] as const;
+export const WAVE_1_UI_LOCALES = ['en', 'es', 'fr', 'ar', 'fa'] as const;
 
 export function localeSelectorEnabled(): boolean {
   return (
@@ -77,7 +78,7 @@ export function enabledUiLocales(
 ): string[] {
   const enabled = [PRODUCT_FALLBACK_LOCALE];
   if (!isProduction || selectorEnabled) {
-    enabled.push('es', 'fr', 'ar');
+    enabled.push('es', 'fr', 'ar', 'fa');
   }
   if (import.meta.env.VITE_ENABLE_I18N_FOUNDATION === 'true') {
     for (const [locale, isEnabled] of Object.entries(rolloutFlags)) {
@@ -108,6 +109,7 @@ export function createI18nInstance(
   const resources: Resource = {
     en: englishResources,
     ...wave1Resources,
+    fa: faResources,
   };
   if (!isProduction) {
     resources[PSEUDO_LOCALE] = pseudoResource(
@@ -119,7 +121,13 @@ export function createI18nInstance(
   const initialization = instance.init({
     resources,
     lng: PRODUCT_FALLBACK_LOCALE,
-    fallbackLng: (locale) => uiLocaleFallbackChain(locale),
+    fallbackLng: (code) => {
+      const canonical = canonicalizeUiLocale(code) ?? PRODUCT_FALLBACK_LOCALE;
+      const language = canonical.split('-')[0] ?? PRODUCT_FALLBACK_LOCALE;
+      if (language === PRODUCT_FALLBACK_LOCALE)
+        return [PRODUCT_FALLBACK_LOCALE];
+      return [language, PRODUCT_FALLBACK_LOCALE];
+    },
     supportedLngs: enabledUiLocales(isProduction),
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
@@ -148,7 +156,12 @@ export const i18n = createI18nInstance();
 
 export function textDirection(locale: string): 'ltr' | 'rtl' {
   const canonical = canonicalizeUiLocale(locale) ?? PRODUCT_FALLBACK_LOCALE;
-  return canonical === 'ar' || canonical.startsWith('ar-') ? 'rtl' : 'ltr';
+  return canonical === 'ar' ||
+    canonical.startsWith('ar-') ||
+    canonical === 'fa' ||
+    canonical.startsWith('fa-')
+    ? 'rtl'
+    : 'ltr';
 }
 
 export function storedClinicLocale(): string | null {

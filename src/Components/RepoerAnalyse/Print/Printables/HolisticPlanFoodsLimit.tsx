@@ -1,3 +1,5 @@
+import { uiText } from '../../../../i18n/uiText';
+
 interface HolisticPlanFoodsLimitProps {
   value: string[];
 }
@@ -18,7 +20,7 @@ const HolisticPlanFoodsLimit: React.FC<HolisticPlanFoodsLimitProps> = ({
             }}
           >
             <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-            Foods to Limit
+            {uiText('Foods to Limit')}
           </div>
           <div
             className="flex flex-col pt-1.5"

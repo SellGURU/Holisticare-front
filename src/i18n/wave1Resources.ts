@@ -1,5 +1,19 @@
 import type { Resource } from 'i18next';
 
+import {
+  generateFlowEs,
+  generateFlowFr,
+  generateFlowAr,
+} from './portalNamespaces/generateFlow';
+import { libraryEs, libraryFr, libraryAr } from './portalNamespaces/library';
+import {
+  reportChromeEs,
+  reportChromeFr,
+  reportChromeAr,
+} from './portalNamespaces/reportChrome';
+import { shareEs, shareFr, shareAr } from './portalNamespaces/share';
+import { uploadEs, uploadFr, uploadAr } from './portalNamespaces/upload';
+
 const nav = {
   es: {
     main: 'Principal',
@@ -92,8 +106,14 @@ const settings = {
     region: 'Formato regional',
     save: 'Guardar idioma',
     saved: 'Idioma guardado',
-    help: 'La interfaz cambia de inmediato. Los informes y el contenido de IA ya guardados no se modifican. Las nuevas generaciones usan este idioma.',
-    languages: { en: 'Inglés', es: 'Español', fr: 'Francés', ar: 'Árabe' },
+    help: 'La interfaz cambia después de guardar. Los informes y el contenido de IA ya guardados no se modifican. Las nuevas generaciones usan este idioma.',
+    languages: {
+      en: 'Inglés',
+      es: 'Español',
+      fr: 'Francés',
+      ar: 'Árabe',
+      fa: 'Persa',
+    },
     menu: {
       clinic_profile: 'Perfil de la clínica',
       clinic_preferences: 'Preferencias de la clínica',
@@ -103,6 +123,9 @@ const settings = {
       privacy: 'Privacidad',
       general: 'General',
       account: 'Cuenta',
+      integrations_and_ai: 'Integraciones e IA',
+      integrations: 'Integraciones',
+      ai_preferences: 'Preferencias de IA',
     },
   },
   fr: {
@@ -112,8 +135,14 @@ const settings = {
     region: 'Format régional',
     save: 'Enregistrer la langue',
     saved: 'Langue enregistrée',
-    help: "L'interface change immédiatement. Les rapports et le contenu d'IA déjà enregistrés restent inchangés. Les nouvelles générations utilisent cette langue.",
-    languages: { en: 'Anglais', es: 'Espagnol', fr: 'Français', ar: 'Arabe' },
+    help: "L'interface change après l'enregistrement. Les rapports et le contenu d'IA déjà enregistrés restent inchangés. Les nouvelles générations utilisent cette langue.",
+    languages: {
+      en: 'Anglais',
+      es: 'Espagnol',
+      fr: 'Français',
+      ar: 'Arabe',
+      fa: 'Persan',
+    },
     menu: {
       clinic_profile: 'Profil de la clinique',
       clinic_preferences: 'Préférences de la clinique',
@@ -123,6 +152,9 @@ const settings = {
       privacy: 'Confidentialité',
       general: 'Général',
       account: 'Compte',
+      integrations_and_ai: 'Intégrations et IA',
+      integrations: 'Intégrations',
+      ai_preferences: 'Préférences d’IA',
     },
   },
   ar: {
@@ -132,12 +164,13 @@ const settings = {
     region: 'التنسيق الإقليمي',
     save: 'حفظ اللغة',
     saved: 'تم حفظ اللغة',
-    help: 'تتبدل الواجهة فورًا. التقارير ومحتوى الذكاء الاصطناعي المحفوظ سابقًا يبقى كما هو. التوليد الجديد يستخدم هذه اللغة.',
+    help: 'تتبدل الواجهة بعد الحفظ. التقارير ومحتوى الذكاء الاصطناعي المحفوظ سابقًا يبقى كما هو. التوليد الجديد يستخدم هذه اللغة.',
     languages: {
       en: 'الإنجليزية',
       es: 'الإسبانية',
       fr: 'الفرنسية',
       ar: 'العربية',
+      fa: 'الفارسية',
     },
     menu: {
       clinic_profile: 'ملف العيادة',
@@ -148,6 +181,9 @@ const settings = {
       privacy: 'الخصوصية',
       general: 'عام',
       account: 'الحساب',
+      integrations_and_ai: 'التكامل والذكاء الاصطناعي',
+      integrations: 'عمليات التكامل',
+      ai_preferences: 'تفضيلات الذكاء الاصطناعي',
     },
   },
 } as const;
@@ -281,18 +317,33 @@ export const wave1Resources: Resource = {
     settings: settings.es,
     accessibility: accessibility.es,
     reports: reports.es,
+    share: shareEs,
+    reportChrome: reportChromeEs,
+    generateFlow: generateFlowEs,
+    upload: uploadEs,
+    library: libraryEs,
   },
   fr: {
     nav: nav.fr,
     settings: settings.fr,
     accessibility: accessibility.fr,
     reports: reports.fr,
+    share: shareFr,
+    reportChrome: reportChromeFr,
+    generateFlow: generateFlowFr,
+    upload: uploadFr,
+    library: libraryFr,
   },
   ar: {
     nav: nav.ar,
     settings: settings.ar,
     accessibility: accessibility.ar,
     reports: reports.ar,
+    share: shareAr,
+    reportChrome: reportChromeAr,
+    generateFlow: generateFlowAr,
+    upload: uploadAr,
+    library: libraryAr,
   },
 };
 

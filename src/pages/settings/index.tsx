@@ -99,7 +99,7 @@ const Setting: React.FC = () => {
 
   return (
     <div>
-      <div className="flex md:fixed z-[48] top-13 w-full md:pr-6 pr-3 pl-3  md:pl-[194px] py-4 left-0  justify-between ">
+      <div className="flex md:fixed z-[48] top-13 w-full md:pe-6 pe-3 ps-3 md:ps-[194px] py-4 start-0 justify-between ">
         <div className=" text-base font-medium text-Text-Primary">
           {t('settings:title')}
         </div>

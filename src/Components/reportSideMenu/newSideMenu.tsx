@@ -285,13 +285,13 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       </div> */}
       <div
         onClick={() => onClose()}
-        className="size-8 rounded-md  py-2 px-4 flex items-center justify-center xl:hidden absolute right-[-10px] top-[-10px] cursor-pointer"
+        className="size-8 rounded-md  py-2 px-4 flex items-center justify-center xl:hidden absolute end-[-10px] top-[-10px] cursor-pointer"
       >
         <SvgIcon src="/icons/close.svg" color="#005F73" />
       </div>
       <div className="h-px w-full bg-gray-100 mt-4"></div>
       <div className="mt-6  overflow-y-auto">
-        <div className="TextStyle-Headline-6 text-left hidden md:block">
+        <div className="TextStyle-Headline-6 text-start hidden md:block">
           {t('sections')}
         </div>
         <div className="mt-2 flex flex-col gap-1">
@@ -308,7 +308,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                   }
                 }}
                 key={index}
-                className={`text-[10px] ${disableClicks && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center pl-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
+                className={`text-[10px] ${disableClicks && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center ps-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
                   item === activeMenu
                     ? 'border-Primary-EmeraldGreen'
                     : 'border-gray-50'

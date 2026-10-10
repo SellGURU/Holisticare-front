@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { uiText } from '../../../i18n/uiText';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Legends from '../Legends';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
@@ -42,6 +44,7 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
   needFocusAnalyzing,
   ringLoading,
 }) => {
+  const { t } = useTranslation('reportChrome');
   const [isOpen, setIsOpen] = useState(true);
   const { phase: descriptionPhase, displayedDescription } =
     useCategoryDescriptionDisplay({
@@ -102,10 +105,10 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
                 />
               </div>
             </div>
-            <div className="ml-2">
+            <div className="ms-2">
               <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
                 <TooltipTextAuto maxWidth="300px">
-                  {data.subcategory}
+                  {String(uiText(data.subcategory))}
                 </TooltipTextAuto>
                 {isOpen && <Legends></Legends>}
               </div>
@@ -138,7 +141,7 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
             ) : displayedDescription && refrences.length > 0 ? (
               <>
                 <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
-                  Description
+                  {t('description')}
                 </div>
                 <div className=" md:h-[30px] overflow-y-auto text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
                   <MarkdownText text={displayedDescription} />
@@ -152,9 +155,7 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
                     <div className="flex flex-col justify-center items-center">
                       <img src="/icons/EmptyState-biomarkerbox.svg" alt="" />
                       <div className="TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary max-w-[280px]">
-                        No biomarkers are visible in this category. Disabled
-                        catalog items are hidden here, and leftover notes are
-                        not shown.
+                        {t('noBiomarkersInCategory')}
                       </div>
                     </div>
                   </div>

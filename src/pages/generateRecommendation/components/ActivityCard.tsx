@@ -10,6 +10,7 @@ import {
   CATEGORY_ORDER,
   DEFAULT_CATEGORY_LABELS,
 } from '../../../utils/lookingForwards';
+import { uiText } from '../../../i18n/uiText';
 
 interface ActivityCardProps {
   item: any;
@@ -51,7 +52,11 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   handleRemoveIssueFromList: handleRemoveIssueFromListData,
   handleUpdateDoseByKey,
 }) => {
-  const { positive, negative } = splitInstructions(item.Instruction);
+  const split = splitInstructions(item.Instruction);
+  const positive =
+    String(item.Recommendations_positive ?? '').trim() || split.positive;
+  const negative =
+    String(item.Recommendations_negative ?? '').trim() || split.negative;
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
   const [color, setColor] = useState<string>('');
@@ -229,7 +234,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   className={`size-[8px] select-none rounded-full`}
                   style={{ backgroundColor: color }}
                 ></div>
-                {item?.label || '-'}
+                {item?.label ? String(uiText(item.label)) : '-'}
               </div>
               {(item?.fda_status || item?.FDA_Status) &&
                 item.Category === 'Medical Peptide Therapy' && (
@@ -263,7 +268,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray cursor-pointer"
                   onClick={() => setShowAddIssue(true)}
                 >
-                  Add Issue{' '}
+                  {String(uiText('Add Issue'))}{' '}
                   <img src="/icons/add-small.svg" alt="" className="w-3 h-3" />
                 </div>
                 {showAddIssue && (
@@ -514,7 +519,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                             alt=""
                             className="w-5 h-5"
                           />
-                          Create new issue
+                          {String(uiText('Create new issue'))}
                         </div>
                       )}
                     </div>
@@ -588,7 +593,8 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   className="ml-3 mb-[2px] flex gap-[2px] items-center text-[10px] text-[#F4A261] underline cursor-pointer"
                 >
                   <img src="/icons/alarm.svg" alt="" />
-                  Conflict <span>({Conflicts?.length})</span>
+                  {String(uiText('Conflict'))}{' '}
+                  <span>({Conflicts?.length})</span>
                 </div>
               )}
             </div>
@@ -598,7 +604,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
             <div className="flex flex-col gap-1 pl-3 mt-2 mb-2">
               <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
                 <img src="/icons/info-circle-blue.svg" alt="" />
-                Analysis Info
+                {String(uiText('Analysis Info'))}
               </div>
               <ExpandableText
                 text={item['Practitioner Comments'][0]}
@@ -610,7 +616,9 @@ export const ActivityCard: FC<ActivityCardProps> = ({
           <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
           {item.Category === 'Supplement' && (
             <div className="mb-2">
-              <div className="text-Text-Secondary text-[10px] mb-1">Dose</div>
+              <div className="text-Text-Secondary text-[10px] mb-1">
+                {String(uiText('Dose'))}
+              </div>
               <input
                 value={item.Dose || ''}
                 onChange={(e) =>
@@ -620,20 +628,20 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                     e.target.value,
                   )
                 }
-                placeholder="Enter dose (e.g., 1000 mg daily)"
+                placeholder={String(uiText('Enter dose (e.g., 1000 mg daily)'))}
                 className="w-full h-8 px-2 outline-none bg-backgroundColor-Card border border-Gray-50 rounded-lg text-Text-Primary text-xs"
               />
             </div>
           )}
           <li className="mb-1.5 text-justify">
             <span className="text-Text-Secondary bullet-point">
-              Practitioner Insight (Benefits):
+              {String(uiText('Practitioner Insight (Benefits):'))}
             </span>{' '}
             {positive}
           </li>
           <li className=" text-justify">
             <span className="text-Text-Secondary bullet-point">
-              Practitioner Insight (Risks):
+              {String(uiText('Practitioner Insight (Risks):'))}
             </span>{' '}
             {negative}
           </li>

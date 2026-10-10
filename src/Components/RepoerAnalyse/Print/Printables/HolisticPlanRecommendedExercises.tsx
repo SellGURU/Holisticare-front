@@ -1,3 +1,5 @@
+import { uiText } from '../../../../i18n/uiText';
+
 interface HolisticPlanRecommendedExercisesProps {
   value: string[];
 }
@@ -22,7 +24,7 @@ const HolisticPlanRecommendedExercises: React.FC<
               alt=""
               className="ml-[-2px]"
             />
-            Recommended Exercises
+            {uiText('Recommended Exercises')}
           </div>
           <div
             className="flex flex-col pt-1.5"

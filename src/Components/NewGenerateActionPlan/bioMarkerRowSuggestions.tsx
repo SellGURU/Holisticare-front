@@ -9,6 +9,7 @@ import FilePreviewModal from './components/FilePreviewModal';
 import ActionTaskDetailFields from './components/ActionTaskDetailFields';
 import MonthShows from './components/MonthShows';
 import { resolveCategoryIcon } from '../../help';
+import { uiText } from '../../i18n/uiText';
 import {
   TaskValidationError,
   isScheduleMissing,
@@ -255,7 +256,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   >
                     <img src="/icons/alarm.svg" alt="" className="w-4 h-4" />
                     <div className="text-xs text-[#FFAB2C] underline">
-                      Conflict
+                      {uiText('Conflict')}
                     </div>
                     <div className="text-xs text-[#FFAB2C]">
                       ({value.flag.conflicts.length})
@@ -321,7 +322,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       />
                       {checkValid ||
                       (validationErrors && validationErrors.length > 0)
-                        ? 'Schedule required'
+                        ? String(uiText('Schedule required'))
                         : 'No schedule yet'}
                     </div>
                     {(checkValid ||
@@ -432,7 +433,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                           className="text-Primary-DeepTeal cursor-pointer underline font-medium"
                           onClick={() => setShowMore(!showMore)}
                         >
-                          {showMore ? 'See less' : 'See more'}
+                          {showMore ? uiText('See less') : uiText('See more')}
                         </span>
                       )}
                     </div>

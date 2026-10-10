@@ -5,17 +5,14 @@ import Application from '../../../api/app';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 import Circleloader from '../../../Components/CircleLoader';
 import SpinnerLoader from '../../../Components/SpinnerLoader';
-import {
-  applyUiLocale,
-  storedClinicLocale,
-  textDirection,
-} from '../../../i18n';
+import { applyUiLocale, storedClinicLocale } from '../../../i18n';
 
 const LANGUAGES = [
   { language: 'en', regions: ['en-US', 'en-GB'] },
   { language: 'es', regions: ['es-ES', 'es-MX'] },
   { language: 'fr', regions: ['fr-FR', 'fr-CA'] },
   { language: 'ar', regions: ['ar'] },
+  { language: 'fa', regions: ['fa-IR'] },
 ] as const;
 
 function languageOf(locale: string): string {
@@ -24,7 +21,7 @@ function languageOf(locale: string): string {
 
 export function LanguageAndRegion() {
   const { t } = useTranslation('settings');
-  const savedFocus = useRef<HTMLElement | null>(null);
+  const dirty = useRef(false);
   const [locale, setLocale] = useState(storedClinicLocale() || 'en');
   const [initialLocale, setInitialLocale] = useState(locale);
   const [loading, setLoading] = useState(true);
@@ -38,34 +35,22 @@ export function LanguageAndRegion() {
     Application.getSettingData({})
       .then((response) => {
         const stored = response?.data?.content_locale;
-        if (typeof stored === 'string' && stored) {
-          setLocale(stored);
-          setInitialLocale(stored);
-          return applyUiLocale(stored);
-        }
-        return undefined;
+        if (typeof stored !== 'string' || !stored) return;
+        setInitialLocale(stored);
+        if (!dirty.current) setLocale(stored);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const restoreFocus = () => {
-    const element = savedFocus.current;
-    if (element && document.contains(element)) element.focus();
-  };
-
   const selectLocale = (next: string) => {
-    savedFocus.current = document.activeElement as HTMLElement | null;
+    dirty.current = true;
+    setSaved(false);
     setLocale(next);
-    void applyUiLocale(next).finally(restoreFocus);
   };
 
   return (
-    <div
-      className="bg-backgroundColor-Card h-fit min-h-[348px] w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary"
-      lang={locale}
-      dir={textDirection(locale)}
-    >
+    <div className="bg-backgroundColor-Card h-fit min-h-[348px] w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary">
       {loading ? (
         <div className="w-full flex justify-center items-center h-[300px]">
           <Circleloader />
@@ -116,19 +101,22 @@ export function LanguageAndRegion() {
           </div>
           <div className="flex justify-end mt-6">
             <ButtonPrimary
+              type="button"
               ClassName="min-w-[150px]"
               onClick={() => {
-                if (saving) return;
+                if (saving || locale === initialLocale) return;
                 setSaving(true);
                 Application.updateClinicLocale({ content_locale: locale })
+                  .then(() => applyUiLocale(locale))
                   .then(() => {
                     setInitialLocale(locale);
                     setSaved(true);
+                    dirty.current = false;
                     window.setTimeout(() => setSaved(false), 2000);
                   })
                   .catch(() => {
                     setLocale(initialLocale);
-                    void applyUiLocale(initialLocale);
+                    dirty.current = false;
                   })
                   .finally(() => setSaving(false));
               }}

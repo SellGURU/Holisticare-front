@@ -140,7 +140,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                     <>
                       {menu.name === 'Knowledge Graph' &&
                       !dontPermisionsToRender(menu.name) ? (
-                        <div className=" my-2  w-full flex pl-5  items-center">
+                        <div className=" my-2  w-full flex ps-5  items-center">
                           {' '}
                           <PortalLink
                             to={menu.url}
@@ -193,9 +193,9 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                                   onClick={() => {
                                     selectMenu(menu);
                                   }}
-                                  className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
+                                  className={`h-[32px]  2xl:h-[32px] ps-5 py-4 pe-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
                                     activeMenu.name === menu.name
-                                      ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
+                                      ? ' bg-[#E6EEF5] border-e-2 border-Primary-DeepTeal'
                                       : 'bg-white'
                                   } cursor-pointer text-[8px] h-sm:text-[10px] `}
                                 >
@@ -220,9 +220,9 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                                 </PortalLink>
                               ) : (
                                 <div
-                                  className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
+                                  className={`h-[32px]  2xl:h-[32px] ps-5 py-4 pe-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
                                     activeMenu.name === menu.name
-                                      ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
+                                      ? ' bg-[#E6EEF5] border-e-2 border-Primary-DeepTeal'
                                       : 'bg-white'
                                   } opacity-50 cursor-not-allowed text-[8px] h-sm:text-[10px] `}
                                 >
@@ -261,8 +261,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
             </div>
           </div>
         </div>
-        <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  pl-5 md:grid  w-full items-end gap-1">
-          <div className="flex w-full justify-center items-end ml-[-16px]">
+        <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  ps-5 md:grid  w-full items-end gap-1">
+          <div className="flex w-full justify-center items-end ms-[-16px]">
             Powered by
             <img
               className=""

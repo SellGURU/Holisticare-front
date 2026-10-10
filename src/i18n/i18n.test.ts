@@ -25,9 +25,11 @@ describe('UI locale foundation', () => {
     expect(resolveEnabledUiLocale('not_a_locale', ['en', 'fr'])).toBe('en');
   });
 
-  it('uses rtl only for Arabic tags', () => {
+  it('uses rtl for Arabic and Persian tags', () => {
     expect(textDirection('ar')).toBe('rtl');
     expect(textDirection('ar-SA')).toBe('rtl');
+    expect(textDirection('fa')).toBe('rtl');
+    expect(textDirection('fa-IR')).toBe('rtl');
     expect(textDirection('fr-CA')).toBe('ltr');
   });
 
@@ -50,6 +52,14 @@ describe('UI locale foundation', () => {
     expect(instance.t('reports:sectionLabels.client_summary')).toBe(
       'Resumen del cliente',
     );
+    await instance.changeLanguage('fa');
+    expect(instance.t('nav:client_list')).toBe('فهرست مراجعان');
+    expect(instance.t('settings:languageAndRegion')).toBe('زبان و منطقه');
+    expect(instance.t('settings:menu.integrations')).toBe('یکپارچه‌سازی');
+    expect(instance.t('settings:menu.ai_preferences')).toBe(
+      'ترجیحات هوش مصنوعی',
+    );
+    expect(instance.t('settings:title')).not.toBe('الإعدادات');
     await instance.changeLanguage('en');
     expect(
       instance.t('nav:not_extracted', { defaultValue: 'Client List' }),

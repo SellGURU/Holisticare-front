@@ -448,7 +448,7 @@ const ClientList = () => {
                   className={`text-[12px] flex items-center justify-center gap-1 bg-Primary-EmeraldGreen text-white border border-gray-50 rounded-[12px] px-6 py-[6px] ${isDemo ? 'pointer-events-none opacity-50' : ''}`}
                   style={{ borderRadius: '20px' }}
                 >
-                  <img className="mr-1" src="/icons/user-add2.svg" alt="" />
+                  <img className="me-1" src="/icons/user-add2.svg" alt="" />
                   Add Client
                 </PortalLink>
               </div>

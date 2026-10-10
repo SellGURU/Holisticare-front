@@ -6,6 +6,7 @@ import { Tooltip } from 'react-tooltip';
 import Application from '../../api/app';
 import SpinnerLoader from '../SpinnerLoader';
 import { showSuccess } from '../GlobalToast';
+import { uiText } from '../../i18n/uiText';
 
 export const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -95,7 +96,7 @@ export const ChangePassword = () => {
       });
       setbtnLoading(false);
       resetForm(); // all good, clear the form
-      showSuccess('Password changed successfully.');
+      showSuccess(String(uiText('Password changed successfully.')));
     } catch (err: any) {
       const apiError = err?.detail;
       console.log(err);

@@ -1,3 +1,4 @@
+import { uiText } from '../../../i18n/uiText';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import { resolveCategoryStatusRingBackground } from '../../../utils/categoryStatusRingStyle';
 
@@ -39,7 +40,7 @@ const SummaryBoxPrint: React.FC<SummaryBoxPrintProps> = ({ data }) => {
         </div>
         <div className="ml-2">
           <div className=" text-sm" style={{ color: '#005F73' }}>
-            {data.subcategory}
+            {String(uiText(data.subcategory))}
           </div>
           <div
             className="flex justify-start items-center"

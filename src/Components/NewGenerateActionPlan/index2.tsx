@@ -27,8 +27,11 @@ import {
   validateActionPlanTasks,
 } from './actionPlanValidation';
 import { createTrailingDebounce } from '../../utils/trailingDebounce';
+import { useTranslation } from 'react-i18next';
+import { uiText } from '../../i18n/uiText';
 
 const GenerateActionPlan = () => {
+  const { t } = useTranslation('reports');
   const isDemo = useIsDemo();
   // const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
@@ -396,7 +399,9 @@ const GenerateActionPlan = () => {
                   />
                 </div>
                 <div className="TextStyle-Headline-5 text-Text-Primary">
-                  {calendarView ? 'Calendar View' : 'Generate Action Plan'}
+                  {calendarView
+                    ? uiText('Calendar View')
+                    : t('generateActionPlan')}
                 </div>
               </div>
               {!calendarView && (
@@ -418,7 +423,7 @@ const GenerateActionPlan = () => {
                         ) : (
                           <>
                             <img src="/icons/tick-square.svg" alt="" />
-                            Save Changes
+                            {uiText('Save Changes')}
                           </>
                         )}
                       </ButtonPrimary>

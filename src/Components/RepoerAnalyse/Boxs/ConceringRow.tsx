@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
+import { uiText } from '../../../i18n/uiText';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
 interface ConceringRowProps {
@@ -15,7 +16,7 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
       <div className="w-full flex justify-between px-6 items-center bg-white  border-b border-Gray-50 h-[56px]">
         <div className="TextStyle-Body-2 text-Text-Primary">
           <TooltipTextAuto tooltipPlace="top" maxWidth="200px">
-            {data.subcategory}
+            {String(uiText(data.subcategory))}
           </TooltipTextAuto>
         </div>
         <div
@@ -24,7 +25,11 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
           }}
           className={`${isOpen ? '-rotate-90' : 'rotate-90'}  cursor-pointer transition-transform`}
         >
-          <img className="w-6 h-6" src="/icons/arrow-right.svg" alt="" />
+          <img
+            className="w-6 h-6 rtl:-scale-x-100"
+            src="/icons/arrow-right.svg"
+            alt=""
+          />
         </div>
       </div>
       {isOpen && (

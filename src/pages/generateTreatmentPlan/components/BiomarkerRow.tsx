@@ -10,6 +10,7 @@ import {
   resolveCategoryName,
   splitInstructions,
 } from '../../../help';
+import { uiText } from '../../../i18n/uiText';
 import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
@@ -235,7 +236,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
           </div>
           <div className="text-Text-Primary mt-1 text-[10px] font-[500] text-center">
             <TooltipTextAuto maxWidth="800px" tooltipPlace="top">
-              {resolveCategoryName(value.Category)}
+              {uiText(resolveCategoryName(value.Category))}
             </TooltipTextAuto>
           </div>
         </div>
@@ -321,7 +322,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                         data-tooltip-id={`${value.title}-${index}`}
                         className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
                       >
-                        Analysis Info
+                        {uiText('Analysis Info')}
                         <Tooltip
                           id={`${value.title}-${index}`}
                           place="top"
@@ -516,7 +517,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               <div className="flex flex-col gap-1 mb-1.5">
                 <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
                   <img src="/icons/info-circle-blue.svg" alt="" />
-                  Analysis Info
+                  {uiText('Analysis Info')}
                 </div>
                 <div className="text-[#666666] leading-5 text-xs text-justify mr-8">
                   {value['Practitioner Comments'][0]?.substring(
@@ -528,7 +529,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                       className="text-Primary-DeepTeal cursor-pointer underline font-medium"
                       onClick={() => setShowMore(!showMore)}
                     >
-                      {showMore ? 'See less' : 'See more'}
+                      {showMore ? uiText('See less') : uiText('See more')}
                     </span>
                   )}
                 </div>
@@ -536,21 +537,21 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
             )}
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
               <img src="/icons/book.svg" alt="" className="ml-[-2px]" />
-              Scientific Basis
+              {uiText('Scientific Basis')}
             </div>
             <div className="text-Text-Quadruple text-xs leading-5">
               {value?.['Based on'] || '-'}
             </div>
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
               <img src="/icons/lamp-on-new.svg" alt="" className="ml-[-2px]" />
-              Guidelines
+              {uiText('Guidelines')}
             </div>
             <div className="text-Text-Quadruple text-xs leading-5 mr-8">
               {value?.Intervnetion_content || '-'}
             </div>
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
               <img src="/icons/medal-star.svg" alt="" className="ml-[-2px]" />
-              Expected Benefits
+              {uiText('Expected Benefits')}
             </div>
             <div className="flex flex-col ml-1">
               {value?.key_benefits?.map((el: any) => {
@@ -569,7 +570,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                     alt=""
                     className="ml-[-2px]"
                   />
-                  Recommended Dosage
+                  {uiText('Recommended Dosage')}
                 </div>
                 <div className="text-Text-Quadruple text-xs leading-5 mb-1">
                   {value?.Dose}
@@ -584,7 +585,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                     alt=""
                     className="ml-[-2px]"
                   />
-                  Recommended Exercises
+                  {uiText('Recommended Exercises')}
                 </div>
                 <div className="flex flex-col ml-1">
                   {value?.exercises_to_do?.map((el: any) => {
@@ -601,7 +602,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               <>
                 <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
                   <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-                  Exercises to Avoid
+                  {uiText('Exercises to Avoid')}
                 </div>
                 <div className="flex flex-col ml-1">
                   {value?.exercises_to_avoid?.map((el: any) => {
@@ -622,7 +623,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                     alt=""
                     className="ml-[-2px]"
                   />
-                  Recommended Foods
+                  {uiText('Recommended Foods')}
                 </div>
                 <div className="flex flex-col ml-1">
                   {value?.foods_to_eat?.map((el: any) => {
@@ -639,7 +640,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               <>
                 <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
                   <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-                  Foods to Limit
+                  {uiText('Foods to Limit')}
                 </div>
                 <div className="flex flex-col ml-1">
                   {value?.foods_to_avoid?.map((el: any) => {

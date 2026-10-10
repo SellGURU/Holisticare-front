@@ -4,6 +4,7 @@ import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 import SpinnerLoader from '../../../Components/SpinnerLoader';
+import { uiText } from '../../../i18n/uiText';
 import {
   ClinicNotificationSettings,
   EMAIL_ROWS,
@@ -14,6 +15,9 @@ import {
   NotificationSwitch,
   NotificationSwitchGroup,
 } from './NotificationSwitch';
+
+const messageText = (detail: unknown, fallback: string) =>
+  String(uiText(typeof detail === 'string' && detail ? detail : fallback));
 
 const readSettings = (data: ClinicNotificationSettings | undefined) => {
   const base = emptyClinicNotificationSettings();
@@ -43,8 +47,10 @@ export const ClinicNotifications = () => {
       })
       .catch((err) => {
         toast.error(
-          err?.response?.data?.detail ||
+          messageText(
+            err?.response?.data?.detail,
             'Failed to load notification settings.',
+          ),
         );
       })
       .finally(() => setLoading(false));
@@ -116,12 +122,16 @@ export const ClinicNotifications = () => {
                     const next = readSettings(res.data);
                     setSettings(next);
                     setInitial(next);
-                    toast.success('Notification settings saved.');
+                    toast.success(
+                      String(uiText('Notification settings saved.')),
+                    );
                   })
                   .catch((err) => {
                     toast.error(
-                      err?.response?.data?.detail ||
+                      messageText(
+                        err?.response?.data?.detail,
                         'Failed to save notification settings.',
+                      ),
                     );
                   })
                   .finally(() => setSaving(false));

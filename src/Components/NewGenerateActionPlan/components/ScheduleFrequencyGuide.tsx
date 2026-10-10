@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import SvgIcon from '../../../utils/svgIcon';
+import { uiText } from '../../../i18n/uiText';
 
 interface ScheduleFrequencyGuideProps {
   active: boolean;
@@ -66,17 +67,26 @@ const ScheduleFrequencyGuide: React.FC<ScheduleFrequencyGuideProps> = ({
           <div className="flex-1">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-medium text-[#FC5474]">
-                Schedule required
+                {uiText('Schedule required')}
               </p>
               <span className="rounded-full bg-[#FC5474] px-2 py-0.5 text-[10px] font-semibold text-white">
-                Step 1
+                {uiText('Step 1')}
               </span>
             </div>
             <p className="mt-1 text-[11px] leading-relaxed text-Text-Primary">
-              Select one option below to continue:{' '}
-              <span className="font-semibold text-[#FC5474]">Daily</span>,{' '}
-              <span className="font-semibold text-[#FC5474]">Weekly</span>, or{' '}
-              <span className="font-semibold text-[#FC5474]">Monthly</span>.
+              {uiText('Select one option below to continue:')}{' '}
+              <span className="font-semibold text-[#FC5474]">
+                {uiText('Daily')}
+              </span>
+              ,{' '}
+              <span className="font-semibold text-[#FC5474]">
+                {uiText('Weekly')}
+              </span>
+              , {uiText('or')}{' '}
+              <span className="font-semibold text-[#FC5474]">
+                {uiText('Monthly')}
+              </span>
+              .
             </p>
           </div>
           <img

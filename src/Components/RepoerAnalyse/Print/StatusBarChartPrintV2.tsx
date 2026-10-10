@@ -1,5 +1,6 @@
 // import TooltipText from '../../Components/TooltipText';
 
+import StatusBarChartLtrShell from '../StatusBarChartLtrShell';
 import {
   inferValueKind,
   resolveGlobalStatusPin,
@@ -115,108 +116,110 @@ const StatusBarChartPrintV2 = ({
   };
 
   return (
-    <div className="w-full relative flex items-center select-none">
-      {sortedBounds.map((el: ChartBound, index: number) => {
-        return (
-          <>
-            <div
-              className={` relative  ${index == sortedBounds.length - 1 && 'rounded-r-[8px]'} ${index == 0 && 'rounded-l-[8px]'}`}
-              style={{
-                width: 100 / sortedBounds.length + '%',
-                background: createGradient(sortedBounds, index),
-                minHeight: '8px',
-                maxHeight: '8px',
-                height: '8px ',
-                borderTopLeftRadius: index == 0 ? '8px' : 'unset',
-                borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
-                borderBottomRightRadius:
-                  index == sortedBounds.length - 1 ? '8px' : 'unset',
-                borderTopRightRadius:
-                  index == sortedBounds.length - 1 ? '8px' : 'unset',
-              }}
-            >
+    <StatusBarChartLtrShell>
+      <div className="w-full relative flex items-center select-none">
+        {sortedBounds.map((el: ChartBound, index: number) => {
+          return (
+            <>
               <div
+                className={` relative  ${index == sortedBounds.length - 1 && 'rounded-r-[8px]'} ${index == 0 && 'rounded-l-[8px]'}`}
                 style={{
-                  color: '#005f73 ',
-                  fontSize: '8px',
-                  top: '-35px',
-                  left: '-4px',
+                  width: 100 / sortedBounds.length + '%',
+                  background: createGradient(sortedBounds, index),
+                  minHeight: '8px',
+                  maxHeight: '8px',
+                  height: '8px ',
+                  borderTopLeftRadius: index == 0 ? '8px' : 'unset',
+                  borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
+                  borderBottomRightRadius:
+                    index == sortedBounds.length - 1 ? '8px' : 'unset',
+                  borderTopRightRadius:
+                    index == sortedBounds.length - 1 ? '8px' : 'unset',
                 }}
-                className={`absolute w-full px-1  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}
               >
-                {el.label}
-              </div>
-              <div
-                style={{
-                  color: '#005f73 ',
-                  fontSize: '8px',
-                  top: '-20px',
-                  left: '-4px',
-                }}
-                className="absolute w-full px-1 text-Primary-DeepTeal flex flex-col items-center justify-center left-[-4px] top-[-35px] opacity-90 text-[10px] break-words text-ellipsis"
-              >
-                <span
+                <div
                   style={{
-                    display: 'inline',
-                    whiteSpace: 'pre-line',
-                    wordBreak: 'break-word',
-                    textAlignLast: 'center',
-                    textAlign: 'center',
+                    color: '#005f73 ',
+                    fontSize: '8px',
+                    top: '-35px',
+                    left: '-4px',
                   }}
+                  className={`absolute w-full px-1  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}
                 >
-                  {el.label != '' && <>(</>}
-                  <>{getRangeString(el)}</>
-                  {el.label != '' && <>)</>}
-                </span>
+                  {el.label}
+                </div>
+                <div
+                  style={{
+                    color: '#005f73 ',
+                    fontSize: '8px',
+                    top: '-20px',
+                    left: '-4px',
+                  }}
+                  className="absolute w-full px-1 text-Primary-DeepTeal flex flex-col items-center justify-center left-[-4px] top-[-35px] opacity-90 text-[10px] break-words text-ellipsis"
+                >
+                  <span
+                    style={{
+                      display: 'inline',
+                      whiteSpace: 'pre-line',
+                      wordBreak: 'break-word',
+                      textAlignLast: 'center',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {el.label != '' && <>(</>}
+                    <>{getRangeString(el)}</>
+                    {el.label != '' && <>)</>}
+                  </span>
+                </div>
               </div>
-            </div>
-          </>
-        );
-      })}
-      {globalPin?.show ? (
-        <div
-          className="pointer-events-none absolute z-10"
-          style={{
-            top: '2px',
-            left: `${globalPin.leftPercent}%`,
-          }}
-        >
+            </>
+          );
+        })}
+        {globalPin?.show ? (
           <div
+            className="pointer-events-none absolute z-10"
             style={{
-              backgroundColor: '#005f73',
-              borderRadius: '100%',
-            }}
-            className="w-2 h-2 rotate-45 bg-Primary-DeepTeal"
-          ></div>
-          <div
-            style={{
-              backgroundColor: '#005f73',
-              width: '3px',
-              height: '8px',
-              marginLeft: '2.4px',
-            }}
-            className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
-          ></div>
-          <div
-            className="w-max flex justify-center ml-0 items-center gap-[2px] text-Primary-DeepTeal"
-            style={{
-              fontSize: '10px',
-              gap: '2px',
-              color: '#005f73 ',
-              marginLeft:
-                globalPin.segmentIndex === 0
-                  ? '0px'
-                  : '-' +
-                    ((values?.[0]?.length || 0) + (unit?.length || 0)) * 6.3 +
-                    'px',
+              top: '2px',
+              left: `${globalPin.leftPercent}%`,
             }}
           >
-            <span className="opacity-40">You: </span>
-            {values && values[0]} <span>{unit}</span>
+            <div
+              style={{
+                backgroundColor: '#005f73',
+                borderRadius: '100%',
+              }}
+              className="w-2 h-2 rotate-45 bg-Primary-DeepTeal"
+            ></div>
+            <div
+              style={{
+                backgroundColor: '#005f73',
+                width: '3px',
+                height: '8px',
+                marginLeft: '2.4px',
+              }}
+              className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
+            ></div>
+            <div
+              className="w-max flex justify-center ml-0 items-center gap-[2px] text-Primary-DeepTeal"
+              style={{
+                fontSize: '10px',
+                gap: '2px',
+                color: '#005f73 ',
+                marginLeft:
+                  globalPin.segmentIndex === 0
+                    ? '0px'
+                    : '-' +
+                      ((values?.[0]?.length || 0) + (unit?.length || 0)) * 6.3 +
+                      'px',
+              }}
+            >
+              <span className="opacity-40">You: </span>
+              {values && values[0]} <span>{unit}</span>
+            </div>
           </div>
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+    </StatusBarChartLtrShell>
   );
 };
 

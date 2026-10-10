@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { publish } from '../../utils/event';
 import HealthRiskScoreCard from './HealthRiskScoreCard';
 import {
@@ -11,6 +12,7 @@ import {
   useHealthRiskAssessments,
   type HealthRiskAssessment,
 } from './healthRiskAssessments';
+import { uiText } from '../../i18n/uiText';
 
 interface HealthRisksPanelProps {
   memberId: number | null;
@@ -65,6 +67,7 @@ export default function HealthRisksPanel({
   memberId,
   enabled = true,
 }: HealthRisksPanelProps) {
+  const { t } = useTranslation('upload');
   const { loading, error, assessments, activeTypes } = useHealthRiskAssessments(
     memberId,
     enabled,
@@ -112,31 +115,33 @@ export default function HealthRisksPanel({
         </h2>
       </div>
       <p className="mt-1 text-[12px] text-Text-Secondary">
-        Screening signal for practitioner review. This is not a diagnosis.
+        {uiText(
+          'Screening signal for practitioner review. This is not a diagnosis.',
+        )}
       </p>
 
       <ModelGroup
-        title="Health Risks"
-        blurb="Risk assessment from clinic formulas. Missing data is not the same as no risk."
-        empty="No calculated risk snapshot yet. Save lab values that match the clinic formula, then refresh."
+        title={String(uiText('Health Risks'))}
+        blurb={t('healthRisksBlurb')}
+        empty={t('healthRisksEmpty')}
         error={error}
         items={risks}
         kind="risk"
         show={showRisks}
       />
       <ModelGroup
-        title="Health Scores"
-        blurb="Composite health index. Low scores need attention. Incomplete formulas are omitted."
-        empty="No health score can be calculated from this patient's current labs. Missing data is not a low score."
+        title={String(uiText('Health Scores'))}
+        blurb={t('healthScoreBlurb')}
+        empty={t('healthScoreEmpty')}
         error={error}
         items={scores}
         kind="score"
         show={showScores}
       />
       <ModelGroup
-        title="Age"
-        blurb="Biological age clocks from clinic formulas."
-        empty="No age clock can be calculated from this patient's current labs. Missing data is not a young or old result."
+        title={String(uiText('Age'))}
+        blurb={t('ageClockBlurb')}
+        empty={t('ageClockEmpty')}
         error={error}
         items={ages}
         kind="age"

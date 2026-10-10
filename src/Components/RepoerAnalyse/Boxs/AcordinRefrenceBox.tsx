@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SourceTag } from '../../source-badge';
 import Toggle from './Toggle';
 import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
@@ -18,6 +19,7 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
   biomarker,
   key,
 }) => {
+  const { t } = useTranslation('reportChrome');
   const [isOpen, setIsOpen] = useState(false);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [showHistoricalChart, setShowHistoricalChart] = useState(false);
@@ -31,11 +33,11 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
       >
         <div
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex justify-between items-center text-sm text-Text-Primary"
+          className="w-full flex justify-between items-center gap-2 text-sm text-Text-Primary text-start"
         >
-          {biomarker.name}
+          <span className="min-w-0 flex-1">{biomarker.name}</span>
           <img
-            className={`${isOpen && 'rotate-180'}`}
+            className={`shrink-0 ${isOpen && 'rotate-180'}`}
             src="/icons/arrow-down.svg"
             alt=""
           />
@@ -54,14 +56,14 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
                   }}
                   className="flex relative justify-start items-center cursor-pointer md:TextStyle-Button  text-Primary-DeepTeal "
                 >
-                  More Info
+                  {t('moreInfo')}
                   <img
                     src="/icons/user-navbar/info-circle.svg"
-                    className="w-4  cursor-pointer h-4 ml-1"
+                    className="w-4  cursor-pointer h-4 ms-1"
                     alt=""
                   />
                   {showMoreInfo && biomarker.more_info && (
-                    <div className="absolute p-2 left-4 xs:left-6 top-4 bg-white w-[270px] xs:w-[320px]h-auto rounded-[16px] z-[60] border border-gray-50 shadow-100">
+                    <div className="absolute p-2 start-4 xs:start-6 top-4 bg-white w-[270px] xs:w-[320px]h-auto rounded-[16px] z-[60] border border-gray-50 shadow-100">
                       <div className="text-[9px] text-Text-Secondary text-justify">
                         {biomarker.more_info}
                       </div>
@@ -74,7 +76,7 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
                       <SourceTag source={biomarker.source} />
                     )}
                     <div className="  md:TextStyle-Headline-6 text-[8px]  md:text-Text-Primary">
-                      Historical Chart
+                      {t('historicalChart')}
                     </div>
                     <Toggle
                       setChecked={(value) => {
@@ -87,10 +89,10 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
               </div>
               {!showHistoricalChart && (
                 <div className=" my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
-                  Current Value
+                  {t('currentValue')}
                   {biomarker?.values?.[0] != null &&
                   biomarker.values[0] !== '' ? (
-                    <span className="ml-2 text-Primary-DeepTeal">
+                    <span className="ms-2 text-Primary-DeepTeal">
                       {biomarker.values[0]}
                       {biomarker.unit ? ` ${biomarker.unit}` : ''}
                     </span>

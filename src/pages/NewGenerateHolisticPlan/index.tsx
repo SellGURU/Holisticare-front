@@ -41,6 +41,7 @@ import {
 import { publish } from '../../utils/event';
 import { buildResultTabHydration } from './resultTabHydration';
 import { clientNeedsCompile } from '../../utils/compileFromNeedRefreshModal';
+import { uiText } from '../../i18n/uiText';
 
 const sleep = (ms: number) =>
   new Promise((resolve) => {
@@ -651,7 +652,7 @@ const NewGenerateHolisticPlan = () => {
                 ) : (
                   <div className=" w-[80px] md:w-auto md:min-w-[100px] flex items-center justify-center gap-1">
                     <img className="w-4" src="/icons/tick-square.svg" alt="" />
-                    Save Changes
+                    {uiText('Save Changes')}
                   </div>
                 )}
               </ButtonPrimary>
@@ -700,7 +701,7 @@ const NewGenerateHolisticPlan = () => {
                         src="/icons/tick-square.svg"
                         alt=""
                       />
-                      Save Changes
+                      {uiText('Save Changes')}
                     </div>
                   )}
                 </ButtonPrimary>
@@ -1424,7 +1425,7 @@ const NewGenerateHolisticPlan = () => {
                 ) : (
                   <div className=" min-w-[100px] flex items-center justify-center gap-1">
                     <img src="/icons/tick-square.svg" alt="" />
-                    Save Changes
+                    {uiText('Save Changes')}
                   </div>
                 )}
               </ButtonPrimary>
@@ -1550,12 +1551,16 @@ const NewGenerateHolisticPlan = () => {
                 {isAnalysingQuik ? (
                   <>
                     <SpinnerLoader></SpinnerLoader>
-                    <div className="mt-[2px] text-nowrap">Quick Analysis</div>
+                    <div className="mt-[2px] text-nowrap">
+                      {uiText('Quick Analysis')}
+                    </div>
                   </>
                 ) : (
                   <>
                     <img src="/icons/stars.svg" alt="" />
-                    <div className="mt-[2px] text-nowrap">Quick Analysis</div>
+                    <div className="mt-[2px] text-nowrap">
+                      {uiText('Quick Analysis')}
+                    </div>
                   </>
                 )}
               </div>

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { uiText } from '../../../../i18n/uiText';
 interface UserInfoProps {
   usrInfoData: any;
 }
@@ -14,7 +15,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ usrInfoData }) => {
         </div>
         <div className="flex justify-center items-center gap-1">
           <div className="" style={{ fontSize: '14px', color: '#888888' }}>
-            <div>Gender: {usrInfoData?.sex} </div>
+            <div>Gender: {String(uiText(usrInfoData?.sex ?? ''))} </div>
           </div>
           <div
             className=""

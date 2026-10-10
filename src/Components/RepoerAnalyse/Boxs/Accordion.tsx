@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from 'react';
+import { uiText } from '../../../i18n/uiText';
 
 interface AccordionItemProps {
   data: any;
@@ -32,7 +33,9 @@ export const AccordionItem: FC<AccordionItemProps> = ({ data }) => {
         className="flex justify-between items-center "
         onClick={toggleAccordion}
       >
-        <h3 className="text-xs font-medium">{data.subcategory}</h3>
+        <h3 className="text-xs font-medium">
+          {String(uiText(data.subcategory))}
+        </h3>
         <img
           src="/icons/arrow-down.svg"
           alt="Toggle"
@@ -75,19 +78,23 @@ export const AccordionItem: FC<AccordionItemProps> = ({ data }) => {
                 </div>
                 <div className="flex justify-between mt-2 text-[8px] xs:text-[10px] border-t border-[#E9F0F2] pt-[6px]">
                   <div>
-                    <p className=" text-Text-Secondary">Lab Ref Range</p>
+                    <p className=" text-Text-Secondary">
+                      {uiText('Lab Ref Range')}
+                    </p>
                     <p>{biomarker['Lab Ref Range']}</p>
                   </div>
                   <div>
-                    <p className=" text-Text-Secondary">Optimal Range</p>
+                    <p className=" text-Text-Secondary">
+                      {uiText('Optimal Range')}
+                    </p>
                     <p>{biomarker['Optimal Range']}</p>
                   </div>
                   <div>
-                    <p className=" text-Text-Secondary">Baseline</p>
+                    <p className=" text-Text-Secondary">{uiText('Baseline')}</p>
                     <p>{biomarker.Baseline}</p>
                   </div>
                   <div>
-                    <p className=" text-Text-Secondary">Changes</p>
+                    <p className=" text-Text-Secondary">{uiText('Changes')}</p>
                     <p>{biomarker.Changes}</p>
                   </div>
                 </div>

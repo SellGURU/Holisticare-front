@@ -1,4 +1,5 @@
 // import { splitInstructions } from '../../../help';
+import { uiText } from '../../../i18n/uiText';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface TreatmentPlanPrintProps {
@@ -50,7 +51,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
               }}
             >
               <img src="/icons/book.svg" alt="" className="ml-[-2px]" />
-              Scientific Basis
+              {uiText('Scientific Basis')}
             </div>
             <div
               style={{
@@ -70,7 +71,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
               }}
             >
               <img src="/icons/lamp-on-new.svg" alt="" className="ml-[-2px]" />
-              Guidelines
+              {uiText('Guidelines')}
             </div>
             <div
               style={{
@@ -90,7 +91,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
               }}
             >
               <img src="/icons/medal-star.svg" alt="" className="ml-[-2px]" />
-              Expected Benefits
+              {uiText('Expected Benefits')}
             </div>
             <div className="flex flex-col ml-1">
               {data?.key_benefits?.map((el: any) => {
@@ -122,7 +123,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                     alt=""
                     className="ml-[-2px]"
                   />
-                  Recommended Dosage
+                  {uiText('Recommended Dosage')}
                 </div>
                 <div
                   style={{
@@ -150,7 +151,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                     alt=""
                     className="ml-[-2px]"
                   />
-                  Recommended Exercises
+                  {uiText('Recommended Exercises')}
                 </div>
                 <div className="flex flex-col ml-1">
                   {data?.exercises_to_do?.map((el: any) => {
@@ -180,7 +181,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                   }}
                 >
                   <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-                  Exercises to Avoid
+                  {uiText('Exercises to Avoid')}
                 </div>
                 <div className="flex flex-col ml-1">
                   {data?.exercises_to_avoid?.map((el: any) => {
@@ -214,7 +215,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                     alt=""
                     className="ml-[-2px]"
                   />
-                  Recommended Foods
+                  {uiText('Recommended Foods')}
                 </div>
                 <div className="flex flex-col ml-1">
                   {data?.foods_to_eat?.map((el: any) => {
@@ -244,7 +245,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                   }}
                 >
                   <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-                  Foods to Limit
+                  {uiText('Foods to Limit')}
                 </div>
                 <div className="flex flex-col ml-1">
                   {data?.foods_to_avoid?.map((el: any) => {

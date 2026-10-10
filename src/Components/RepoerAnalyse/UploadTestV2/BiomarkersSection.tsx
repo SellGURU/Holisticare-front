@@ -19,6 +19,7 @@ import type {
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
 import useIsDemo from '../../../hooks/useIsDemo';
+import { useTranslation } from 'react-i18next';
 import { formatLabCalendarDate } from '../../../utils/labCalendarDate';
 import {
   pinBiomarkerNameFields,
@@ -174,6 +175,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   reviewHydrating = false,
   onDirtyIdsChange,
 }) => {
+  const { t } = useTranslation('upload');
   const isDemo = useIsDemo();
 
   const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set());
@@ -1824,8 +1826,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   type="search"
                   value={searchFilter}
                   onChange={(event) => setSearchFilter(event.target.value)}
-                  placeholder="Search biomarkers..."
-                  aria-label="Search biomarkers"
+                  placeholder={t('searchBiomarkers')}
+                  aria-label={t('searchBiomarkers')}
                   className="h-7 w-full rounded-lg border border-Gray-50 bg-white pl-7 pr-2 text-[9px] text-Text-Primary outline-none transition-colors placeholder:text-Text-Quadruple hover:border-Gray-100 focus:border-Primary-DeepTeal md:text-[10px]"
                 />
                 <img
@@ -2271,7 +2273,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           isOpen
           onClose={() => setExcludeConfirmRow(null)}
           onConfirm={confirmExcludeReviewRow}
-          heading="Exclude biomarker"
+          heading={t('excludeBiomarker')}
           message={`Exclude "${resolveExcludeDisplayName(excludeConfirmRow)}" from future lab uploads? You can restore it later from the Excluded list.`}
           confirmText="Exclude"
           cancelText="Cancel"
@@ -2285,7 +2287,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           onConfirm={() => {
             void handleExcludeAllVisible();
           }}
-          heading="Exclude all in this list"
+          heading={t('excludeAllInList')}
           message={`Exclude all ${excludeAllCandidateRows.length} biomarkers currently shown? You can restore them later from the Excluded list.`}
           confirmText={
             excludeAllRunning

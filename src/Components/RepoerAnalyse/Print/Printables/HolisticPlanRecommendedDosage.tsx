@@ -1,3 +1,5 @@
+import { uiText } from '../../../../i18n/uiText';
+
 interface HolisticPlanRecommendedDosageProps {
   value: string;
 }
@@ -18,7 +20,7 @@ const HolisticPlanRecommendedDosage: React.FC<
             }}
           >
             <img src="/icons/ruler-new.svg" alt="" className="ml-[-2px]" />
-            Recommended Dosage
+            {uiText('Recommended Dosage')}
           </div>
           <div
             style={{

@@ -1,3 +1,5 @@
+import { uiText } from '../../../../i18n/uiText';
+
 interface HolisticPlanExpectedBenefitsProps {
   value: string[];
 }
@@ -16,7 +18,7 @@ const HolisticPlanExpectedBenefits: React.FC<
         }}
       >
         <img src="/icons/medal-star.svg" alt="" className="ml-[-2px]" />
-        Expected Benefits
+        {uiText('Expected Benefits')}
       </div>
       <div
         className="flex flex-col pt-1.5"

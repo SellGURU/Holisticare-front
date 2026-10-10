@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { uiText } from '../../../i18n/uiText';
 import Application from '../../../api/app';
 // import { uploadToAzure } from '../../../help';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
@@ -2330,7 +2331,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   className="z-10 relative px-2 h-[65vh] flex flex-col items-center justify-center"
                 >
                   <div className="text-base font-medium text-Text-Primary">
-                    Biomarker Input Complete!
+                    {uiText('Biomarker Input Complete!')}
                   </div>
                   {extractedBiomarkers.length + addedBiomarkers.length > 0 && (
                     <div className="w-[144px] mt-4  py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
@@ -2340,13 +2341,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         alt=""
                       />
                       {extractedBiomarkers.length + addedBiomarkers.length}{' '}
-                      Biomarker added!
+                      {uiText('Biomarker added!')}
                     </div>
                   )}
                   <div className="text-xs mt-4 text-Text-Primary w-[570px] text-center ">
-                    You’ve completed entering your biomarkers. To save your
-                    changes and update your health plan with the new data, click
-                    ‘Save Changes’ or ‘Discard Changes’ to cancel.
+                    {uiText(
+                      'You’ve completed entering your biomarkers. To save your changes and update your health plan with the new data, click ‘Save Changes’ or ‘Discard Changes’ to cancel.',
+                    )}
                   </div>
                   <div className="w-full gap-2 flex justify-center mt-[46px] ">
                     <ButtonSecondary
@@ -2359,7 +2360,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       outline
                     >
                       <img src="/icons/close-square-green.svg" alt="" />
-                      Discard Changes
+                      {uiText('Discard Changes')}
                     </ButtonSecondary>
                     <ButtonSecondary
                       title={demoLockedTitle}
@@ -2373,7 +2374,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       }}
                     >
                       <img src="/icons/tick-square.svg" alt="" />
-                      Save Changes
+                      {uiText('Save Changes')}
                     </ButtonSecondary>
                   </div>
                 </div>

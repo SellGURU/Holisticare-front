@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
@@ -32,6 +33,7 @@ const HolisticPlanShareAndDownload = ({
   onRetryHtmlReport,
   activePlan = null,
 }: HolisticPlanShareAndDownloadProps) => {
+  const { t, i18n } = useTranslation('share');
   const { id } = useParams<{ id: string }>();
   const [eventPlan, setEventPlan] = useState<any>(null);
   const [openPublicShare, setOpenPublicShare] = useState(false);
@@ -53,10 +55,10 @@ const HolisticPlanShareAndDownload = ({
     const twoMinutesInMs = 2 * 60 * 1000; // 2 minutes in milliseconds
 
     if (diffInMs < twoMinutesInMs) {
-      return 'just now';
+      return t('justNow');
     }
 
-    return sharedDate.toLocaleDateString('en-US', {
+    return sharedDate.toLocaleDateString(i18n.language || 'en', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -69,10 +71,10 @@ const HolisticPlanShareAndDownload = ({
         <div className="flex flex-col items-center">
           <div className="text-Text-Quadruple text-xs font-medium flex items-center gap-1">
             <img src="/icons/tick-circle-gray.svg" alt="" />
-            Shared with Client
+            {t('sharedWithClient')}
           </div>
           <div className="text-Text-Fivefold text-[10px]">
-            on{' '}
+            {t('sharedOn')}{' '}
             {formatSharedDate(
               activeTreatment.shared_report_with_client_date as string,
             )}
@@ -94,7 +96,7 @@ const HolisticPlanShareAndDownload = ({
               color="transparent"
             ></SvgIcon>
             {/* <img src="/icons/close-circle.svg" alt="" /> */}
-            Not shared with Client
+            {t('notSharedWithClient')}
           </div>
         </div>
       </>
@@ -124,7 +126,7 @@ const HolisticPlanShareAndDownload = ({
         >
           <div className="flex items-center justify-center gap-1.5 text-Primary-DeepTeal text-xs font-medium">
             <SpinnerLoader color="#005F73" />
-            Preparing share…
+            {t('preparingShare')}
           </div>
         </div>
       );
@@ -152,7 +154,7 @@ const HolisticPlanShareAndDownload = ({
             }}
           >
             <img src="/icons/document-upload.svg" alt="" className="w-4 h-4" />
-            Share with Client
+            {t('shareWithClient')}
           </ButtonPrimary>
         </div>
       </>
@@ -192,13 +194,13 @@ const HolisticPlanShareAndDownload = ({
                 {isHtmlReportExists ? (
                   <div className="flex items-center gap-1">
                     <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
-                    View Holistic Plan
+                    {t('viewHolisticPlan')}
                   </div>
                 ) : null}
                 <div className="text-[10px] text-Text-Fivefold">
                   {htmlReportPollState === 'timed_out'
-                    ? 'Report preparation is taking longer than expected.'
-                    : 'We could not prepare your report.'}
+                    ? t('reportTimedOut')
+                    : t('reportFailed')}
                 </div>
                 {onRetryHtmlReport && (
                   <button
@@ -209,7 +211,7 @@ const HolisticPlanShareAndDownload = ({
                       onRetryHtmlReport();
                     }}
                   >
-                    Retry
+                    {t('retry')}
                   </button>
                 )}
               </div>
@@ -217,7 +219,7 @@ const HolisticPlanShareAndDownload = ({
               <div className="flex flex-col items-center gap-1">
                 <SpinnerLoader color="#005F73"></SpinnerLoader>
                 <div className="text-[10px] text-Primary-DeepTeal">
-                  Your report is currently being prepared.
+                  {t('reportPreparing')}
                 </div>
               </div>
             ) : isHtmlReportExists ? (
@@ -228,12 +230,12 @@ const HolisticPlanShareAndDownload = ({
                       src="/icons/download.svg"
                       color="#005F73"
                     ></SvgIcon>
-                    Download Holistic Plan
+                    {t('downloadHolisticPlan')}
                   </>
                 ) : (
                   <>
                     <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
-                    View Holistic Plan
+                    {t('viewHolisticPlan')}
                   </>
                 )}
               </>
@@ -254,10 +256,10 @@ const HolisticPlanShareAndDownload = ({
         >
           <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1.5">
             <SpinnerLoader color="#005F73" />
-            Public Link
+            {t('publicLinkAction')}
           </div>
           <div className="text-[10px] text-Text-Fivefold">
-            Preparing report…
+            {t('preparingReport')}
           </div>
         </div>
       );
@@ -278,11 +280,11 @@ const HolisticPlanShareAndDownload = ({
           }`}
         >
           <img src="/icons/link-2.svg" alt="" className="w-5 h-5" />
-          Public Link
+          {t('publicLinkAction')}
         </button>
         {disabled && (
           <div className="text-[10px] text-Text-Fivefold">
-            Available after report is ready
+            {t('availableAfterReady')}
           </div>
         )}
       </div>
@@ -292,7 +294,7 @@ const HolisticPlanShareAndDownload = ({
   return (
     <>
       <div
-        className={`flex ${activeTreatment?.shared_report_with_client ? 'items-start' : 'items-center'}  gap-6`}
+        className={`flex flex-wrap justify-end ${activeTreatment?.shared_report_with_client ? 'items-start' : 'items-center'} gap-3 md:gap-6`}
       >
         {activeTreatment &&
           normalizeHolisticPlanState(activeTreatment.state).toLowerCase() !==

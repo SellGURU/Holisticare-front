@@ -1,3 +1,5 @@
+import { uiText } from '../../../../i18n/uiText';
+
 interface HolisticPlanScientificBasisProps {
   value: string;
 }
@@ -16,7 +18,7 @@ const HolisticPlanScientificBasis: React.FC<
         }}
       >
         <img src="/icons/book.svg" alt="" className="ml-[-2px]" />
-        Scientific Basis
+        {uiText('Scientific Basis')}
       </div>
       <div
         style={{

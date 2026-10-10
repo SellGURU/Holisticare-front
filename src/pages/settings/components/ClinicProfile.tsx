@@ -9,6 +9,7 @@ import { blobToBase64 } from '../../../help';
 import { fetchBrandInfo } from '../../../utils/brandInfoCache';
 import { invalidateBrandInfo } from '../../../utils/cacheKeys';
 import { publish } from '../../../utils/event';
+import { uiText } from '../../../i18n/uiText';
 
 const MAX_NAME_LENGTH = 30;
 const MIN_NAME_LENGTH = 3;
@@ -233,7 +234,7 @@ export const ClinicProfile = () => {
 
               <div className="flex flex-col items-end gap-1">
                 {errorLogo && (
-                  <div className="text-Red text-[8px]">{errorLogo}</div>
+                  <div className="text-Red text-[8px]">{uiText(errorLogo)}</div>
                 )}
                 <div
                   className={`p-[1px] rounded-lg ${
@@ -316,7 +317,7 @@ export const ClinicProfile = () => {
                 />
                 {errorName && (
                   <div className="text-Red text-[8px] mt-1 ml-3">
-                    {errorName}
+                    {uiText(errorName)}
                   </div>
                 )}
               </div>
@@ -324,7 +325,7 @@ export const ClinicProfile = () => {
           </div>
 
           {saveError && (
-            <div className="text-Red text-[10px] mt-4">{saveError}</div>
+            <div className="text-Red text-[10px] mt-4">{uiText(saveError)}</div>
           )}
 
           <div className="flex items-center gap-4 justify-end mt-8 md:mt-10 mr-1">

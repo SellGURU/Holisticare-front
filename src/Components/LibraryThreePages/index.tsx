@@ -9,6 +9,7 @@ import PreviewModalLibraryTreePages from './components/PreviewModal';
 import ManageOtherTypesModal from './components/ManageOtherTypesModal';
 import Circleloader from '../CircleLoader';
 import useIsDemo from '../../hooks/useIsDemo';
+import { useTranslation } from 'react-i18next';
 import { sortLibraryRows } from '../../utils/libraryTableSort';
 import {
   EnabledFilter,
@@ -20,6 +21,7 @@ interface LibraryThreePagesProps {
 }
 
 const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
+  const { t } = useTranslation('library');
   const isDemo = useIsDemo();
   const [loading, setLoading] = useState(true);
   const [loadingCall, setLoadingCall] = useState(false);
@@ -525,7 +527,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
           ) : (
             <div className="w-full h-full h-sm:h-[500px] flex flex-col justify-center items-center text-base font-medium text-Text-Primary ">
               <img src="/icons/search-status.svg" alt="" />
-              <span className="-mt-6"> No results found.</span>
+              <span className="-mt-6"> {t('noResults')}</span>
             </div>
           )}
         </>

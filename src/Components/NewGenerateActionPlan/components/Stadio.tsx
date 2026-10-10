@@ -22,6 +22,7 @@ import {
   TaskValidationError,
 } from '../actionPlanValidation';
 import { createTrailingDebounce } from '../../../utils/trailingDebounce';
+import { uiText } from '../../../i18n/uiText';
 
 interface StadioProps {
   data: {
@@ -615,7 +616,7 @@ const Stadio: FC<StadioProps> = ({
           {haveConflic && (
             <div className="w-full  my-2 ">
               <AlertModal
-                heading="Conflict"
+                heading={String(uiText('Conflict'))}
                 texts={haveConflicText}
                 onClose={() => {
                   setHaveConflic(false);
