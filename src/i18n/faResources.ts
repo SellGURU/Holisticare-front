@@ -43,10 +43,24 @@ export const faResources = {
   settings: {
     title: 'تنظیمات',
     languageAndRegion: 'زبان و منطقه',
+    portalLanguageTitle: 'زبان پورتال',
+    portalLanguageHelp: 'منوها، دکمه‌ها و چیدمان برای حساب شما در این دستگاه.',
+    contentLanguageTitle: 'زبان هوش مصنوعی و گزارش (کلینیک)',
+    contentLanguageHelp:
+      'گزارش‌ها، برنامه سلامت و متن تولیدی AI از این زبان استفاده می‌کنند. پس از تغییر، rescore یا regenerate کنید؛ متن ذخیره‌شده خودکار عوض نمی‌شود.',
+    contentLocaleField: 'زبان و قالب منطقه‌ای',
     language: 'زبان',
     region: 'قالب منطقه‌ای',
     save: 'ذخیره زبان',
     saved: 'زبان ذخیره شد',
+    savePortal: 'ذخیره زبان پورتال',
+    savedPortal: 'زبان پورتال ذخیره شد',
+    saveContent: 'ذخیره زبان محتوا',
+    savedContent: 'زبان محتوا ذخیره شد',
+    setupTitle: 'زبان‌ها را انتخاب کنید',
+    setupIntro:
+      'نحوهٔ نمایش پورتال برای خودتان را انتخاب کنید. مدیر کلینیک می‌تواند زبان گزارش‌ها و برنامه‌های AI را هم تنظیم کند.',
+    setupContinue: 'ادامه',
     help: 'رابط پس از ذخیره عوض می‌شود. گزارش‌ها و محتوای هوش مصنوعیِ ذخیره‌شده دست نمی‌خورند. تولید جدید از این زبان استفاده می‌کند.',
     languages: {
       en: 'انگلیسی',

@@ -13,6 +13,8 @@ import AppContextProvider from './store/app.tsx';
 import { ToastContainer } from 'react-toastify';
 import { runPortalBootGuard } from './utils/bootGuard';
 import { ClinicLocaleSync } from './i18n/ClinicLocaleSync';
+import { LocalePreferencesProvider } from './i18n/LocalePreferencesContext';
+import { LocaleSetupGate } from './i18n/LocaleSetupGate';
 import { LocaleRoot } from './i18n/LocaleRoot';
 import { i18n, initializeI18n } from './i18n';
 import { I18nextProvider } from 'react-i18next';
@@ -20,24 +22,32 @@ import { I18nextProvider } from 'react-i18next';
 initGlobalErrorHandler();
 runPortalBootGuard();
 
-void initializeI18n().finally(() =>
-  createRoot(document.getElementById('root')!).render(
-    <I18nextProvider i18n={i18n}>
-      <LocaleRoot>
-        <AppErrorBoundary>
-          <AppContextProvider>
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error('Holisticare root element (#root) was not found.');
+}
+
+createRoot(rootElement).render(
+  <I18nextProvider i18n={i18n}>
+    <LocaleRoot>
+      <AppErrorBoundary>
+        <AppContextProvider>
+          <LocalePreferencesProvider>
             <ClinicLocaleSync />
+            <LocaleSetupGate />
             <MainWrapper />
-          </AppContextProvider>
-          <ToastContainer
-            position="top-right"
-            hideProgressBar
-            closeOnClick
-            draggable
-            pauseOnHover
-          />
-        </AppErrorBoundary>
-      </LocaleRoot>
-    </I18nextProvider>,
-  ),
+          </LocalePreferencesProvider>
+        </AppContextProvider>
+        <ToastContainer
+          position="top-right"
+          hideProgressBar
+          closeOnClick
+          draggable
+          pauseOnHover
+        />
+      </AppErrorBoundary>
+    </LocaleRoot>
+  </I18nextProvider>,
 );
+
+void initializeI18n();

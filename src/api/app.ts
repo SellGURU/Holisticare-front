@@ -1161,6 +1161,15 @@ class Application extends Api {
   static updateClinicLocale = (data: { content_locale: string }) => {
     return this.post('/setting/clinic_locale', data);
   };
+  static updatePortalUiLocale = (data: { portal_ui_locale: string }) => {
+    return this.post('/setting/portal_ui_locale', data);
+  };
+  static localeSetup = (data: {
+    portal_ui_locale: string;
+    content_locale?: string;
+  }) => {
+    return this.post('/setting/locale_setup', data);
+  };
   static getToneList = (data: any) => {
     return this.post('/setting/tone_list', data);
   };

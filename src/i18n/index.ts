@@ -10,7 +10,9 @@ import { wave1Resources } from './wave1Resources';
 
 export const PRODUCT_FALLBACK_LOCALE = 'en';
 export const PSEUDO_LOCALE = 'en-XA';
+/** @deprecated Legacy key; UI locale now uses PORTAL_UI_LOCALE_STORAGE_KEY */
 export const CLINIC_LOCALE_STORAGE_KEY = 'holisticare.clinicContentLocale';
+export const PORTAL_UI_LOCALE_STORAGE_KEY = 'holisticare.portalUiLocale';
 export const WAVE_1_UI_LOCALES = ['en', 'es', 'fr', 'ar', 'fa'] as const;
 
 export function localeSelectorEnabled(): boolean {
@@ -164,13 +166,25 @@ export function textDirection(locale: string): 'ltr' | 'rtl' {
     : 'ltr';
 }
 
-export function storedClinicLocale(): string | null {
+export function storedPortalUiLocale(): string | null {
   if (typeof window === 'undefined') return null;
   try {
-    return window.localStorage.getItem(CLINIC_LOCALE_STORAGE_KEY);
+    const current = window.localStorage.getItem(PORTAL_UI_LOCALE_STORAGE_KEY);
+    if (current) return current;
+    const legacy = window.localStorage.getItem(CLINIC_LOCALE_STORAGE_KEY);
+    if (legacy) {
+      window.localStorage.setItem(PORTAL_UI_LOCALE_STORAGE_KEY, legacy);
+      return legacy;
+    }
+    return null;
   } catch {
     return null;
   }
+}
+
+/** @deprecated Use storedPortalUiLocale */
+export function storedClinicLocale(): string | null {
+  return storedPortalUiLocale();
 }
 
 export async function applyUiLocale(locale: string): Promise<string> {
@@ -192,7 +206,7 @@ export async function applyUiLocale(locale: string): Promise<string> {
     }
   }
   try {
-    window.localStorage.setItem(CLINIC_LOCALE_STORAGE_KEY, canonical);
+    window.localStorage.setItem(PORTAL_UI_LOCALE_STORAGE_KEY, canonical);
   } catch {
     // Persistence is best-effort; the server remains authoritative after login.
   }
@@ -202,7 +216,7 @@ export async function applyUiLocale(locale: string): Promise<string> {
 export async function initializeI18n(): Promise<void> {
   try {
     await initializationByInstance.get(i18n);
-    const stored = storedClinicLocale();
+    const stored = storedPortalUiLocale();
     if (stored) await applyUiLocale(stored);
   } catch {
     // Localization is fail-open: the existing English application still renders.

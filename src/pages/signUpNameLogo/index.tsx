@@ -1,19 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
-import Application from '../../api/app';
-import { blobToBase64 } from '../../help';
-import SpinnerLoader from '../../Components/SpinnerLoader';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
+import Application from '../../api/app';
+import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+import SpinnerLoader from '../../Components/SpinnerLoader';
+import { ContentLocalePicker } from '../../i18n/ContentLocalePicker';
+import { applyUiLocale, storedPortalUiLocale } from '../../i18n';
+import { LocaleSelectFields } from '../../i18n/LocaleSelectFields';
+import { useLocalePreferences } from '../../i18n/LocalePreferencesContext';
+import { blobToBase64 } from '../../help';
 
 const SignUpNameLogo = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('settings');
+  const { refreshLocalePreferences } = useLocalePreferences();
+
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [errorName, setErrorName] = useState('');
   const [errorLogo, setErrorLogo] = useState('');
   const [clinicName, setClinicName] = useState<string>('');
   const [imageSelect, setImageSelect] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [portalLocale, setPortalLocale] = useState(
+    storedPortalUiLocale() || 'en-US',
+  );
+  const [contentLocale, setContentLocale] = useState('en-US');
+
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     const maxSizeInBytes = 4 * 1024 * 1024;
@@ -86,37 +100,77 @@ const SignUpNameLogo = () => {
       name: clinicName,
       html_email: '',
     };
-    Application.saveBrandInfo(data)
+    Application.localeSetup({
+      portal_ui_locale: portalLocale,
+      content_locale: contentLocale,
+    })
+      .then(() => applyUiLocale(portalLocale))
+      .then(() => refreshLocalePreferences())
+      .then(() => Application.saveBrandInfo(data))
       .then(() => {
         navigate('/');
       })
       .catch((err) => {
-        console.error('Error saving brand info:', err);
+        console.error('Error saving onboarding profile:', err);
       })
       .finally(() => {
         setIsLoading(false);
       });
   };
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-bg-color px-12 py-8">
-      <div className="w-full h-full flex flex-col gap-2 justify-center items-center border border-Gray-100 rounded-xl bg-white bg-opacity-40">
+    <div className="fixed inset-0 z-10 flex items-center justify-center bg-bg-color px-4 py-6 overflow-hidden">
+      <div
+        className="w-full max-w-lg max-h-[calc(100vh-3rem)] flex flex-col border border-Gray-100 rounded-xl bg-white bg-opacity-95 shadow-100 overflow-hidden"
+        role="dialog"
+        aria-labelledby="register-profile-title"
+      >
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-6 md:p-8 flex flex-col items-center gap-2">
         <img src="./icons/tick-circle-large.svg" alt="" />
-        <div className="text-Text-Primary font-medium text-base">
+        <div
+          id="register-profile-title"
+          className="text-Text-Primary font-medium text-base"
+        >
           You're all set!
         </div>
-        <div className="w-[80%] md:w-[36%] text-wrap text-Text-Primary text-sm text-center leading-6">
+        <div className="w-full text-wrap text-Text-Primary text-sm text-center leading-6">
           Your account has been successfully created. Now let’s personalize your
           experience by setting up your clinic profile. Add your clinic's name
           and logo — you can always change them later.
         </div>
-        <div className="flex flex-col mt-4">
+
+        <div className="w-full max-w-[300px] mt-4 space-y-4 text-left">
+          <div>
+            <p className="text-xs font-medium mb-2">{t('portalLanguageTitle')}</p>
+            <LocaleSelectFields
+              locale={portalLocale}
+              onLocaleChange={setPortalLocale}
+              idPrefix="register-portal"
+              stacked
+            />
+          </div>
+          <div>
+            <p className="text-xs font-medium mb-1">
+              {t('contentLanguageTitle')}
+            </p>
+            <p className="text-[10px] text-[#888888] mb-2">
+              {t('contentLanguageHelp')}
+            </p>
+            <ContentLocalePicker
+              locale={contentLocale}
+              onLocaleChange={setContentLocale}
+              id="register-content-locale"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col mt-4 w-full max-w-[300px]">
           <div className="text-Text-Primary font-medium text-xs mb-2">
             Clinic Name
           </div>
           <div className="flex flex-col">
             <input
               type="text"
-              className={`w-[300px] h-[28px] border ${errorName ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
+              className={`w-full h-[28px] border ${errorName ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
               placeholder="Enter your clinic name"
               value={clinicName}
               onChange={(e) => {
@@ -144,7 +198,7 @@ const SignUpNameLogo = () => {
           </div>
         </div>
         <div
-          className={`w-[300px] mt-2 ${selectedFiles.length > 0 ? 'flex flex-col items-center justify-center' : ''}`}
+          className={`w-full max-w-[300px] mt-2 ${selectedFiles.length > 0 ? 'flex flex-col items-center justify-center' : ''}`}
         >
           {selectedFiles.length > 0 ? (
             <div
@@ -202,16 +256,19 @@ const SignUpNameLogo = () => {
             </div>
           )}
         </div>
-        <ButtonSecondary
-          ClassName="w-[300px] rounded-[20px] border border-white mt-4"
-          onClick={() => {
-            if (validateForm()) {
-              onSave();
-            }
-          }}
-        >
-          {isLoading ? <SpinnerLoader /> : 'Continue'}
-        </ButtonSecondary>
+        </div>
+        <div className="shrink-0 border-t border-Gray-50 bg-white/95 px-6 py-4 flex justify-center">
+          <ButtonSecondary
+            ClassName="w-full max-w-[300px] rounded-[20px] border border-white"
+            onClick={() => {
+              if (validateForm()) {
+                onSave();
+              }
+            }}
+          >
+            {isLoading ? <SpinnerLoader /> : 'Continue'}
+          </ButtonSecondary>
+        </div>
       </div>
     </div>
   );

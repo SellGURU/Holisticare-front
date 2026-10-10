@@ -63,10 +63,25 @@ export const englishResources = {
   settings: {
     title: 'Settings',
     languageAndRegion: 'Language and region',
+    portalLanguageTitle: 'Portal language',
+    portalLanguageHelp:
+      'Menus, buttons, and layout for your account on this device.',
+    contentLanguageTitle: 'AI and report language (clinic)',
+    contentLanguageHelp:
+      'New reports, health plans, and AI-generated text use this language. Rescore or regenerate after you change it; existing stored text is not rewritten.',
+    contentLocaleField: 'Language and regional format',
     language: 'Language',
     region: 'Regional format',
     save: 'Save language',
     saved: 'Language saved',
+    savePortal: 'Save portal language',
+    savedPortal: 'Portal language saved',
+    saveContent: 'Save content language',
+    savedContent: 'Content language saved',
+    setupTitle: 'Choose your languages',
+    setupIntro:
+      'Pick how the portal looks for you. Clinic admins can also set the language used for AI reports and plans.',
+    setupContinue: 'Continue',
     help: 'The interface changes after you save. Saved reports and AI content stay unchanged. New generation uses this language.',
     languages: {
       en: 'English',

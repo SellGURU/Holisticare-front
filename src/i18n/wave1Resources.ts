@@ -102,10 +102,25 @@ const settings = {
   es: {
     title: 'Configuración',
     languageAndRegion: 'Idioma y región',
+    portalLanguageTitle: 'Idioma del portal',
+    portalLanguageHelp:
+      'Menús, botones y diseño de su cuenta en este dispositivo.',
+    contentLanguageTitle: 'Idioma de IA e informes (clínica)',
+    contentLanguageHelp:
+      'Los informes, planes de salud y texto de IA nuevos usan este idioma. Vuelva a puntuar o regenerar tras cambiarlo.',
+    contentLocaleField: 'Idioma y formato regional',
     language: 'Idioma',
     region: 'Formato regional',
     save: 'Guardar idioma',
     saved: 'Idioma guardado',
+    savePortal: 'Guardar idioma del portal',
+    savedPortal: 'Idioma del portal guardado',
+    saveContent: 'Guardar idioma de contenido',
+    savedContent: 'Idioma de contenido guardado',
+    setupTitle: 'Elija sus idiomas',
+    setupIntro:
+      'Elija cómo se ve el portal para usted. Los administradores también pueden fijar el idioma de informes e IA.',
+    setupContinue: 'Continuar',
     help: 'La interfaz cambia después de guardar. Los informes y el contenido de IA ya guardados no se modifican. Las nuevas generaciones usan este idioma.',
     languages: {
       en: 'Inglés',
@@ -131,10 +146,25 @@ const settings = {
   fr: {
     title: 'Paramètres',
     languageAndRegion: 'Langue et région',
+    portalLanguageTitle: 'Langue du portail',
+    portalLanguageHelp:
+      'Menus, boutons et mise en page pour votre compte sur cet appareil.',
+    contentLanguageTitle: "Langue d'IA et des rapports (clinique)",
+    contentLanguageHelp:
+      'Les nouveaux rapports, plans de santé et textes IA utilisent cette langue. Rescorez ou régénérez après modification.',
+    contentLocaleField: 'Langue et format régional',
     language: 'Langue',
     region: 'Format régional',
     save: 'Enregistrer la langue',
     saved: 'Langue enregistrée',
+    savePortal: 'Enregistrer la langue du portail',
+    savedPortal: 'Langue du portail enregistrée',
+    saveContent: 'Enregistrer la langue du contenu',
+    savedContent: 'Langue du contenu enregistrée',
+    setupTitle: 'Choisissez vos langues',
+    setupIntro:
+      'Choisissez l’affichage du portail pour vous. Les admins peuvent aussi définir la langue des rapports et de l’IA.',
+    setupContinue: 'Continuer',
     help: "L'interface change après l'enregistrement. Les rapports et le contenu d'IA déjà enregistrés restent inchangés. Les nouvelles générations utilisent cette langue.",
     languages: {
       en: 'Anglais',
@@ -160,10 +190,24 @@ const settings = {
   ar: {
     title: 'الإعدادات',
     languageAndRegion: 'اللغة والمنطقة',
+    portalLanguageTitle: 'لغة البوابة',
+    portalLanguageHelp: 'القوائم والأزرار والتخطيط لحسابك على هذا الجهاز.',
+    contentLanguageTitle: 'لغة الذكاء الاصطناعي والتقارير (العيادة)',
+    contentLanguageHelp:
+      'التقارير وخطط الصحة والنصوص المولَّدة تستخدم هذه اللغة. أعد التقييم أو التوليد بعد التغيير.',
+    contentLocaleField: 'اللغة والتنسيق الإقليمي',
     language: 'اللغة',
     region: 'التنسيق الإقليمي',
     save: 'حفظ اللغة',
     saved: 'تم حفظ اللغة',
+    savePortal: 'حفظ لغة البوابة',
+    savedPortal: 'تم حفظ لغة البوابة',
+    saveContent: 'حفظ لغة المحتوى',
+    savedContent: 'تم حفظ لغة المحتوى',
+    setupTitle: 'اختر لغاتك',
+    setupIntro:
+      'اختر شكل البوابة لك. يمكن للمسؤول أيضًا تعيين لغة التقارير والذكاء الاصطناعي.',
+    setupContinue: 'متابعة',
     help: 'تتبدل الواجهة بعد الحفظ. التقارير ومحتوى الذكاء الاصطناعي المحفوظ سابقًا يبقى كما هو. التوليد الجديد يستخدم هذه اللغة.',
     languages: {
       en: 'الإنجليزية',

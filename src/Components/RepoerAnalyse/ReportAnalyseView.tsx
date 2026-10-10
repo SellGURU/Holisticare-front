@@ -114,10 +114,7 @@ import {
   planRefreshForTerminalDomains,
   shouldApplyFetchResult,
 } from '../../utils/domainRefreshCoordinator';
-import {
-  shouldShowClientSummaryTextLoading,
-  shouldShowSectionSkeleton,
-} from '../../utils/reportSectionLoading';
+import { shouldShowSectionSkeleton } from '../../utils/reportSectionLoading';
 
 const canLoadOverviewSections = (info: {
   show_report?: boolean;
@@ -945,6 +942,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       outcomes,
       lastAppliedDomainRevisionRef.current,
     );
+    const summaryOutcome = outcomes.client_summary;
+    if (
+      domains.includes('client_summary') &&
+      isDomainAuthoritative(summaryOutcome?.state) &&
+      !plan.queries.includes('clientSummary')
+    ) {
+      plan.queries.push('clientSummary');
+      plan.revisions.client_summary = summaryOutcome?.data_revision ?? null;
+    }
     if (plan.queries.length === 0) return;
     pendingRevisionsRef.current = {
       ...pendingRevisionsRef.current,
@@ -1069,6 +1075,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       } else if (wasOverviewProcessingRef.current) {
         wasOverviewProcessingRef.current = false;
         publish('allProgressCompleted', {});
+        void fetchClientSummaryCategories(true, true);
       }
     },
     onPollTimeout: () => {
@@ -1229,6 +1236,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   useEffect(() => {
     const handleAllProgressCompleted = () => {
       setDisableGenerate(false);
+      if (!isShare && resolvedMemberID != null) {
+        void fetchClientSummaryCategories(true, true);
+      }
     };
     const handleSourceProcessingDone = (event?: CustomEvent) => {
       const detail = event?.detail || {};
@@ -1240,7 +1250,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }
       fetchData({ force: true, silent: true });
     };
+    const handleHealthPlanProcessingComplete = () => {
+      handleAllProgressCompleted();
+    };
     subscribe('allProgressCompleted', handleAllProgressCompleted);
+    subscribe(
+      'healthPlanProcessingComplete',
+      handleHealthPlanProcessingComplete,
+    );
     subscribe(
       'questionnaireProcessingCompleted',
       handleSourceProcessingDone as EventListener,
@@ -1248,6 +1265,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     subscribe('completedProgress', handleSourceProcessingDone as EventListener);
     return () => {
       unsubscribe('allProgressCompleted', handleAllProgressCompleted);
+      unsubscribe(
+        'healthPlanProcessingComplete',
+        handleHealthPlanProcessingComplete,
+      );
       unsubscribe(
         'questionnaireProcessingCompleted',
         handleSourceProcessingDone as EventListener,
@@ -1646,18 +1667,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const clientSummaryDomainState = String(
     ClientSummaryBoxs?.domain_outcomes?.client_summary?.state || '',
   );
-  const summaryPending =
+  const summaryRegenInFlight = overviewProcessing || clientSummaryLoading;
+  const summaryDomainStalled =
+    (clientSummaryDomainState === 'pending' ||
+      clientSummaryDomainState === 'incomplete') &&
+    !summaryRegenInFlight;
+  const showClientSummaryTextLoading =
     !overviewPollTimedOut &&
-    !clientSummaryReady &&
-    (hasCategoryCards ||
-      overviewProcessing ||
-      clientSummaryLoading ||
-      clientSummaryDomainState === 'pending');
-  const showClientSummaryTextLoading = shouldShowClientSummaryTextLoading({
-    hasSummaryText,
-    isInitialRequest: clientSummaryLoading && !hasSummaryText,
-    summaryPending,
-  });
+    (summaryRegenInFlight ||
+      (!hasSummaryText &&
+        !summaryDomainStalled &&
+        (clientSummaryDomainState === 'pending' ||
+          clientSummaryDomainState === 'incomplete' ||
+          (hasCategoryCards &&
+            !clientSummaryReady &&
+            clientSummaryDomainState.length === 0))) ||
+      (hasSummaryText &&
+        summaryRegenInFlight &&
+        clientSummaryDomainState === 'pending'));
   const showDetailedAnalysisSkeleton = shouldShowSectionSkeleton({
     hasDisplayedData: hasReferenceBiomarkers || hasCategoryCards,
     isInitialRequest: detailedAnalysisLoading,
