@@ -11,6 +11,9 @@ describe('portalLocaleCatalog', () => {
     const options = portalLocaleOptions('en');
     expect(options.find((o) => o.value === 'en-US')?.isDisabled).toBe(false);
     expect(options.find((o) => o.value === 'en-GB')?.isDisabled).toBe(false);
+    expect(options.some((o) => o.value === 'fa-IR' || o.value === 'fa')).toBe(
+      false,
+    );
     expect(options.find((o) => o.value === 'es-ES')?.isDisabled).toBe(true);
     expect(options.find((o) => o.value === 'es-ES')?.label).toContain(
       'Coming soon',

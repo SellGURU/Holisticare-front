@@ -79,9 +79,9 @@ export const englishResources = {
     savedPortal: 'Portal language saved',
     saveContent: 'Save content language',
     savedContent: 'Content language saved',
-    setupTitle: 'Choose your languages',
+    setupTitle: 'New language settings',
     setupIntro:
-      'Pick how the portal looks for you. Clinic admins can also set the language used for AI reports and plans.',
+      'Menus and buttons follow the portal language. New reports, health plans, and AI text follow the health plan language. Saved text stays as it is.',
     setupContinue: 'Continue',
     help: 'The interface changes after you save. Saved reports and AI content stay unchanged. New generation uses this language.',
     languages: {

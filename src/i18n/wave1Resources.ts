@@ -118,9 +118,9 @@ const settings = {
     savedPortal: 'Idioma del portal guardado',
     saveContent: 'Guardar idioma de contenido',
     savedContent: 'Idioma de contenido guardado',
-    setupTitle: 'Elija sus idiomas',
+    setupTitle: 'Nueva configuración de idioma',
     setupIntro:
-      'Elija cómo se ve el portal para usted. Los administradores también pueden fijar el idioma de informes e IA.',
+      'Los menús y botones siguen el idioma del portal. Los informes, planes de salud y textos de IA nuevos siguen el idioma del plan de salud. El texto ya guardado se queda igual.',
     setupContinue: 'Continuar',
     help: 'La interfaz cambia después de guardar. Los informes y el contenido de IA ya guardados no se modifican. Las nuevas generaciones usan este idioma.',
     languages: {
@@ -163,9 +163,9 @@ const settings = {
     savedPortal: 'Langue du portail enregistrée',
     saveContent: 'Enregistrer la langue du contenu',
     savedContent: 'Langue du contenu enregistrée',
-    setupTitle: 'Choisissez vos langues',
+    setupTitle: 'Nouveau réglage de langue',
     setupIntro:
-      'Choisissez l’affichage du portail pour vous. Les admins peuvent aussi définir la langue des rapports et de l’IA.',
+      'Les menus et boutons suivent la langue du portail. Les nouveaux rapports, plans de santé et textes IA suivent la langue du plan de santé. Le texte déjà enregistré reste tel quel.',
     setupContinue: 'Continuer',
     help: "L'interface change après l'enregistrement. Les rapports et le contenu d'IA déjà enregistrés restent inchangés. Les nouvelles générations utilisent cette langue.",
     languages: {
@@ -207,9 +207,9 @@ const settings = {
     savedPortal: 'تم حفظ لغة البوابة',
     saveContent: 'حفظ لغة المحتوى',
     savedContent: 'تم حفظ لغة المحتوى',
-    setupTitle: 'اختر لغاتك',
+    setupTitle: 'إعداد لغة جديد',
     setupIntro:
-      'اختر شكل البوابة لك. يمكن للمسؤول أيضًا تعيين لغة التقارير والذكاء الاصطناعي.',
+      'القوائم والأزرار تتبع لغة البوابة. التقارير وخطط الصحة ونصوص الذكاء الاصطناعي الجديدة تتبع لغة خطة الصحة. النص المحفوظ يبقى كما هو.',
     setupContinue: 'متابعة',
     help: 'تتبدل الواجهة بعد الحفظ. التقارير ومحتوى الذكاء الاصطناعي المحفوظ سابقًا يبقى كما هو. التوليد الجديد يستخدم هذه اللغة.',
     languages: {

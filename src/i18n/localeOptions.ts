@@ -3,7 +3,6 @@ export const PORTAL_LOCALE_OPTIONS = [
   { language: 'es', regions: ['es-ES', 'es-MX'] },
   { language: 'fr', regions: ['fr-FR', 'fr-CA'] },
   { language: 'ar', regions: ['ar'] },
-  { language: 'fa', regions: ['fa-IR'] },
 ] as const;
 
 export function languageOf(locale: string): string {
