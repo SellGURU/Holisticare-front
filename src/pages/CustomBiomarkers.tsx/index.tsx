@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import BiomarkersApi from '../../api/Biomarkers';
 import {
   invalidateLabEntryBiomarkerUnitsCache,
@@ -23,6 +24,7 @@ import {
   matchesEnabledFilter,
 } from '../../utils/catalogEnabled';
 
+import { parseScoringBiomarkerAddParams } from '../NewForms/CheckIn/questionFormula';
 import { prepareBiomarkerForApi } from './biomarkerFormUtils';
 import DefaultData from './default.json';
 import {
@@ -77,6 +79,7 @@ const getUniqueOptions = (items: any[], key: string) =>
 
 const CustomBiomarkers = () => {
   const isDemo = useIsDemo();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -86,6 +89,12 @@ const CustomBiomarkers = () => {
   const [sortKey, setSortKey] = useState<SortKey>('Biomarker');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [activeAdd, setActiveAdd] = useState(false);
+  const [queuedAdds, setQueuedAdds] = useState<
+    Array<{ name: string; unit: string }>
+  >([]);
+  const queuedAddsRef = useRef(queuedAdds);
+  queuedAddsRef.current = queuedAdds;
+  const appliedQueueKeyRef = useRef('');
   const [loading, setLoading] = useState(false);
   const [errorDetails, setErrorDetails] = useState<string>('');
   const [selectedChartBiomarker, setSelectedChartBiomarker] =
@@ -105,14 +114,52 @@ const CustomBiomarkers = () => {
     setBiomarkers(prepareBiomarkersCatalogList(values));
   };
 
+  const clearQueuedAdds = () => {
+    setQueuedAdds([]);
+    appliedQueueKeyRef.current = '';
+    if (
+      searchParams.has('addNames') ||
+      searchParams.has('units')
+    ) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('addNames');
+      next.delete('units');
+      setSearchParams(next, { replace: true });
+    }
+  };
+
   const openModalAdd = () => {
     if (isDemo) return;
+    clearQueuedAdds();
     setActiveAdd(true);
   };
   const closeModalAdd = () => {
     setActiveAdd(false);
     setErrorDetails('');
+    clearQueuedAdds();
   };
+
+  const queuedAddKey = searchParams.getAll('addNames').join('\n');
+  useEffect(() => {
+    if (isDemo) return;
+    if (queuedAddKey === appliedQueueKeyRef.current) return;
+    appliedQueueKeyRef.current = queuedAddKey;
+    const queued = parseScoringBiomarkerAddParams(searchParams);
+    if (queued.length === 0) return;
+    setQueuedAdds(queued);
+    setActiveAdd(true);
+  }, [queuedAddKey, searchParams, isDemo]);
+
+  const addModalData = useMemo(() => {
+    const current = queuedAdds[0];
+    if (!current) return DefaultData;
+    return {
+      ...DefaultData,
+      Biomarker: current.name,
+      unit: current.unit,
+      biomarker_type: 'other',
+    };
+  }, [queuedAdds]);
 
   const getBiomarkers = (options?: { force?: boolean }) => {
     const force = Boolean(options?.force);
@@ -397,8 +444,24 @@ const CustomBiomarkers = () => {
     const new_biomarker = prepareBiomarkerForApi(values, 'add');
     BiomarkersApi.addBiomarkersList({ new_biomarker })
       .then(() => {
-        closeModalAdd();
+        const remaining = queuedAddsRef.current.slice(1);
+        setErrorDetails('');
         getBiomarkers({ force: true });
+        const nextParams = new URLSearchParams(searchParams);
+        nextParams.delete('addNames');
+        nextParams.delete('units');
+        remaining.forEach((item) => {
+          nextParams.append('addNames', item.name);
+          nextParams.append('units', item.unit);
+        });
+        setSearchParams(nextParams, { replace: true });
+        if (remaining.length > 0) {
+          setQueuedAdds(remaining);
+          setActiveAdd(true);
+          return;
+        }
+        setQueuedAdds([]);
+        setActiveAdd(false);
       })
       .catch((error) => {
         const rawDetail =
@@ -438,6 +501,12 @@ const CustomBiomarkers = () => {
                 Showing {filteredBiomarkers.length} of {biomarkers.length}{' '}
                 biomarkers
               </div>
+              {queuedAdds.length > 0 && (
+                <div className="mt-1 text-[11px] font-medium text-Primary-DeepTeal">
+                  Adding {queuedAdds[0].name} ({queuedAdds.length} remaining
+                  from the questionnaire)
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-2 md:flex-row md:items-center">
@@ -593,7 +662,7 @@ const CustomBiomarkers = () => {
         <AddModal
           onCancel={closeModalAdd}
           onSave={(values: any) => onsave(values)}
-          data={DefaultData}
+          data={addModalData}
           biomarkerTypeOptions={biomarkerTypeOptions}
           benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
           existingBiomarkers={biomarkers}

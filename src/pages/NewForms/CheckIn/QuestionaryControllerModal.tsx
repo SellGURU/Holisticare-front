@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState, Dispatch, SetStateAction } from 'react';
+import {
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import { BeatLoader } from 'react-spinners';
 import BiomarkersApi from '../../../api/Biomarkers';
 import FormsApi from '../../../api/Forms';
@@ -14,10 +21,14 @@ import CalculationsEditor from './CalculationsEditor';
 import QuestionItem from './QuestionItem';
 import QuestionsJsonEditor from './QuestionsJsonEditor';
 import TimerPicker from './TimerPicker';
+import MissingScoringBiomarkersModal from './MissingScoringBiomarkersModal';
 import {
+  isUnrecognizedCatalogBiomarkerError,
   mapClinicCatalog,
+  missingScoringCatalogBiomarkers,
   uniqueQuestionId,
   type FormCatalogItem,
+  type MissingScoringCatalogBiomarker,
 } from './questionFormula';
 
 const SCORING_SENTINEL_KEY = '__scoring__';
@@ -101,19 +112,44 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   const [gender, setGender] = useState('female');
   const [catalog, setCatalog] = useState<Array<FormCatalogItem>>([]);
   const [catalogLoading, setCatalogLoading] = useState(false);
-  useEffect(() => {
+  const [missingScoringBiomarkers, setMissingScoringBiomarkers] = useState<
+    Array<MissingScoringCatalogBiomarker>
+  >([]);
+  const loadCatalog = useCallback((): Promise<Array<FormCatalogItem>> => {
     setCatalogLoading(true);
-    const loadCatalog = fetchCatalog
+    const request = fetchCatalog
       ? fetchCatalog()
       : BiomarkersApi.getBiomarkersList({ include_all: true });
-    loadCatalog
+    return request
       .then((res) => {
         const raw = res.data?.configs?.more_info ?? res.data;
-        setCatalog(mapClinicCatalog(raw));
+        const mapped = mapClinicCatalog(raw);
+        setCatalog(mapped);
+        return mapped;
       })
-      .catch(() => setCatalog([]))
+      .catch(() => {
+        setCatalog([]);
+        return [] as Array<FormCatalogItem>;
+      })
       .finally(() => setCatalogLoading(false));
   }, [fetchCatalog]);
+  useEffect(() => {
+    loadCatalog();
+  }, [loadCatalog]);
+  useEffect(() => {
+    const refreshIfVisible = () => {
+      if (document.visibilityState && document.visibilityState !== 'visible') {
+        return;
+      }
+      loadCatalog();
+    };
+    window.addEventListener('focus', refreshIfVisible);
+    document.addEventListener('visibilitychange', refreshIfVisible);
+    return () => {
+      window.removeEventListener('focus', refreshIfVisible);
+      document.removeEventListener('visibilitychange', refreshIfVisible);
+    };
+  }, [loadCatalog]);
   useEffect(() => {
     if (error && error == 'A form with the same title already exists.') {
       setTitleForm(templateData?.title || '');
@@ -284,12 +320,21 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       setIsSaveLoading(false);
     }
   }, [textErrorMessage]);
+  useEffect(() => {
+    if (!isUnrecognizedCatalogBiomarkerError(textErrorMessage)) return;
+    loadCatalog().then((fresh) => {
+      const missing = missingScoringCatalogBiomarkers(scoring, fresh);
+      if (missing.length > 0) {
+        setMissingScoringBiomarkers(missing);
+      }
+    });
+  }, [textErrorMessage, scoring, loadCatalog]);
   const addCheckinForm = () => {
     setIsSaveLoading(true);
     const getTimeInMilliseconds = () => {
       return minutes * 60000 + seconds * 1000;
     };
-    onSave({
+    const payload = {
       title: titleForm.length > 0 ? titleForm : templateData.title,
       questions: mergeScoringIntoQuestions(questions, scoring),
       share_with_client: Boolean(checked),
@@ -299,6 +344,18 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       description: descriptionForm,
       default_questionnaire: Boolean(autoAssign),
       gender_target: genderRestriction ? gender : 'both',
+    };
+    loadCatalog().then((freshCatalog) => {
+      if (freshCatalog.length > 0) {
+        const missing = missingScoringCatalogBiomarkers(scoring, freshCatalog);
+        if (missing.length > 0) {
+          setIsSaveLoading(false);
+          setMissingScoringBiomarkers(missing);
+          return;
+        }
+      }
+      setMissingScoringBiomarkers([]);
+      onSave(payload);
     });
     // FormsApi.addCheckin({
     //   title: titleForm,
@@ -352,6 +409,25 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   }, [editId]);
   return (
     <>
+      {missingScoringBiomarkers.length > 0 && (
+        <MissingScoringBiomarkersModal
+          missing={missingScoringBiomarkers}
+          onClose={() => setMissingScoringBiomarkers([])}
+          onAdded={(name) => {
+            setCatalog((current) => {
+              if (
+                current.some(
+                  (item) =>
+                    item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+                )
+              ) {
+                return current;
+              }
+              return [...current, { name, is_enabled: true }];
+            });
+          }}
+        />
+      )}
       {loading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-[50]">
           <Circleloader></Circleloader>
@@ -451,11 +527,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             Add question to continue.
           </div>
         )}
-        {textErrorMessage && (
-          <div className="text-xs text-Red shrink-0 px-2 whitespace-pre-line">
-            {textErrorMessage}
-          </div>
-        )}
+        {textErrorMessage &&
+          !isUnrecognizedCatalogBiomarkerError(textErrorMessage) && (
+            <div className="text-xs text-Red shrink-0 px-2 whitespace-pre-line">
+              {textErrorMessage}
+            </div>
+          )}
         <div
           className={`w-full flex shrink-0 ${step === 0 ? 'justify-end' : 'justify-between'} items-center p-2 ${
             AddquestionStep == 1 && 'hidden'

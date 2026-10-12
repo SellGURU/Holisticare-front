@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildScoringBiomarkerAddUrl,
   fillableQuestions,
+  isUnrecognizedCatalogBiomarkerError,
   mapClinicCatalog,
+  parseScoringBiomarkerAddParams,
+  missingScoringCatalogBiomarkers,
   pruneOptionScores,
   resolveQuestionId,
   toQuestionId,
@@ -76,6 +80,121 @@ describe('pruneOptionScores', () => {
         Gone: 9,
       }),
     ).toEqual({ 'Not at all': 0, 'Several days': 1 });
+  });
+});
+
+describe('missingScoringCatalogBiomarkers', () => {
+  const catalog = [{ name: 'Anxiety Level', unit: '' }];
+
+  it('returns every scoring map that is not in the catalog', () => {
+    expect(
+      missingScoringCatalogBiomarkers(
+        [
+          {
+            name: 'FSFI Total Score',
+            formula: 'sum(q1)',
+            map_to_biomarker: 'Female Sexual Function Index',
+            unit: 'points',
+          },
+          {
+            name: 'Sexual Health Composite Score',
+            formula: 'sum(q1)',
+            map_to_biomarker: 'Sexual Health Composite Score',
+            unit: 'points',
+          },
+          {
+            name: 'GAD-7',
+            formula: 'sum(q1)',
+            map_to_biomarker: 'Anxiety Level',
+          },
+        ],
+        catalog,
+      ),
+    ).toEqual([
+      {
+        ruleIndex: 0,
+        ruleName: 'FSFI Total Score',
+        mapTo: 'Female Sexual Function Index',
+        unit: 'points',
+      },
+      {
+        ruleIndex: 1,
+        ruleName: 'Sexual Health Composite Score',
+        mapTo: 'Sexual Health Composite Score',
+        unit: 'points',
+      },
+    ]);
+  });
+
+  it('skips insight-only rules and duplicates', () => {
+    expect(
+      missingScoringCatalogBiomarkers(
+        [
+          {
+            name: 'FSFI',
+            formula: 'sum(q1)',
+            map_to_biomarker: 'Female Sexual Function Index',
+            is_biomarker: false,
+          },
+          {
+            name: 'Copy',
+            formula: 'sum(q1)',
+            map_to_biomarker: 'Female Sexual Function Index',
+          },
+          {
+            name: 'Again',
+            formula: 'sum(q1)',
+            map_to_biomarker: 'Female Sexual Function Index',
+          },
+        ],
+        catalog,
+      ),
+    ).toEqual([
+      {
+        ruleIndex: 1,
+        ruleName: 'Copy',
+        mapTo: 'Female Sexual Function Index',
+        unit: '',
+      },
+    ]);
+  });
+});
+
+describe('buildScoringBiomarkerAddUrl', () => {
+  it('encodes each missing name as a query param', () => {
+    expect(
+      buildScoringBiomarkerAddUrl([
+        { mapTo: 'Female Sexual Function Index', unit: 'points' },
+        { mapTo: 'Sexual Health Composite Score', unit: 'points' },
+      ]),
+    ).toBe(
+      '/biomarkers?addNames=Female+Sexual+Function+Index&units=points&addNames=Sexual+Health+Composite+Score&units=points',
+    );
+  });
+});
+
+describe('parseScoringBiomarkerAddParams', () => {
+  it('reads repeated addNames and units', () => {
+    expect(
+      parseScoringBiomarkerAddParams(
+        new URLSearchParams(
+          'addNames=Female+Sexual+Function+Index&units=points&addNames=Sexual+Health+Composite+Score&units=points',
+        ),
+      ),
+    ).toEqual([
+      { name: 'Female Sexual Function Index', unit: 'points' },
+      { name: 'Sexual Health Composite Score', unit: 'points' },
+    ]);
+  });
+});
+
+describe('isUnrecognizedCatalogBiomarkerError', () => {
+  it('matches the lab-import scoring save error', () => {
+    expect(
+      isUnrecognizedCatalogBiomarkerError(
+        "Scoring rule 1: 'Female Sexual Function Index' is not recognized by the system. Please select a valid biomarker from the 'System Biomarker' menu.",
+      ),
+    ).toBe(true);
   });
 });
 
