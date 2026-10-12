@@ -1,3 +1,5 @@
+import { uiText } from '../../i18n/uiText';
+
 interface ToggleProps {
   value: Array<string>;
   active: string;
@@ -28,7 +30,7 @@ const Toggle: React.FC<ToggleProps> = ({
           }}
           className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} ${isNotif && 'w-[176px] h-[24px]'} h-[20px] w-[110px] xs:w-[150px]  ${isClientList && 'h-[24px] w-[100px]'} ${isMessages && '!w-[86.33px] h-[23px]'} rounded-[16px] flex justify-center items-center text-[10px] xs:text-[12px]`}
         >
-          {value[0]}
+          {uiText(value[0])}
         </div>
         <div className="w-[1px] h-[17px] bg-[#E5E5E5]"></div>
         <div
@@ -37,7 +39,7 @@ const Toggle: React.FC<ToggleProps> = ({
           }}
           className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} ${isNotif && 'w-[176px] h-[24px]'} h-[20px] w-[110px] xs:w-[150px]  ${isClientList && 'h-[24px] w-[100px]'} ${isMessages && '!w-[86.33px] h-[23px]'} rounded-[16px] flex justify-center items-center text-[10px] xs:text-[12px]`}
         >
-          {value[1]}
+          {uiText(value[1])}
         </div>
         {value[2] ? (
           <>
@@ -48,7 +50,7 @@ const Toggle: React.FC<ToggleProps> = ({
               }}
               className={` cursor-pointer ${active == value[2] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} ${isNotif && 'w-[176px] h-[24px]'} h-[20px] w-[135px] ${isClientList && 'h-[24px] w-[100px]'} ${isMessages && '!w-[86.33px] h-[23px]'} rounded-[16px] flex justify-center items-center text-[10px] xs:text-[12px]`}
             >
-              {value[2]}
+              {uiText(value[2])}
             </div>
           </>
         ) : (

@@ -173,18 +173,18 @@ const MainTopBar = () => {
         )}
       </div>
       <div className="hidden md:block w-full sticky z-50 top-0 ">
-        <div className="w-full flex items-center justify-end bg-white border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
+        <div className="w-full flex items-center justify-end bg-white border-b border-gray-50 ps-4 pe-6 py-2 shadow-100">
           <div className="relative">
-            <div className="flex gap-10 ">
+            <div className="flex items-center gap-6">
               <div className="relative">
                 <div
                   ref={notifButtentRef}
                   onClick={() => setshowNotification(!showNotification)}
-                  className="size-6 relative rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 "
+                  className="size-6 relative rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer"
                 >
                   <img src="/icons/notification-2.svg" alt="" />
                   {isUnReadNotif && (
-                    <div className="bg-[#F4A261] size-[3.33px] rounded-full absolute top-[6px] right-[6px]"></div>
+                    <div className="bg-[#F4A261] size-[3.33px] rounded-full absolute top-[6px] end-[6px]"></div>
                   )}
                 </div>
               </div>
@@ -207,7 +207,7 @@ const MainTopBar = () => {
                     <BeatLoader size={6}></BeatLoader>
                   </div>
                 )}
-                {customTheme.name ? customTheme.name : ''}{' '}
+                {customTheme.name ? customTheme.name : ''}
               </div>
             </div>
             {visibleClinic && (

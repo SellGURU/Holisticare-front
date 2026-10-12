@@ -1,3 +1,4 @@
+import { uiText } from '../../../../i18n/uiText';
 import resolveAnalyseIcon from '../../resolveAnalyseIcon';
 import { resolveCategoryStatusRingBackground } from '../../../../utils/categoryStatusRingStyle';
 
@@ -52,7 +53,7 @@ const DetailedAnalyseCategory: React.FC<DetailedAnalyseCategoryProps> = ({
               style={{ color: '#005F73', fontSize: '14px' }}
               className=" text-sm"
             >
-              {data?.subcategory}
+              {String(uiText(data?.subcategory ?? ''))}
             </div>
             <div
               className="flex justify-start items-center "

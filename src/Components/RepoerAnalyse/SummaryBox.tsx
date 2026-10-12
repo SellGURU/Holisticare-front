@@ -1,3 +1,4 @@
+import { uiText } from '../../i18n/uiText';
 import SpinnerLoader from '../SpinnerLoader';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import resolveAnalyseIcon from './resolveAnalyseIcon';
@@ -82,13 +83,13 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({
             />
           </div>
         </div>
-        <div className="ml-2">
+        <div className="ms-2">
           <div className="TextStyle-Headline-6 text-Text-Primary">
             <TooltipTextAuto maxWidth="350px">
-              {data.subcategory}
+              {String(uiText(data.subcategory))}
             </TooltipTextAuto>
           </div>
-          <div className="flex justify-start items-center">
+          <div className="flex justify-start items-center gap-2">
             <div className=" text-Text-Secondary text-[10px]">
               {' '}
               {biomarkerCountMissing ? (
@@ -104,7 +105,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({
                 </>
               )}
             </div>
-            <div className="text-Text-Secondary ml-2 text-[10px]">
+            <div className="text-Text-Secondary text-[10px]">
               {showNeedFocusAnalyzing ? (
                 <span className="inline-flex items-center gap-1 text-Text-Triarty">
                   <SpinnerLoader color="#9CA3AF" />

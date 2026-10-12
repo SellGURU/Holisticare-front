@@ -114,16 +114,16 @@ const Home = () => {
         ref={sideMenuRef}
         className={`
         
-          ${isMobileView && !isMobileMenuOpen ? '-left-[250px]' : 'left-0'}
+          ${isMobileView && !isMobileMenuOpen ? '-start-[250px]' : 'start-0'}
           
           transition-all z-[60] fixed top-0 duration-300 ease-in-out
-          md:left-0
+          md:start-0
         `}
       >
         <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} />
       </div>
 
-      <div className="min-h-0 w-full flex-1 md:pl-[170px] pt-0 pb-2 bg-bg-color overflow-y-auto hidden-scrollbar">
+      <div className="min-h-0 w-full flex-1 md:ps-[170px] pt-0 pb-2 bg-bg-color overflow-y-auto hidden-scrollbar">
         <Outlet></Outlet>
       </div>
     </div>

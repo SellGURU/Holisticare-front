@@ -2,6 +2,7 @@ import { Tooltip } from 'react-tooltip';
 // import { splitInstructions } from '../../help';
 import { FC } from 'react';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
+import { uiText } from '../../i18n/uiText';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface TreatmentCardProps {
@@ -23,7 +24,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
                 data-tooltip-id={`score-calc-${index}`}
                 className="text-Primary-DeepTeal select-none  ml-1 cursor-pointer text-[10px]"
               >
-                Analysis Info{' '}
+                {uiText('Analysis Info')}{' '}
                 <Tooltip
                   id={`score-calc-${index}`}
                   place="top"
@@ -45,21 +46,21 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
         <div className="flex flex-col gap-1 ml-3">
           <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
             <img src="/icons/book.svg" alt="" className="ml-[-2px]" />
-            Scientific Basis
+            {uiText('Scientific Basis')}
           </div>
           <div className="text-Text-Quadruple text-xs leading-5">
             {data?.Based || '-'}
           </div>
           <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
             <img src="/icons/lamp-on-new.svg" alt="" className="ml-[-2px]" />
-            Guidelines
+            {uiText('Guidelines')}
           </div>
           <div className="text-Text-Quadruple text-xs leading-5">
             {data?.Intervnetion_content || '-'}
           </div>
           <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
             <img src="/icons/medal-star.svg" alt="" className="ml-[-2px]" />
-            Expected Benefits
+            {uiText('Expected Benefits')}
           </div>
           <div className="flex flex-col ml-1">
             {data?.key_benefits?.map((el: any) => {
@@ -74,7 +75,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
             <>
               <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
                 <img src="/icons/ruler-new.svg" alt="" className="ml-[-2px]" />
-                Recommended Dosage
+                {uiText('Recommended Dosage')}
               </div>
               <div className="text-Text-Quadruple text-xs leading-5">
                 {data?.Dose}
@@ -89,7 +90,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
                   alt=""
                   className="ml-[-2px]"
                 />
-                Recommended Exercises
+                {uiText('Recommended Exercises')}
               </div>
               <div className="flex flex-col ml-1">
                 {data?.exercises_to_do?.map((el: any) => {
@@ -106,7 +107,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
             <>
               <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
                 <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-                Exercises to Avoid
+                {uiText('Exercises to Avoid')}
               </div>
               <div className="flex flex-col ml-1">
                 {data?.exercises_to_avoid?.map((el: any) => {
@@ -127,7 +128,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
                   alt=""
                   className="ml-[-2px]"
                 />
-                Recommended Foods
+                {uiText('Recommended Foods')}
               </div>
               <div className="flex flex-col ml-1">
                 {data?.foods_to_eat?.map((el: any) => {
@@ -144,7 +145,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
             <>
               <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
                 <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-                Foods to Limit
+                {uiText('Foods to Limit')}
               </div>
               <div className="flex flex-col ml-1">
                 {data?.foods_to_avoid?.map((el: any) => {
@@ -166,7 +167,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
               onClick={() => window.open(data?.Intervention_url, '_blank')}
             >
               <div className="text-Primary-DeepTeal text-xs font-normal">
-                Learn More (
+                {uiText('Learn More (')}
                 {
                   data?.Intervention_url.split('/')[
                     data?.Intervention_url.split('/').length - 2

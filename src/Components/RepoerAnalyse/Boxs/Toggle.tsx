@@ -13,7 +13,7 @@ const Toggle: React.FC<ToggleProps> = ({ checked, setChecked }) => {
     >
       <div
         className={` w-4 xs:w-6 border border-[#E9EDF5]   h-4 xs:h-6  rounded-full shadow-md transform transition-transform duration-300
-          ${checked ? ' translate-x-3 xs:translate-x-5 bg-Primary-EmeraldGreen' : 'translate-x-0 bg-[#F4F4F4]'}
+          ${checked ? 'translate-x-3 xs:translate-x-5 rtl:-translate-x-3 xs:rtl:-translate-x-5 bg-Primary-EmeraldGreen' : 'translate-x-0 bg-[#F4F4F4]'}
         `}
       ></div>
     </div>

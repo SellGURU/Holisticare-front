@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import ConflictsModal from './ConflictsModal';
+import { uiText } from '../../../i18n/uiText';
 import EllipsedTooltip from '../../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip';
 import ActionTaskDetailFields from './ActionTaskDetailFields';
 
@@ -193,7 +194,7 @@ const LibBox: FC<LibBoxProps> = ({
               >
                 <img src="/icons/alarm.svg" alt="" className="w-3 h-3" />
                 <div className="text-[10px] text-[#FFAB2C] underline">
-                  Conflict
+                  {uiText('Conflict')}
                 </div>
                 <div className="text-[10px] text-[#FFAB2C]">
                   ({data.flag.conflicts.length})

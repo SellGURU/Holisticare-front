@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { uiText } from '../../i18n/uiText';
 
 interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -24,6 +25,7 @@ const TextField: React.FC<TextFieldProps> = ({
   largeHeight,
   titleRequired,
   inputRef, // <--- Destructure ref prop
+  placeholder,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,6 +33,8 @@ const TextField: React.FC<TextFieldProps> = ({
   const togglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
+  const translatedPlaceholder =
+    typeof placeholder === 'string' ? String(uiText(placeholder)) : placeholder;
 
   // Keep getInputType for password toggle, but don't force 'text' for numbers
   const getInternalInputType = () => {
@@ -146,6 +150,7 @@ const TextField: React.FC<TextFieldProps> = ({
             ${type === 'password' ? 'pr-8' : ''}
             ${!newStyle && 'shadow-300'}`}
           {...props} // <--- Pass all other props (like 'step', 'value', 'name', 'onBlur', 'id')
+          placeholder={translatedPlaceholder}
           onChange={type === 'number' ? handleNumberInput : handleChange}
         />
         {type === 'password' && (
@@ -162,7 +167,9 @@ const TextField: React.FC<TextFieldProps> = ({
         )}
       </div>
       {inValid && (
-        <span className="text-Red text-[10px] mt-1">{errorMessage}</span>
+        <span className="text-Red text-[10px] mt-1">
+          {uiText(errorMessage)}
+        </span>
       )}
     </div>
   );

@@ -10,6 +10,8 @@ import Toggle from './Toggle';
 // import { sortKeysWithValues } from './Help';
 import { Tooltip } from 'react-tooltip';
 import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
+import { uiText } from '../../../i18n/uiText';
+import { useTranslation } from 'react-i18next';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
@@ -59,6 +61,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   needFocusAnalyzing,
   ringLoading,
 }) => {
+  const { t } = useTranslation('reportChrome');
   const [isOpen, setIsOpen] = useState(true);
   const [isCheced, setIsCheced] = useState(false);
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
@@ -253,10 +256,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                 />
               </div>
             </div>
-            <div className="ml-2">
+            <div className="ms-2">
               <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
                 <TooltipTextAuto maxWidth="400px">
-                  {data.subcategory}
+                  {String(uiText(data.subcategory))}
                 </TooltipTextAuto>
 
                 {/* {isOpen && <Legends></Legends>} */}
@@ -288,7 +291,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             ) : displayedDescription && refrences.length > 0 ? (
               <>
                 <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
-                  Description
+                  {t('description')}
                 </div>
                 <div className="  text-Text-Primary opacity-90 TextStyle-Body-2 mt-2 text-justify">
                   <MarkdownText text={displayedDescription} />
@@ -298,7 +301,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               {refrences.length > 0 && (
                 <>
-                  <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
+                  <div className=" w-[330px] h-[150px] overflow-y-scroll pe-2 hidden md:block ">
                     {sortedReferences.map((value: any, index: number) => {
                       return (
                         <>
@@ -308,13 +311,13 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                               setActiveBOx(index);
                               setActive(value);
                             }}
-                            className={`w-full h-10 mb-2 cursor-pointer text-sm ${
+                            className={`w-full h-10 mb-2 cursor-pointer text-sm text-start ${
                               activeBox == index
                                 ? 'border-Primary-EmeraldGreen '
                                 : 'border-Gray-50'
-                            }  border items-center bg-white  rounded-[6px] flex justify-between px-4`}
+                            }  border items-center bg-white  rounded-[6px] flex justify-between gap-2 px-4`}
                           >
-                            <div className="flex justify-start items-center gap-2">
+                            <div className="flex min-w-0 flex-1 justify-start items-center gap-2">
                               <div
                                 data-tooltip-id={`tooltip-detiledAnalyse-${index + '-' + value.name}`}
                                 className=" text-[12px]"
@@ -350,7 +353,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                               )}
                             </div>
                             <img
-                              className="h-4  w-4"
+                              className="h-4 w-4 shrink-0 rtl:-scale-x-100"
                               src="/icons/arrow-right.svg"
                               alt=""
                             />
@@ -381,10 +384,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                       <div className=" w-full p-4 border border-Gray-50 h-[159px] bg-white rounded-[6px]">
                         <div className="flex mb-[74px] mt-[-8px] justify-between items-center">
                           <div className="  flex justify-start items-center TextStyle-Headline-6 text-Text-Primary">
-                            Current Value
+                            {t('currentValue')}
                             {active?.values?.[0] != null &&
                             active.values[0] !== '' ? (
-                              <span className="ml-2 text-Primary-DeepTeal text-[12px]">
+                              <span className="ms-2 text-Primary-DeepTeal text-[12px]">
                                 {active.values[0]}
                                 {active.unit ? ` ${active.unit}` : ''}
                               </span>
@@ -396,16 +399,16 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                               onMouseLeave={() => {
                                 setShowMoreInfo(false);
                               }}
-                              className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                              className="flex relative justify-start ms-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
                             >
-                              More Info
+                              {t('moreInfo')}
                               <img
                                 src="/icons/user-navbar/info-circle.svg"
-                                className="w-4  cursor-pointer h-4 ml-1"
+                                className="w-4  cursor-pointer h-4 ms-1"
                                 alt=""
                               />
                               {showMoreInfo && active.more_info && (
-                                <div className="absolute p-2 left-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
+                                <div className="absolute p-2 start-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
                                   <div className="text-[9px] text-Text-Secondary text-justify">
                                     {active.more_info}
                                   </div>
@@ -420,16 +423,16 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                                 onMouseLeave={() => {
                                   setShowGeneInsights(false);
                                 }}
-                                className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                                className="flex relative justify-start ms-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
                               >
-                                Gene Insights
+                                {t('geneInsights')}
                                 <img
                                   src="/icons/user-navbar/info-circle.svg"
-                                  className="w-4  cursor-pointer h-4 ml-1"
+                                  className="w-4  cursor-pointer h-4 ms-1"
                                   alt=""
                                 />
                                 {showGeneInsights && active?.gene_insight && (
-                                  <div className="absolute p-2 left-6 top-4 bg-white w-[365px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
+                                  <div className="absolute p-2 start-6 top-4 bg-white w-[365px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
                                     <div>
                                       <GeneticsDnaTable
                                         data={active?.gene_insight}
@@ -457,7 +460,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                                 <div
                                   className={`TextStyle-Headline-6 text-nowrap text-Text-Primary `}
                                 >
-                                  Historical Chart
+                                  {t('historicalChart')}
                                 </div>
                                 <Toggle
                                   setChecked={(value) => {
@@ -500,7 +503,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                     <div className="w-full">
                       <div className=" w-full border border-Gray-50 p-4 h-[159px] bg-white  rounded-[6px]">
                         <div className="TextStyle-Headline-6 flex justify-between text-nowrap items-center gap-2 text-Text-Primary mb-5">
-                          Historical Data
+                          {t('historicalData')}
                           <div className="flex justify-end w-full items-center  mt-[-8px]  gap-2">
                             {/* {active?.unit != '' && (
                               <div className="relative z-50 ">
@@ -519,7 +522,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                             <div className="  cursor-pointer ml-6 ">
                               <div className="flex gap-2 justify-end items-center">
                                 <div className="TextStyle-Headline-6 text-nowrap text-Text-Primary">
-                                  Historical Chart
+                                  {t('historicalChart')}
                                 </div>
                                 <Toggle
                                   setChecked={(value) => {
@@ -562,9 +565,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                     <div className="flex flex-col justify-center items-center">
                       <img src="/icons/EmptyState-biomarkerbox.svg" alt="" />
                       <div className="TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary max-w-[280px]">
-                        No biomarkers are visible in this category. Disabled
-                        catalog items are hidden here, and leftover notes are
-                        not shown.
+                        {t('noBiomarkersInCategory')}
                       </div>
                     </div>
                   </div>

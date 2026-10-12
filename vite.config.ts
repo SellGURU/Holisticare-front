@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { uiTextPlugin } from './vite-plugin-ui-text';
 
 // Generate unique build ID to ensure service worker changes on each build
 const buildId =
@@ -21,6 +23,9 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [
+    uiTextPlugin(
+      fileURLToPath(new URL('./src/i18n/uiText.ts', import.meta.url)),
+    ),
     react(),
     VitePWA({
       registerType: 'autoUpdate',

@@ -1,4 +1,6 @@
+import StatusBarChartLtrShell from '../../Components/RepoerAnalyse/StatusBarChartLtrShell';
 import TooltipText from '../../Components/TooltipText';
+import { uiText } from '../../i18n/uiText';
 import {
   inferValueKind,
   resolveGlobalStatusPin,
@@ -28,7 +30,6 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
   valueKind: valueKindProp,
   matchedBoundIndex,
 }) => {
-  // console.log(data);
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus' || key == 'CriticalRange') {
       return '#B2302E';
@@ -70,14 +71,12 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
 
     const currentColor = currentItem.color || resolveColor(currentItem.status);
 
-    // If this is the last item or there's no next item, return solid color
     if (!nextItem) {
       return currentColor;
     }
 
     const nextColor = nextItem.color || resolveColor(nextItem.status);
 
-    // Create gradient only at the boundary (last 20% of current segment)
     return `linear-gradient(to right, ${currentColor} 80%, ${nextColor} 100%)`;
   };
 
@@ -97,13 +96,12 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
 
     const formatNumber = (val: string | number): string => {
       const num = Number(val);
-      return Number.isNaN(num) ? String(val) : String(num); // removes .000
+      return Number.isNaN(num) ? String(val) : String(num);
     };
 
     const low = normalize(el.low);
     const high = normalize(el.high);
 
-    // Equality check
     if (low && high) {
       if (isNumeric(low) && isNumeric(high)) {
         if (Number(low) === Number(high)) {
@@ -114,22 +112,21 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
       }
     }
 
-    // Open-ended ranges
     if (!low && high) return `< ${high}`;
     if (!high && low) return `> ${low}`;
 
-    // Normal range
     if (low && high) return `${low} - ${high}`;
 
     return '';
   };
 
   return (
-    <div className="w-full relative flex select-none">
-      {sortedBounds.map((el: ChartBound, index: number) => {
-        return (
-          <>
+    <StatusBarChartLtrShell>
+      <div className="w-full relative flex select-none">
+        {sortedBounds.map((el: ChartBound, index: number) => {
+          return (
             <div
+              key={`${el.label ?? ''}-${index}`}
               className={` relative  h-[8px] ${index == sortedBounds.length - 1 && 'rounded-r-[8px] '} ${index == 0 && 'rounded-l-[8px]'}`}
               style={{
                 width: 100 / sortedBounds.length + '%',
@@ -148,40 +145,42 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
               >
                 {el.label != '' && <>(</>}
                 <TooltipText tooltipValue={getRangeString(el)}>
-                  <>{getRangeString(el)}</>
+                  <span dir="ltr" className="unicode-bidi-plaintext">
+                    {getRangeString(el)}
+                  </span>
                 </TooltipText>
                 {el.label != '' && <>)</>}
               </div>
             </div>
-          </>
-        );
-      })}
-      {globalPin?.show ? (
-        <div
-          className="pointer-events-none absolute top-[2px] z-[8]"
-          style={{
-            left: `${globalPin.leftPercent}%`,
-          }}
-        >
-          <div className="w-1 h-1 rotate-45 bg-Primary-DeepTeal"></div>
-          <div className="w-[2px] h-[9px] ml-[1.3px] bg-Primary-DeepTeal"></div>
+          );
+        })}
+        {globalPin?.show ? (
           <div
-            className="text-[10px] w-max flex justify-center ml-[0px] items-center gap-[2px] text-Primary-DeepTeal"
+            className="pointer-events-none absolute top-[2px] z-[8]"
             style={{
-              marginLeft:
-                globalPin.segmentIndex === 0
-                  ? '0px'
-                  : '-' +
-                    ((values?.[0]?.length || 0) + (unit?.length || 0)) * 6.3 +
-                    'px',
+              left: `${globalPin.leftPercent}%`,
             }}
           >
-            <span className="opacity-40">You: </span>
-            {values && values[0]} <span className="opacity-70">{unit}</span>
+            <div className="w-1 h-1 rotate-45 bg-Primary-DeepTeal"></div>
+            <div className="w-[2px] h-[9px] ml-[1.3px] bg-Primary-DeepTeal"></div>
+            <div
+              className="text-[10px] w-max flex justify-center ml-[0px] items-center gap-[2px] text-Primary-DeepTeal"
+              style={{
+                marginLeft:
+                  globalPin.segmentIndex === 0
+                    ? '0px'
+                    : '-' +
+                      ((values?.[0]?.length || 0) + (unit?.length || 0)) * 6.3 +
+                      'px',
+              }}
+            >
+              <span className="opacity-40">{uiText('You:')} </span>
+              {values && values[0]} <span className="opacity-70">{unit}</span>
+            </div>
           </div>
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+    </StatusBarChartLtrShell>
   );
 };
 

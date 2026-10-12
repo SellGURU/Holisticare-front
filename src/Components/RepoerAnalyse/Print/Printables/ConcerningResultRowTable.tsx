@@ -1,4 +1,5 @@
 import React from 'react';
+import { uiText } from '../../../../i18n/uiText';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ConcerningResultRowTableProps {
@@ -19,7 +20,7 @@ const ConcerningResultRowTable: React.FC<ConcerningResultRowTableProps> = ({
             width: 200,
           }}
         >
-          <div>{el.subcategory}</div>
+          <div>{String(uiText(el.subcategory))}</div>
           <div>{el.name}</div>
         </div>
         <div

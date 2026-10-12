@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Fragment } from 'react';
 import MainModal from '../../MainModal';
+import { uiText } from '../../../i18n/uiText';
 
 interface ConflictsModalProps {
   showModal: boolean;
@@ -29,7 +30,7 @@ const ConflictsModal: React.FC<ConflictsModalProps> = ({
         <div className="bg-white max-h-[400px] overflow-auto w-[500px] p-6 pb-5 rounded-2xl shadow-800 flex flex-col justify-between">
           <div>
             <div className="border-b border-Gray-50 pb-2 w-full text-sm font-medium text-Text-Primary">
-              Conflict
+              {uiText('Conflict')}
             </div>
             <div className="flex flex-col gap-2 mt-5">
               {conflicts?.map((conflict: any, index: number) => (
@@ -65,7 +66,7 @@ const ConflictsModal: React.FC<ConflictsModalProps> = ({
               }}
               className="text-sm font-medium text-Disable cursor-pointer"
             >
-              Close
+              {uiText('Close')}
             </button>
           </div>
         </div>

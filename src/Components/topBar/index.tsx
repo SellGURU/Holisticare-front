@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import PortalLink from '../PortalLink';
 import { BeatLoader } from 'react-spinners';
@@ -24,6 +25,14 @@ interface TopBarProps {
   isShare?: boolean;
 }
 
+const REPORT_CRUMB_KEYS: Record<string, string> = {
+  'Client List': 'clientList',
+  'Health Plan': 'healthPlan',
+  'Generate Holistic Plan': 'generateHolisticPlan',
+  'Generate Action Plan': 'generateActionPlan',
+  'Generate Day to Day Activity': 'generateActivity',
+};
+
 export const TopBar: FC<TopBarProps> = ({
   canDownload,
   setShowCombo,
@@ -31,6 +40,7 @@ export const TopBar: FC<TopBarProps> = ({
   isShare,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation('reports');
   const { setClinicAccess, accountRole, setAccountRole } = useApp();
   const printreport = () => {
     const mywindow: any = window.open('', 'PRINT', 'height=300,width=800');
@@ -305,20 +315,24 @@ export const TopBar: FC<TopBarProps> = ({
                 {index != resolveNav().length - 1 ? (
                   <PortalLink
                     to={el.url}
-                    className={`text-[10px] md:text-xs font-medium ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} cursor-pointer ml-1`}
+                    className={`text-[10px] md:text-xs font-medium ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} cursor-pointer ms-1`}
                   >
-                    {el.name}
+                    {REPORT_CRUMB_KEYS[el.name]
+                      ? t(REPORT_CRUMB_KEYS[el.name])
+                      : el.name}
                   </PortalLink>
                 ) : (
                   <div
-                    className={`text-[10px] md:text-xs font-medium ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} opacity-50 ml-1`}
+                    className={`text-[10px] md:text-xs font-medium ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} opacity-50 ms-1`}
                   >
-                    {el.name}
+                    {REPORT_CRUMB_KEYS[el.name]
+                      ? t(REPORT_CRUMB_KEYS[el.name])
+                      : el.name}
                   </div>
                 )}
                 {index != resolveNav().length - 1 && (
                   <img
-                    className="w-5 h-5"
+                    className="w-5 h-5 shrink-0 rtl:-scale-x-100"
                     src="/icons/arrow-right.svg"
                     alt=""
                   />

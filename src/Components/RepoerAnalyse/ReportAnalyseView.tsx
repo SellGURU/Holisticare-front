@@ -75,6 +75,8 @@ import {
   shouldShowNeedFocusEmptyIllustration,
   shouldTreatEmptyFindingsAsAuthoritative,
 } from '../../utils/mergeCategoryCards';
+import { useTranslation } from 'react-i18next';
+import { navKey } from '../../i18n/wave1Resources';
 import {
   categoryNeedFocusAnalyzing,
   categoryRingLoading,
@@ -85,6 +87,7 @@ import {
   type OverviewDataPhase,
 } from '../../utils/asyncProcessing';
 import { reconcileOverviewUiState } from '../../utils/reconcileOverviewUiState';
+import { uiText } from '../../i18n/uiText';
 import { logDescriptionRender } from '../../utils/descriptionDebug';
 import {
   HEALTH_PLAN_CACHE_KEYS,
@@ -111,10 +114,7 @@ import {
   planRefreshForTerminalDomains,
   shouldApplyFetchResult,
 } from '../../utils/domainRefreshCoordinator';
-import {
-  shouldShowClientSummaryTextLoading,
-  shouldShowSectionSkeleton,
-} from '../../utils/reportSectionLoading';
+import { shouldShowSectionSkeleton } from '../../utils/reportSectionLoading';
 
 const canLoadOverviewSections = (info: {
   show_report?: boolean;
@@ -200,6 +200,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   uniqKey,
   setFirst_time_view,
 }) => {
+  const { t } = useTranslation(['reports', 'reportChrome']);
   const { id, name } = useParams<{ id: string; name: string }>();
   const resolvedMemberID = id ? parseInt(id) : memberID;
   const asyncProcessing = isAsyncProcessingEnabled();
@@ -872,11 +873,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         getTreatmentPlanData();
         return;
       }
-      if (detail.silent === true) {
-        return;
-      }
       if (detail.fullReload === true) {
         fetchData({ force: true, silent: true });
+        return;
+      }
+      if (detail.silent === true) {
         return;
       }
       setCallSync(true);
@@ -941,6 +942,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       outcomes,
       lastAppliedDomainRevisionRef.current,
     );
+    const summaryOutcome = outcomes.client_summary;
+    if (
+      domains.includes('client_summary') &&
+      isDomainAuthoritative(summaryOutcome?.state) &&
+      !plan.queries.includes('clientSummary')
+    ) {
+      plan.queries.push('clientSummary');
+      plan.revisions.client_summary = summaryOutcome?.data_revision ?? null;
+    }
     if (plan.queries.length === 0) return;
     pendingRevisionsRef.current = {
       ...pendingRevisionsRef.current,
@@ -1065,6 +1075,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       } else if (wasOverviewProcessingRef.current) {
         wasOverviewProcessingRef.current = false;
         publish('allProgressCompleted', {});
+        void fetchClientSummaryCategories(true, true);
       }
     },
     onPollTimeout: () => {
@@ -1225,6 +1236,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   useEffect(() => {
     const handleAllProgressCompleted = () => {
       setDisableGenerate(false);
+      if (!isShare && resolvedMemberID != null) {
+        void fetchClientSummaryCategories(true, true);
+      }
     };
     const handleSourceProcessingDone = (event?: CustomEvent) => {
       const detail = event?.detail || {};
@@ -1236,7 +1250,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }
       fetchData({ force: true, silent: true });
     };
+    const handleHealthPlanProcessingComplete = () => {
+      handleAllProgressCompleted();
+    };
     subscribe('allProgressCompleted', handleAllProgressCompleted);
+    subscribe(
+      'healthPlanProcessingComplete',
+      handleHealthPlanProcessingComplete,
+    );
     subscribe(
       'questionnaireProcessingCompleted',
       handleSourceProcessingDone as EventListener,
@@ -1244,6 +1265,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     subscribe('completedProgress', handleSourceProcessingDone as EventListener);
     return () => {
       unsubscribe('allProgressCompleted', handleAllProgressCompleted);
+      unsubscribe(
+        'healthPlanProcessingComplete',
+        handleHealthPlanProcessingComplete,
+      );
       unsubscribe(
         'questionnaireProcessingCompleted',
         handleSourceProcessingDone as EventListener,
@@ -1642,18 +1667,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const clientSummaryDomainState = String(
     ClientSummaryBoxs?.domain_outcomes?.client_summary?.state || '',
   );
-  const summaryPending =
+  const summaryRegenInFlight = overviewProcessing || clientSummaryLoading;
+  const summaryDomainStalled =
+    (clientSummaryDomainState === 'pending' ||
+      clientSummaryDomainState === 'incomplete') &&
+    !summaryRegenInFlight;
+  const showClientSummaryTextLoading =
     !overviewPollTimedOut &&
-    !clientSummaryReady &&
-    (hasCategoryCards ||
-      overviewProcessing ||
-      clientSummaryLoading ||
-      clientSummaryDomainState === 'pending');
-  const showClientSummaryTextLoading = shouldShowClientSummaryTextLoading({
-    hasSummaryText,
-    isInitialRequest: clientSummaryLoading && !hasSummaryText,
-    summaryPending,
-  });
+    (summaryRegenInFlight ||
+      (!hasSummaryText &&
+        !summaryDomainStalled &&
+        (clientSummaryDomainState === 'pending' ||
+          clientSummaryDomainState === 'incomplete' ||
+          (hasCategoryCards &&
+            !clientSummaryReady &&
+            clientSummaryDomainState.length === 0))) ||
+      (hasSummaryText &&
+        summaryRegenInFlight &&
+        clientSummaryDomainState === 'pending'));
   const showDetailedAnalysisSkeleton = shouldShowSectionSkeleton({
     hasDisplayedData: hasReferenceBiomarkers || hasCategoryCards,
     isInitialRequest: detailedAnalysisLoading,
@@ -2106,7 +2137,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           onScrollCapture={() => {
             handleScroll();
           }}
-          className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
+          className={`pt-[20px] scroll-container relative pb-[50px] xl:pe-28 h-[98vh] xl:ms-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
         >
           {asyncProcessing &&
             labJobStatus?.overall_status === 'failed' &&
@@ -2144,7 +2175,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         id="Client Summary"
                         className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
                       >
-                        {CLIENT_SUMMARY_TITLE}
+                        {uiText(CLIENT_SUMMARY_TITLE)}
                         <div className="ml-4 invisible">
                           <Legends isGray></Legends>
                         </div>
@@ -2155,13 +2186,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         </div>
                       )}
                     </div>
-                    <div className="relative hidden xl:block">
+                    <div
+                      className="relative hidden xl:block w-fit max-w-full"
+                      dir="ltr"
+                    >
                       <img
-                        className={isBodyFigureLoading ? 'opacity-60' : ''}
+                        className={`block ${isBodyFigureLoading ? 'opacity-60' : ''}`}
                         src="/human.png"
                         alt=""
                       />
-                      <div>{memoizedPoints}</div>
+                      <div className="absolute inset-0">{memoizedPoints}</div>
                     </div>
                   </div>
 
@@ -2169,7 +2203,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <div
                       className={`w-full flex justify-between items-center ${
                         isSticky
-                          ? 'fixed top-9 h-[50px] bg-[#E9F0F2] left-0 px-5 z-50 '
+                          ? 'fixed top-9 h-[50px] bg-[#E9F0F2] z-50 !w-auto start-0 end-0 xl:start-[200px] xl:end-28 px-5 '
                           : ''
                       }`}
                     >
@@ -2219,7 +2253,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                                   <span className="hidden md:block">
                                     Gender:
                                   </span>
-                                  {userInfoData.sex}{' '}
+                                  {uiText(userInfoData.sex)}{' '}
                                 </div>
                                 <div className="w-[0.75px] mx-2 md:mx-1 h-[24px] bg-Text-Triarty"></div>
                               </>
@@ -2245,7 +2279,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       {showClientSummaryTextLoading ? (
                         <ChartLoadingPlaceholder
                           variant="text"
-                          label="Generating summary…"
+                          label={t('reportChrome:generatingSummary')}
                         />
                       ) : showClientSummaryContentSkeleton ? (
                         <div className="animate-pulse space-y-2">
@@ -2458,7 +2492,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   id="Detailed Analysis"
                   className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 flex items-center"
                 >
-                  Detailed Analysis
+                  {t(`reports:sectionLabels.${navKey('Detailed Analysis')}`)}
                 </div>
                 <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
                   {overviewBiomarkerTotals.detailedNote ||
@@ -2532,7 +2566,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           className="w-[219px]"
                         />
                         <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
-                          No Detailed Analysis Available Yet!
+                          {t('reportChrome:noDetailedAnalysis')}
                         </div>
                       </div>
                     </div>
@@ -2544,12 +2578,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           {accessManager.filter((el) => el.name == 'Holistic Plan')[0]
             .checked == true && (
             <div className="my-[200px] min-h-[700px]">
-              <div className="w-full flex items-center justify-between">
+              <div className="w-full flex flex-wrap items-start justify-between gap-3">
                 <div
                   id="Holistic Plan"
-                  className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary"
+                  className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary shrink-0"
                 >
-                  Holistic Plan
+                  {t(`reports:sectionLabels.${navKey('Holistic Plan')}`)}
                 </div>
                 {TreatMentPlanData?.length > 0 &&
                 isHaveReport &&

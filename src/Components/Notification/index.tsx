@@ -188,7 +188,7 @@ export const Notification: React.FC<NotificationProps> = ({
   return (
     <div
       ref={refrence}
-      className="absolute right-[80px] z-50 w-[400px] h-fit max-h-[613px] border top-14 md:top-10 border-gray-50 bg-white rounded-[16px] p-4 flex flex-col gap-4 shadow-800 text-Text-Primary"
+      className="absolute end-[80px] z-50 w-[400px] h-fit max-h-[613px] border top-14 md:top-10 border-gray-50 bg-white rounded-[16px] p-4 flex flex-col gap-4 shadow-800 text-Text-Primary"
     >
       <div className="text-sm font-medium">Notification</div>
       <div className="w-full justify-center">

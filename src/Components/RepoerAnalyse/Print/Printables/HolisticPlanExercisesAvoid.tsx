@@ -1,3 +1,5 @@
+import { uiText } from '../../../../i18n/uiText';
+
 interface HolisticPlanExercisesAvoidProps {
   value: string[];
 }
@@ -18,7 +20,7 @@ const HolisticPlanExercisesAvoid: React.FC<HolisticPlanExercisesAvoidProps> = ({
             }}
           >
             <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-            Exercises to Avoid
+            {uiText('Exercises to Avoid')}
           </div>
           <div
             className="flex flex-col pt-1.5"

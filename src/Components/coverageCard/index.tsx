@@ -4,6 +4,7 @@ import MainModal from '../MainModal';
 import Checkbox from '../checkbox';
 import SearchBox from '../SearchBox';
 import { toType2, type2ToFlatList } from '../../utils/lookingForwards';
+import { useTranslation } from 'react-i18next';
 
 interface CoverageCardProps {
   progress: number;
@@ -30,6 +31,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
   searchQuery = '',
   onSearch,
 }) => {
+  const { t } = useTranslation('generateFlow');
   const safeProgress = Math.min(100, Math.max(0, progress));
   const [addIssue, setAddIssue] = useState(false);
   const [newIssue, setNewIssue] = useState('');
@@ -178,7 +180,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                 onClick={() => setAddIssue(true)}
               >
                 <img src="/icons/add-small.svg" alt="" className="w-5 h-5" />
-                Create new issue
+                {t('createNewIssue')}
               </div>
             )}
           </div>

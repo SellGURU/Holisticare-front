@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { publish, subscribe, unsubscribe } from '../../utils/event'; // Adjust the import path as needed
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import SvgIcon from '../../utils/svgIcon';
 import { decodeAccessUser } from '../../help';
+import { navKey } from '../../i18n/wave1Resources';
 import {
   resolveReportSection,
   RISKS_SCORES_AGE_SECTION,
@@ -29,6 +31,11 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   activeReportSection,
   setActiveReportSection,
 }) => {
+  const { t } = useTranslation('reports');
+  const sectionLabel = (item: string) =>
+    t(`sectionLabels.${navKey(item)}`, {
+      defaultValue: formatStringWithQuotes(item),
+    });
   const menuItems = [
     'Client Summary',
     'Need Focus Biomarker',
@@ -201,7 +208,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
           >
             <img
               src="/icons/health.svg"
-              alt="Health"
+              alt={t('health')}
               className="w-4 h-4"
               style={
                 activeReportSection === 'Health'
@@ -209,7 +216,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                   : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
               }
             />
-            <span className="text-[10px] font-medium">Health</span>
+            <span className="text-[10px] font-medium">{t('health')}</span>
           </div>
           <div
             onClick={() => {
@@ -230,7 +237,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
           >
             <img
               src="/icons/chart.svg"
-              alt="Progress"
+              alt={t('progress')}
               className="w-4 h-4"
               style={
                 activeReportSection === 'Progress'
@@ -238,7 +245,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                   : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
               }
             />
-            <span className="text-[10px] font-medium">Progress</span>
+            <span className="text-[10px] font-medium">{t('progress')}</span>
           </div>
         </div>
       )}
@@ -278,14 +285,14 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       </div> */}
       <div
         onClick={() => onClose()}
-        className="size-8 rounded-md  py-2 px-4 flex items-center justify-center xl:hidden absolute right-[-10px] top-[-10px] cursor-pointer"
+        className="size-8 rounded-md  py-2 px-4 flex items-center justify-center xl:hidden absolute end-[-10px] top-[-10px] cursor-pointer"
       >
         <SvgIcon src="/icons/close.svg" color="#005F73" />
       </div>
       <div className="h-px w-full bg-gray-100 mt-4"></div>
       <div className="mt-6  overflow-y-auto">
-        <div className="TextStyle-Headline-6 text-left hidden md:block">
-          Sections
+        <div className="TextStyle-Headline-6 text-start hidden md:block">
+          {t('sections')}
         </div>
         <div className="mt-2 flex flex-col gap-1">
           {ActiveLayer === 'menu' &&
@@ -301,7 +308,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                   }
                 }}
                 key={index}
-                className={`text-[10px] ${disableClicks && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center pl-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
+                className={`text-[10px] ${disableClicks && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center ps-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
                   item === activeMenu
                     ? 'border-Primary-EmeraldGreen'
                     : 'border-gray-50'
@@ -313,7 +320,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                 ) : item == 'Action Plan' ? (
                   <img src="/icons/verify.svg" />
                 ) : undefined}
-                <span>{formatStringWithQuotes(item)}</span>
+                <span>{sectionLabel(item)}</span>
               </div>
             ))}
           {ActiveLayer === 'layer' && (
@@ -369,7 +376,9 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
               src="/icons/export.svg"
               width="12"
             ></SvgIcon>
-            <div className="text-[12px] text-Primary-DeepTeal">Export</div>
+            <div className="text-[12px] text-Primary-DeepTeal">
+              {t('export')}
+            </div>
           </div>
         </div>
       </div>

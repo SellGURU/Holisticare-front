@@ -19,14 +19,18 @@ const TooltipTextAuto: FC<TooltipTextAutoProps> = ({
 }) => {
   const textRef = useRef<HTMLDivElement>(null);
   const [isEllipsized, setIsEllipsized] = useState(false);
+  const [tooltipText, setTooltipText] = useState(
+    typeof children === 'string' ? children : '',
+  );
   const [tooltipId] = useState(
     () => `tooltip-${Math.random().toString(36).substr(2, 9)}`,
   );
 
   useEffect(() => {
     if (textRef.current) {
-      const { offsetWidth, scrollWidth } = textRef.current;
+      const { offsetWidth, scrollWidth, textContent } = textRef.current;
       setIsEllipsized(scrollWidth > offsetWidth);
+      setTooltipText(textContent ?? '');
     }
   }, [children]);
 
@@ -48,7 +52,7 @@ const TooltipTextAuto: FC<TooltipTextAutoProps> = ({
         className={`select-none max-w-[150px] sm:max-w-[180px] ${uniqueClass}`}
         ref={textRef}
         data-tooltip-id={isEllipsized ? tooltipId : ''}
-        data-tooltip-content={typeof children === 'string' ? children : ''}
+        data-tooltip-content={isEllipsized ? tooltipText : ''}
         style={{
           whiteSpace: 'nowrap',
           overflow: 'hidden',

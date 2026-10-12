@@ -1,0 +1,180 @@
+import { generateFlowEn } from './portalNamespaces/generateFlow';
+import { libraryEn } from './portalNamespaces/library';
+import { reportChromeEn } from './portalNamespaces/reportChrome';
+import { shareEn } from './portalNamespaces/share';
+import { uploadEn } from './portalNamespaces/upload';
+
+export const namespaces = [
+  'common',
+  'nav',
+  'settings',
+  'auth',
+  'errors',
+  'survey',
+  'clinical',
+  'reports',
+  'plan',
+  'chat',
+  'notifications',
+  'accessibility',
+  'share',
+  'reportChrome',
+  'generateFlow',
+  'upload',
+  'library',
+] as const;
+
+export const englishResources = {
+  common: {
+    loading: 'Loading…',
+    unavailable: 'Content unavailable',
+    save: 'Save',
+    cancel: 'Cancel',
+    itemCount: '{count, plural, one {# item} other {# items}}',
+  },
+  nav: {
+    main: 'MAIN',
+    customization: 'CUSTOMIZATION',
+    library: 'LIBRARY',
+    integrations: 'INTEGRATIONS',
+    manage: 'MANAGE',
+    dashboard: 'Dashboard',
+    client_list: 'Client List',
+    drift_analysis: 'Drift Analysis',
+    messages: 'Messages',
+    knowledge_graph: 'Knowledge Graph',
+    playground: 'Playground',
+    custom_branding: 'Custom Branding',
+    custom_biomarker: 'Custom Biomarker',
+    custom_form: 'Custom Form',
+    intelligence_model: 'Intelligence Model',
+    diet: 'Diet',
+    activity: 'Activity',
+    supplement: 'Supplement',
+    lifestyle: 'Lifestyle',
+    peptide: 'Peptide',
+    other: 'Other',
+    fhir_import: 'FHIR Import',
+    package: 'Package',
+    staff: 'Staff',
+    setting: 'Setting',
+    settings: 'Settings',
+  },
+  settings: {
+    title: 'Settings',
+    languageAndRegion: 'Language and region',
+    portalLanguageTitle: 'Portal language',
+    portalLanguageHelp:
+      'Menus, buttons, and layout for your account on this device.',
+    contentLanguageTitle: 'Health plan language',
+    contentLanguageHelp:
+      'New reports, health plans, and AI-generated text use this language. Rescore or regenerate after you change it; existing stored text is not rewritten.',
+    contentLocaleField: 'Health plan',
+    portalLocaleField: 'Language and regional format',
+    language: 'Language',
+    region: 'Regional format',
+    save: 'Save language',
+    saved: 'Language saved',
+    savePortal: 'Save portal language',
+    savedPortal: 'Portal language saved',
+    saveContent: 'Save content language',
+    savedContent: 'Content language saved',
+    setupTitle: 'New language settings',
+    setupIntro:
+      'Menus and buttons follow the portal language. New reports, health plans, and AI text follow the health plan language. Saved text stays as it is.',
+    setupContinue: 'Continue',
+    help: 'The interface changes after you save. Saved reports and AI content stay unchanged. New generation uses this language.',
+    languages: {
+      en: 'English',
+      es: 'Spanish',
+      fr: 'French',
+      ar: 'Arabic',
+      fa: 'Persian',
+    },
+    menu: {
+      clinic_profile: 'Clinic Profile',
+      clinic_preferences: 'Clinic Preferences',
+      language_and_region: 'Language & Region',
+      change_password: 'Change Password',
+      notifications: 'Notifications',
+      privacy: 'Privacy',
+      general: 'General',
+      account: 'Account',
+      integrations_and_ai: 'Integrations & AI',
+      integrations: 'Integrations',
+      ai_preferences: 'AI Preferences',
+    },
+  },
+  auth: {
+    signIn: 'Sign in',
+    signOut: 'Sign out',
+  },
+  errors: {
+    generic: 'Something went wrong. Please try again.',
+  },
+  survey: {
+    title: 'Questionnaire',
+  },
+  clinical: {
+    title: 'Clinical information',
+  },
+  reports: {
+    title: 'Reports',
+    health: 'Health',
+    progress: 'Progress',
+    sections: 'Sections',
+    export: 'Export',
+    clientList: 'Client List',
+    healthPlan: 'Health Plan',
+    generateHolisticPlan: 'Generate Holistic Plan',
+    generateActionPlan: 'Generate Action Plan',
+    generateActivity: 'Generate Day to Day Activity',
+    provideDataTitle: 'Provide Data to Generate Health Plan',
+    provideDataSubtitle:
+      'Choose one methods below to provide a personalized plan.',
+    uploadCardTitle: 'Upload Lab Report or Add Biomarkers',
+    uploadCardBody:
+      "Upload your client's lab test file and edit or add biomarkers manually.",
+    uploadCardAction: 'Enter or Upload Biomarkers',
+    biomarkersAdded: '{count} Biomarker added!',
+    questionnaireCardTitle: 'Fill Health Questionnaire',
+    questionnaireCardBody:
+      'Provide data (lifestyle, medical history, ...) for a more accurate plan.',
+    questionnaireCardAction: 'Fill Questionnaire',
+    questionnairesFilled: 'Questionnaire filled out!',
+    continueToHealthPlan: 'Continue to Health Plan',
+    demoLocked:
+      'Demo version cannot add or edit data. Upgrade for full access.',
+    sectionLabels: {
+      client_summary: 'Client Summary',
+      need_focus_biomarker: '"Need Focus" Biomarker',
+      risks_scores_and_age: 'Risks, Scores & Age',
+      concerning_result: 'Concerning Result',
+      detailed_analysis: 'Detailed Analysis',
+      holistic_plan: 'Holistic Plan',
+      action_plan: 'Action Plan',
+      wellness_summary: 'Wellness Summary',
+      score_progression: 'Score Progression',
+    },
+  },
+  plan: {
+    title: 'Plan',
+  },
+  chat: {
+    title: 'Messages',
+  },
+  notifications: {
+    title: 'Notifications',
+  },
+  accessibility: {
+    languageChanged: 'Language changed to {language}.',
+    closeDialog: 'Close dialog',
+  },
+  share: shareEn,
+  reportChrome: reportChromeEn,
+  generateFlow: generateFlowEn,
+  upload: uploadEn,
+  library: libraryEn,
+} as const;
+
+export type I18nNamespace = (typeof namespaces)[number];

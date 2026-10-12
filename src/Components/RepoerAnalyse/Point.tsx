@@ -1,4 +1,5 @@
 import { Tooltip } from 'react-tooltip';
+import { uiText } from '../../i18n/uiText';
 
 interface PointProps {
   top: number;
@@ -44,12 +45,13 @@ const Point: React.FC<PointProps> = ({
     }
     return '#CCCCCC';
   };
+  const label = String(uiText(name));
   return (
     <>
       <div onClick={onClick}>
         <div
           data-tooltip-id="point"
-          data-tooltip-content={name}
+          data-tooltip-content={label}
           className={`absolute cursor-pointer w-[12px] h-[12px] rounded-full ${
             isProcessing ? 'animate-pulse' : ''
           }`}
@@ -57,7 +59,9 @@ const Point: React.FC<PointProps> = ({
         ></div>
         <div
           data-tooltip-id="point"
-          data-tooltip-content={isProcessing ? `${name} — analyzing` : name}
+          data-tooltip-content={
+            isProcessing ? `${label} — ${String(uiText('analyzing'))}` : label
+          }
           className={`absolute cursor-pointer ${
             !isProcessing && status == 'CriticalRange'
               ? 'bg-[#FF3E5D] w-[20px] h-[20px] animate-ping'

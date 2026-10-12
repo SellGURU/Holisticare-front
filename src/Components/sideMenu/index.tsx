@@ -6,11 +6,14 @@ import { version } from '../../../package.json';
 import { menus } from './menu';
 import { subscribe } from '../../utils/event';
 import PortalLink from '../PortalLink';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../hooks';
+import { navKey } from '../../i18n/wave1Resources';
 interface sideMenuProps {
   onClose: () => void;
 }
 const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
+  const { t } = useTranslation('nav');
   const location = useLocation();
   const { permisions, accountRole } = useApp();
 
@@ -126,14 +129,18 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                     menuCategory.items.length > 0 &&
                     hasVisibleItem && (
                       <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
-                        <>{menuCategory.category}</>
+                        <>
+                          {t(navKey(menuCategory.category), {
+                            defaultValue: menuCategory.category,
+                          })}
+                        </>
                       </div>
                     )}
                   {menuCategory.items.map((menu) => (
                     <>
                       {menu.name === 'Knowledge Graph' &&
                       !dontPermisionsToRender(menu.name) ? (
-                        <div className=" my-2  w-full flex pl-5  items-center">
+                        <div className=" my-2  w-full flex ps-5  items-center">
                           {' '}
                           <PortalLink
                             to={menu.url}
@@ -166,7 +173,9 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                                   : ' bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent block '
                               }`}
                             >
-                              {menu.name}
+                              {t(navKey(menu.name), {
+                                defaultValue: menu.name,
+                              })}
                             </div>
                             {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
                             {/* { activeMenu.name === graph.name && graph.name} */}
@@ -184,9 +193,9 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                                   onClick={() => {
                                     selectMenu(menu);
                                   }}
-                                  className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
+                                  className={`h-[32px]  2xl:h-[32px] ps-5 py-4 pe-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
                                     activeMenu.name === menu.name
-                                      ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
+                                      ? ' bg-[#E6EEF5] border-e-2 border-Primary-DeepTeal'
                                       : 'bg-white'
                                   } cursor-pointer text-[8px] h-sm:text-[10px] `}
                                 >
@@ -204,14 +213,16 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                                         : 'text-Text-Primary block '
                                     }`}
                                   >
-                                    {menu.name}
+                                    {t(navKey(menu.name), {
+                                      defaultValue: menu.name,
+                                    })}
                                   </div>
                                 </PortalLink>
                               ) : (
                                 <div
-                                  className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
+                                  className={`h-[32px]  2xl:h-[32px] ps-5 py-4 pe-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
                                     activeMenu.name === menu.name
-                                      ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
+                                      ? ' bg-[#E6EEF5] border-e-2 border-Primary-DeepTeal'
                                       : 'bg-white'
                                   } opacity-50 cursor-not-allowed text-[8px] h-sm:text-[10px] `}
                                 >
@@ -229,7 +240,9 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                                         : 'text-Text-Primary block '
                                     }`}
                                   >
-                                    {menu.name}
+                                    {t(navKey(menu.name), {
+                                      defaultValue: menu.name,
+                                    })}
                                   </div>
                                 </div>
                               )}
@@ -248,8 +261,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
             </div>
           </div>
         </div>
-        <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  pl-5 md:grid  w-full items-end gap-1">
-          <div className="flex w-full justify-center items-end ml-[-16px]">
+        <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  ps-5 md:grid  w-full items-end gap-1">
+          <div className="flex w-full justify-center items-end ms-[-16px]">
             Powered by
             <img
               className=""

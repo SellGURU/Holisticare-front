@@ -13,9 +13,13 @@ import {
   CATEGORY_ORDER,
   DEFAULT_CATEGORY_LABELS,
 } from '../../../utils/lookingForwards';
+import { uiText } from '../../../i18n/uiText';
 
 const categoryMatches = (a: any, b: any) =>
   String(a || '').toLowerCase() === String(b || '').toLowerCase();
+
+const localizedCategory = (name: string) =>
+  String(uiText(resolveCategoryName(name)));
 
 type CategoryState = {
   name: string;
@@ -471,11 +475,14 @@ export const SetOrders: FC<SetOrdersProps> = ({
         <div className=" w-[95vw] md:w-full relative h-[450px] p-4 rounded-2xl bg-white">
           <div className="flex items-center w-full gap-2 border-b border-Gray-50 py-2 text-base font-medium text-Text-Primary">
             <img src="/icons/danger.svg" alt="" />
-            Change Order
+            {String(uiText('Change Order'))}
           </div>
           <p className="text-xs text-Text-Quadruple my-4">
-            Please complete all required fields before <br /> confirming your
-            order.
+            {String(
+              uiText(
+                'Please complete all required fields before confirming your order.',
+              ),
+            )}
           </p>
           <ul className="border border-Gray-50 rounded-xl">
             {localCategories.map((category, index) => (
@@ -491,7 +498,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                     src={resolveCategoryIcon(category.name)}
                     alt=""
                   />
-                  {resolveCategoryName(category.name)}
+                  {localizedCategory(category.name)}
                 </div>
                 <div className="flex items-center gap-3">
                   <img
@@ -524,13 +531,13 @@ export const SetOrders: FC<SetOrdersProps> = ({
               className="text-sm font-medium text-Disable"
               onClick={() => setshowchangeOrders(false)}
             >
-              Cancel
+              {String(uiText('Cancel'))}
             </button>
             <button
               className={`${localCategories.filter((el) => el.visible).length === 0 ? 'opacity-50 pointer-events-none' : ''} text-sm font-medium text-Primary-DeepTeal`}
               onClick={handleConfirm}
             >
-              Confirm
+              {String(uiText('Confirm'))}
             </button>
           </div>
         </div>
@@ -551,15 +558,12 @@ export const SetOrders: FC<SetOrdersProps> = ({
           handleRemoveIssueFromList={handleRemoveIssueFromList}
         />
         <div className="flex mt-4 w-full flex-wrap sm:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
-          <div
-            className="flex w-full flex-wrap gap-8   
-          2xl:gap-[80px] "
-          >
+          <div className="flex w-full min-w-0 flex-nowrap gap-3 md:gap-4 lg:gap-5 2xl:gap-6 overflow-x-auto hidden-scrollbar">
             {categories.map(
               ({ name, visible }) =>
                 visible && (
                   <div
-                    className={`flex items-center gap-2 text-Primary-DeepTeal text-[10px] md:text-sm font-medium cursor-pointer ${name !== activeCategory ? 'opacity-50' : ''}`}
+                    className={`flex shrink-0 items-center gap-1.5 text-Primary-DeepTeal text-[8px] xs:text-[9px] md:text-[10px] font-medium cursor-pointer whitespace-nowrap ${name !== activeCategory ? 'opacity-50' : ''}`}
                     key={name}
                     onClick={() => {
                       setActiveCategory(name);
@@ -567,11 +571,11 @@ export const SetOrders: FC<SetOrdersProps> = ({
                     }}
                   >
                     <img
-                      className="size-5"
+                      className="size-4 shrink-0 md:size-[18px]"
                       src={resolveCategoryIcon(name)}
                       alt=""
                     />
-                    {resolveCategoryName(name)}
+                    {localizedCategory(name)}
                   </div>
                 ),
             )}
@@ -583,7 +587,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                 isHaveBorder
                 isGrayIcon
                 showClose={searchQuery.length > 0}
-                placeHolder={`search ${activeCategory.toLowerCase()} interventions`}
+                placeHolder={`${String(uiText('Search'))} ${localizedCategory(activeCategory).toLowerCase()} ${String(uiText('interventions'))}`}
                 value={searchQuery}
                 onSearch={(val) => {
                   setActiveCategoryQuery(val);
@@ -609,7 +613,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
                 src="/icons/setting-4.svg"
                 alt=""
               />
-              <span className="text-[10px] md:text-xs">Change Order</span>
+              <span className="text-[10px] md:text-xs">
+                {String(uiText('Change order'))}
+              </span>
             </button>
           </div>
         </div>

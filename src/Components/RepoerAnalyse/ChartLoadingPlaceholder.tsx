@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import DescriptionSkeleton from './DescriptionSkeleton';
 
 export const isBiomarkerChartReady = (biomarker: unknown): boolean => {
@@ -39,11 +40,17 @@ const pulse = (delay = 0) => ({
   animationDelay: `${delay}ms`,
 });
 
-const StatusBarChartSkeleton = ({ className = '' }: { className?: string }) => (
+const StatusBarChartSkeleton = ({
+  className = '',
+  loadingLabel,
+}: {
+  className?: string;
+  loadingLabel: string;
+}) => (
   <div
     className={`w-full animate-pulse ${className}`}
     role="status"
-    aria-label="Loading chart"
+    aria-label={loadingLabel}
   >
     <div className="flex w-full mb-2">
       {[0, 1, 2, 3, 4].map((i) => (
@@ -73,19 +80,21 @@ const StatusBarChartSkeleton = ({ className = '' }: { className?: string }) => (
         <div className="h-3 w-14 rounded bg-Gray-100 mt-0.5" />
       </div>
     </div>
-    <span className="sr-only">Loading chart</span>
+    <span className="sr-only">{loadingLabel}</span>
   </div>
 );
 
 const HistoricalChartSkeleton = ({
   className = '',
+  loadingLabel,
 }: {
   className?: string;
+  loadingLabel: string;
 }) => (
   <div
     className={`w-full animate-pulse ${className}`}
     role="status"
-    aria-label="Loading historical chart"
+    aria-label={loadingLabel}
   >
     <div className="flex items-end justify-between gap-1 h-[72px] px-1">
       {[35, 52, 41, 58, 47, 63, 44, 55].map((h, i) => (
@@ -103,7 +112,7 @@ const HistoricalChartSkeleton = ({
       ))}
     </div>
     <div className="h-px w-full bg-Gray-100 mt-1" />
-    <span className="sr-only">Loading historical chart</span>
+    <span className="sr-only">{loadingLabel}</span>
   </div>
 );
 
@@ -111,13 +120,24 @@ const ChartLoadingPlaceholder = ({
   className = '',
   variant = 'status-bar',
 }: ChartLoadingPlaceholderProps) => {
+  const { t } = useTranslation('reportChrome');
   if (variant === 'historical') {
-    return <HistoricalChartSkeleton className={className} />;
+    return (
+      <HistoricalChartSkeleton
+        className={className}
+        loadingLabel={t('loadingHistoricalChart')}
+      />
+    );
   }
   if (variant === 'text') {
     return <DescriptionSkeleton className={className} />;
   }
-  return <StatusBarChartSkeleton className={className} />;
+  return (
+    <StatusBarChartSkeleton
+      className={className}
+      loadingLabel={t('loadingChart')}
+    />
+  );
 };
 
 type ChartEmptyPlaceholderProps = {
@@ -129,15 +149,16 @@ export const ChartEmptyPlaceholder = ({
   className = '',
   variant = 'status-bar',
 }: ChartEmptyPlaceholderProps) => {
+  const { t } = useTranslation('reportChrome');
   const message =
     variant === 'historical'
-      ? 'A trend chart is not available for this biomarker.'
-      : 'No reference range is configured for this biomarker, so the status chart cannot be drawn.';
+      ? t('chartTrendUnavailable')
+      : t('chartStatusNoRange');
   return (
     <div
       className={`flex w-full min-h-[48px] items-center justify-center px-4 ${className}`}
       role="status"
-      aria-label="Chart unavailable"
+      aria-label={t('chartUnavailable')}
     >
       <p className="text-center text-[10px] leading-4 text-Text-Secondary max-w-[360px]">
         {message}

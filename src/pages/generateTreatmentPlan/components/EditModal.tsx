@@ -17,6 +17,7 @@ import {
 } from '../../../utils/library-unification';
 import SvgIcon from '../../../utils/svgIcon';
 import ValidationForms from '../../../utils/ValidationForms';
+import { uiText } from '../../../i18n/uiText';
 // import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
@@ -681,7 +682,7 @@ const EditModal: FC<EditModalProps> = ({
           </div>
           <div ref={basedOnRef}>
             <TextField
-              label="Scientific Basis"
+              label={String(uiText('Scientific Basis'))}
               placeholder="Enter a related biomarker or health concern  (e.g., LDL Cholesterol )"
               value={formData['Based on']}
               onChange={(e) => {
@@ -709,7 +710,7 @@ const EditModal: FC<EditModalProps> = ({
           {selectedGroupDose && (
             <div ref={doseRef}>
               <TextField
-                label="Recommended Dosage"
+                label={String(uiText('Recommended Dosage'))}
                 value={formData.Dose}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -735,7 +736,7 @@ const EditModal: FC<EditModalProps> = ({
           )}
           <div ref={interventionContentRef}>
             <TextAreaField
-              label="Guidelines"
+              label={String(uiText('Guidelines'))}
               placeholder="Enter a detailed, client-facing explanation of the intervention (e.g., Focuses on fresh fruits, vegetables, whole grains, nuts, and healthy fats.)"
               value={formData.Intervnetion_content}
               onChange={(e) => {
@@ -765,7 +766,7 @@ const EditModal: FC<EditModalProps> = ({
 
           <div ref={keyBenefitsRef}>
             <TextAreaField
-              label="Expected Benefits"
+              label={String(uiText('Expected Benefits'))}
               placeholder="List expected benefits (e.g., Improves sleep quality, boosts energy)"
               value={keyBenefitValue}
               onChange={(e) => {
@@ -816,7 +817,7 @@ const EditModal: FC<EditModalProps> = ({
             <>
               <div ref={foodsToEatRef}>
                 <TextAreaField
-                  label="Recommended Foods"
+                  label={String(uiText('Recommended Foods'))}
                   placeholder="Suggest foods to include (e.g., Leafy greens, lean proteins)"
                   value={foodsToEatValue}
                   onChange={(e) => {
@@ -867,7 +868,7 @@ const EditModal: FC<EditModalProps> = ({
 
               <div ref={foodsToAvoidRef}>
                 <TextAreaField
-                  label="Foods to Limit"
+                  label={String(uiText('Foods to Limit'))}
                   placeholder="Mention foods to limit (e.g., Avoid dairy, fried foods)"
                   value={foodsToAvoidValue}
                   onChange={(e) => {
@@ -923,7 +924,7 @@ const EditModal: FC<EditModalProps> = ({
             <>
               <div ref={exercisesToDoRef}>
                 <TextAreaField
-                  label="Recommended Exercises"
+                  label={String(uiText('Recommended Exercises'))}
                   placeholder="Suggest suitable exercises (e.g., Light yoga, daily walks)"
                   value={exercisesToDoValue}
                   onChange={(e) => {
@@ -975,7 +976,7 @@ const EditModal: FC<EditModalProps> = ({
 
               <div ref={exercisesToAvoidRef}>
                 <TextAreaField
-                  label="Exercises to Limit"
+                  label={String(uiText('Exercises to Limit'))}
                   placeholder="Mention any exercises to limit (e.g., Avoid intense cardio)"
                   value={exercisesToAvoidValue}
                   onChange={(e) => {

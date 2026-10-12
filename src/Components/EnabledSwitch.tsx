@@ -34,8 +34,8 @@ const EnabledSwitch = ({
       }`}
     >
       <span
-        className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform ${
-          enabled ? 'translate-x-[18px]' : 'translate-x-[3px]'
+        className={`pointer-events-none absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full bg-white transition-all ${
+          enabled ? 'start-[18px]' : 'start-[3px]'
         }`}
       />
       <span className="sr-only">

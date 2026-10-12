@@ -23,6 +23,7 @@ export function shouldShowClientSummaryTextLoading({
   isInitialRequest: boolean;
   summaryPending?: boolean;
 }): boolean {
-  if (hasSummaryText) return false;
-  return Boolean(isInitialRequest || summaryPending);
+  if (hasSummaryText && !summaryPending) return false;
+  if (summaryPending) return true;
+  return Boolean(isInitialRequest);
 }

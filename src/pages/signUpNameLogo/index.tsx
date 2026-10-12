@@ -1,19 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
-import Application from '../../api/app';
-import { blobToBase64 } from '../../help';
-import SpinnerLoader from '../../Components/SpinnerLoader';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
+import Application from '../../api/app';
+import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+import SpinnerLoader from '../../Components/SpinnerLoader';
+import { ContentLocalePicker } from '../../i18n/ContentLocalePicker';
+import { applyUiLocale, storedPortalUiLocale } from '../../i18n';
+import { PortalLocalePicker } from '../../i18n/PortalLocalePicker';
+import { useLocalePreferences } from '../../i18n/LocalePreferencesContext';
+import { blobToBase64 } from '../../help';
 
 const SignUpNameLogo = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('settings');
+  const { refreshLocalePreferences } = useLocalePreferences();
+
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [errorName, setErrorName] = useState('');
   const [errorLogo, setErrorLogo] = useState('');
   const [clinicName, setClinicName] = useState<string>('');
   const [imageSelect, setImageSelect] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [portalLocale, setPortalLocale] = useState(
+    storedPortalUiLocale() || 'en-US',
+  );
+  const [contentLocale, setContentLocale] = useState('en-US');
+
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     const maxSizeInBytes = 4 * 1024 * 1024;
@@ -86,132 +100,178 @@ const SignUpNameLogo = () => {
       name: clinicName,
       html_email: '',
     };
-    Application.saveBrandInfo(data)
+    Application.localeSetup({
+      portal_ui_locale: portalLocale,
+      content_locale: contentLocale,
+    })
+      .then(() => applyUiLocale(portalLocale))
+      .then(() => refreshLocalePreferences())
+      .then(() => Application.saveBrandInfo(data))
       .then(() => {
         navigate('/');
       })
       .catch((err) => {
-        console.error('Error saving brand info:', err);
+        console.error('Error saving onboarding profile:', err);
       })
       .finally(() => {
         setIsLoading(false);
       });
   };
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-bg-color px-12 py-8">
-      <div className="w-full h-full flex flex-col gap-2 justify-center items-center border border-Gray-100 rounded-xl bg-white bg-opacity-40">
-        <img src="./icons/tick-circle-large.svg" alt="" />
-        <div className="text-Text-Primary font-medium text-base">
-          You're all set!
-        </div>
-        <div className="w-[80%] md:w-[36%] text-wrap text-Text-Primary text-sm text-center leading-6">
-          Your account has been successfully created. Now let’s personalize your
-          experience by setting up your clinic profile. Add your clinic's name
-          and logo — you can always change them later.
-        </div>
-        <div className="flex flex-col mt-4">
-          <div className="text-Text-Primary font-medium text-xs mb-2">
-            Clinic Name
+    <div className="fixed inset-0 z-10 flex items-center justify-center bg-bg-color px-4 py-6 overflow-hidden">
+      <div
+        className="w-full max-w-lg max-h-[calc(100vh-3rem)] flex flex-col border border-Gray-100 rounded-xl bg-white bg-opacity-95 shadow-100 overflow-hidden"
+        role="dialog"
+        aria-labelledby="register-profile-title"
+      >
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-6 md:p-8 flex flex-col items-center gap-2">
+          <img src="./icons/tick-circle-large.svg" alt="" />
+          <div
+            id="register-profile-title"
+            className="text-Text-Primary font-medium text-base"
+          >
+            You're all set!
           </div>
-          <div className="flex flex-col">
-            <input
-              type="text"
-              className={`w-[300px] h-[28px] border ${errorName ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
-              placeholder="Enter your clinic name"
-              value={clinicName}
-              onChange={(e) => {
-                setClinicName(e.target.value);
-                if (e.target.value.length === 0) {
-                  setErrorName('This field is required.');
-                } else if (
-                  e.target.value.length < 3 ||
-                  e.target.value.length > 30 ||
-                  /^\d+$/.test(e.target.value)
-                ) {
-                  setErrorName(
+          <div className="w-full text-wrap text-Text-Primary text-sm text-center leading-6">
+            Your account has been successfully created. Now let’s personalize
+            your experience by setting up your clinic profile. Add your clinic's
+            name and logo — you can always change them later.
+          </div>
+
+          <div className="flex flex-col mt-4 w-full max-w-[300px]">
+            <div className="text-Text-Primary font-medium text-xs mb-2">
+              Clinic Name
+            </div>
+            <div className="flex flex-col">
+              <input
+                type="text"
+                className={`w-full h-[28px] border ${errorName ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
+                placeholder="Enter your clinic name"
+                value={clinicName}
+                onChange={(e) => {
+                  setClinicName(e.target.value);
+                  if (e.target.value.length === 0) {
+                    setErrorName('This field is required.');
+                  } else if (
+                    e.target.value.length < 3 ||
+                    e.target.value.length > 30 ||
                     /^\d+$/.test(e.target.value)
-                      ? 'Name cannot be only numbers.'
-                      : 'Must be between 3 and 30 characters.',
-                  );
-                } else {
-                  setErrorName('');
-                }
-              }}
-            />
-            {errorName && (
-              <div className="text-Red text-[8px] mt-1 ml-3">{errorName}</div>
-            )}
+                  ) {
+                    setErrorName(
+                      /^\d+$/.test(e.target.value)
+                        ? 'Name cannot be only numbers.'
+                        : 'Must be between 3 and 30 characters.',
+                    );
+                  } else {
+                    setErrorName('');
+                  }
+                }}
+              />
+              {errorName && (
+                <div className="text-Red text-[8px] mt-1 ml-3">{errorName}</div>
+              )}
+            </div>
           </div>
-        </div>
-        <div
-          className={`w-[300px] mt-2 ${selectedFiles.length > 0 ? 'flex flex-col items-center justify-center' : ''}`}
-        >
-          {selectedFiles.length > 0 ? (
-            <div
-              className="w-[170px] h-[170px] rounded-3xl relative"
-              style={{
-                background:
-                  'linear-gradient(88.52deg, #005F73 3%, #6CC24A 140.48%)',
-                padding: '1px',
-              }}
-            >
-              <div className="w-full h-full rounded-3xl bg-white">
-                <img
-                  src={URL.createObjectURL(selectedFiles[0])}
-                  alt=""
-                  className="w-full h-full object-contain rounded-3xl"
-                />
-              </div>
+
+          <div
+            className={`w-full max-w-[300px] mt-2 ${selectedFiles.length > 0 ? 'flex flex-col items-center justify-center' : ''}`}
+          >
+            {selectedFiles.length > 0 ? (
               <div
-                className="absolute bottom-0 -left-4 w-[40px] h-[40px] rounded-full bg-white flex items-center justify-center cursor-pointer"
-                onClick={() => {
-                  setSelectedFiles([]);
+                className="w-[170px] h-[170px] rounded-3xl relative"
+                style={{
+                  background:
+                    'linear-gradient(88.52deg, #005F73 3%, #6CC24A 140.48%)',
+                  padding: '1px',
                 }}
               >
-                <img src="./icons/trash-red.svg" alt="" />
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="text-Text-Primary font-medium text-xs mb-2">
-                Clinic Logo
-              </div>
-              <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-2 p-6 cursor-pointer">
-                <input
-                  multiple
-                  type="file"
-                  accept=".svg,.jpg,.png,.jpeg"
-                  style={{ display: 'none' }}
-                  id="file-upload"
-                  onChange={handleFileUpload}
-                />
-                <img src="/icons/upload-test.svg" alt="" />
-                <div className="text-xs text-Text-Primary text-center mt-1">
-                  Drag and drop or click to upload.
+                <div className="w-full h-full rounded-3xl bg-white">
+                  <img
+                    src={URL.createObjectURL(selectedFiles[0])}
+                    alt=""
+                    className="w-full h-full object-contain rounded-3xl"
+                  />
                 </div>
-                <div className="text-Text-Quadruple text-xs">
-                  Accepted formats:{' '}
-                  <span className="font-medium">.svg, .jpg, .png.</span>
+                <div
+                  className="absolute bottom-0 -left-4 w-[40px] h-[40px] rounded-full bg-white flex items-center justify-center cursor-pointer"
+                  onClick={() => {
+                    setSelectedFiles([]);
+                  }}
+                >
+                  <img src="./icons/trash-red.svg" alt="" />
                 </div>
-              </label>
-            </>
-          )}
-          {errorLogo && (
-            <div className="text-[10px] font-medium mt-1 text-Red">
-              {errorLogo}
+              </div>
+            ) : (
+              <>
+                <div className="text-Text-Primary font-medium text-xs mb-2">
+                  Clinic Logo
+                </div>
+                <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-2 p-6 cursor-pointer">
+                  <input
+                    multiple
+                    type="file"
+                    accept=".svg,.jpg,.png,.jpeg"
+                    style={{ display: 'none' }}
+                    id="file-upload"
+                    onChange={handleFileUpload}
+                  />
+                  <img src="/icons/upload-test.svg" alt="" />
+                  <div className="text-xs text-Text-Primary text-center mt-1">
+                    Drag and drop or click to upload.
+                  </div>
+                  <div className="text-Text-Quadruple text-xs">
+                    Accepted formats:{' '}
+                    <span className="font-medium">.svg, .jpg, .png.</span>
+                  </div>
+                </label>
+              </>
+            )}
+            {errorLogo && (
+              <div className="text-[10px] font-medium mt-1 text-Red">
+                {errorLogo}
+              </div>
+            )}
+          </div>
+
+          <div className="w-full max-w-[300px] mt-4 space-y-4 text-left">
+            <div>
+              <p className="text-xs font-medium mb-2">
+                {t('portalLanguageTitle')}
+              </p>
+              <PortalLocalePicker
+                locale={portalLocale}
+                onLocaleChange={setPortalLocale}
+                id="register-portal-locale"
+                showLabel={false}
+              />
             </div>
-          )}
+            <div>
+              <p className="text-xs font-medium mb-1">
+                {t('contentLanguageTitle')}
+              </p>
+              <p className="text-[10px] text-[#888888] mb-2">
+                {t('contentLanguageHelp')}
+              </p>
+              <ContentLocalePicker
+                locale={contentLocale}
+                onLocaleChange={setContentLocale}
+                id="register-content-locale"
+              />
+            </div>
+          </div>
         </div>
-        <ButtonSecondary
-          ClassName="w-[300px] rounded-[20px] border border-white mt-4"
-          onClick={() => {
-            if (validateForm()) {
-              onSave();
-            }
-          }}
-        >
-          {isLoading ? <SpinnerLoader /> : 'Continue'}
-        </ButtonSecondary>
+        <div className="shrink-0 border-t border-Gray-50 bg-white/95 px-6 py-4 flex justify-center">
+          <ButtonSecondary
+            ClassName="w-full max-w-[300px] rounded-[20px] border border-white"
+            onClick={() => {
+              if (validateForm()) {
+                onSave();
+              }
+            }}
+          >
+            {isLoading ? <SpinnerLoader /> : 'Continue'}
+          </ButtonSecondary>
+        </div>
       </div>
     </div>
   );

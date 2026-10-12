@@ -3,6 +3,9 @@ interface HolisticPlanCategoryProps {
   el: any;
 }
 
+import { resolveCategoryName } from '../../../../help';
+import { uiText } from '../../../../i18n/uiText';
+
 const resolveTreatmentPlanIcon = (category: string) => {
   if (category == 'Diet') {
     return '/icons/TreatmentPlan/IconApple.svg';
@@ -37,7 +40,7 @@ const HolisticPlanCategory: React.FC<HolisticPlanCategoryProps> = ({ el }) => {
         <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
           <img src={resolveTreatmentPlanIcon(el.category)} alt="" />
         </div>
-        {el.category}
+        {uiText(resolveCategoryName(el.category))}
       </div>
     </>
   );

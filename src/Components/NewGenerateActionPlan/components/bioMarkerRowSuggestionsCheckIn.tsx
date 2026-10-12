@@ -8,6 +8,7 @@ import {
   TaskValidationError,
   validateActionPlanTasks,
 } from '../actionPlanValidation';
+import { uiText } from '../../../i18n/uiText';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsCheckInProps {
@@ -167,7 +168,7 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                           color={showScheduleError ? '#FC5474' : '#FFAB2C'}
                         />
                         {showScheduleError
-                          ? 'Schedule required'
+                          ? String(uiText('Schedule required'))
                           : 'No schedule yet'}
                       </div>
                       {showScheduleError && (

@@ -23,7 +23,7 @@ const LogOutModal: React.FC<LogOutModalProps> = ({ refrence, customTheme }) => {
     <>
       <div
         ref={refrence}
-        className="absolute right-0 z-50 w-[180px] h-[128px] border top-14 md:top-10 border-gray-50  shadow-200 bg-white rounded-[6px]"
+        className="absolute end-0 z-50 w-[180px] h-[128px] border top-14 md:top-10 border-gray-50  shadow-200 bg-white rounded-[6px]"
       >
         <div className="flex justify-center items-center mt-2">
           <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-full  ">

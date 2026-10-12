@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { uiText } from '../../i18n/uiText';
 
 interface ExpandableTextProps {
   text: string;
@@ -57,7 +58,7 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({
           onClick={() => setExpanded((p) => !p)}
           className="mt-1 inline-block cursor-pointer text-Primary-DeepTeal underline font-medium text-xs"
         >
-          {expanded ? 'See less' : 'See more'}
+          {expanded ? uiText('See less') : uiText('See more')}
         </span>
       )}
     </div>

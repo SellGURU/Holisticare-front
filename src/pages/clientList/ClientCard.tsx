@@ -19,6 +19,7 @@ import { DeleteModal } from './deleteModal.tsx';
 import EllipsedTooltip from '../../Components/LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
 import useIsDemo from '../../hooks/useIsDemo.ts';
+import { uiText } from '../../i18n/uiText';
 
 const parseDateOfBirth = (value: unknown): Date | null => {
   if (value == null || value === '' || value === '-') return null;
@@ -131,6 +132,33 @@ const ClientCard: FC<ClientCardProps> = ({
       setshowAssign(false);
     },
   });
+
+  const clientMenuItemClass =
+    'flex w-full items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1';
+  const renderClientMenuItem = (
+    label: string,
+    iconSrc: string,
+    onClick: () => void,
+    options?: {
+      border?: boolean;
+      className?: string;
+      iconClass?: string;
+    },
+  ) => (
+    <div
+      onClick={onClick}
+      className={`${clientMenuItemClass} ${
+        options?.border !== false ? 'border-b border-Secondary-SelverGray' : ''
+      } ${options?.className ?? ''}`}
+    >
+      <img
+        src={iconSrc}
+        alt=""
+        className={options?.iconClass ?? 'size-4 w-4 shrink-0'}
+      />
+      <span className="min-w-0 flex-1 text-start">{uiText(label)}</span>
+    </div>
+  );
   // const handleToggleFavoriteAndHighPriority = async () => {
   //   try {
   //     // Call API to toggle favorite status
@@ -950,7 +978,9 @@ const ClientCard: FC<ClientCardProps> = ({
                   : 'text-Primary-DeepTeal'
               }`}
             >
-              {isSavingClientInfo ? 'Saving...' : 'Save Changes'}
+              {isSavingClientInfo
+                ? uiText('Saving...')
+                : uiText('Save Changes')}
             </div>
           </div>
         </div>
@@ -1019,102 +1049,82 @@ const ClientCard: FC<ClientCardProps> = ({
         {showModal && (
           <div
             ref={showModalRefrence}
-            className="absolute top-7 md:top-12 right-[10px] z-20 w-[220px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+            className="absolute top-7 md:top-12 end-[10px] z-20 w-[220px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3 text-start"
+            dir="auto"
           >
             {client.archived ? (
               <>
-                <div
-                  onClick={() => {
+                {renderClientMenuItem(
+                  'Unarchive',
+                  '/icons/directbox-send.svg',
+                  () => {
                     if (isDemo) return;
                     setshowModal(false);
                     setshowArchiveModal(true);
-                    // Application.archivePatient({
-                    //   member_id: client.member_id,
-                    // });
-                    // onarchive(client.member_id);
-                    // ondelete(client.member_id);
-                  }}
-                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
-                >
-                  <img src="/icons/directbox-send.svg" alt="" />
-                  Unarchive
-                </div>
-                {!client.favorite ? (
-                  <div
-                    onClick={handleAddToHighPriority}
-                    className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
-                  >
-                    <img src="/icons/star.svg" alt="" />
-                    Add to High-Priorities
-                  </div>
-                ) : (
-                  client.favorite &&
-                  activeTab == 'High-Priority' && (
-                    <div
-                      onClick={handleRemoveFromHighPriority}
-                      className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
-                    >
-                      <img src="/icons/star.svg" alt="" />
-                      Remove from High-Priorities
-                    </div>
-                  )
+                  },
                 )}
-                <div
-                  onClick={() => {
+                {!client.favorite
+                  ? renderClientMenuItem(
+                      'Add to High-Priorities',
+                      '/icons/star.svg',
+                      handleAddToHighPriority,
+                      { className: 'cursor-default' },
+                    )
+                  : client.favorite &&
+                    activeTab == 'High-Priority' &&
+                    renderClientMenuItem(
+                      'Remove from High-Priorities',
+                      '/icons/star.svg',
+                      handleRemoveFromHighPriority,
+                      { className: 'cursor-default' },
+                    )}
+                {renderClientMenuItem(
+                  'Edit Client',
+                  '/icons/keyboard-open.svg',
+                  () => {
                     if (isDemo) return;
                     handleOpenEditModal();
-                  }}
-                  title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
-                  className={`flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDemo ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <img src="/icons/keyboard-open.svg" alt="" />
-                  Edit Client
-                </div>
-                <div
-                  onClick={handleOpenClientAccess}
-                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
-                >
-                  <img src="/icons/keyboard-open.svg" alt="" />
-                  Client Access
-                </div>
-                <div
-                  onClick={() => {
+                  },
+                  {
+                    className: isDemo ? 'opacity-50 cursor-not-allowed' : '',
+                  },
+                )}
+                {renderClientMenuItem(
+                  'Client Access',
+                  '/icons/keyboard-open.svg',
+                  handleOpenClientAccess,
+                )}
+                {renderClientMenuItem(
+                  'Delete',
+                  '/icons/delete-green.svg',
+                  () => {
                     if (isDemo) return;
                     setshowDeleteModal(true);
-                  }}
-                  // onClick={() => {
-                  //   setshowModal(false);
-                  //   Application.deletePatient({
-                  //     member_id: client.member_id,
-                  //   });
-                  //   // onarchive(client.member_id)
-                  //   ondelete(client.member_id);
-                  // }}
-                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
-                >
-                  <img src="/icons/delete-green.svg" className="w-4" alt="" />
-                  Delete
-                </div>
+                  },
+                  { border: false },
+                )}
               </>
             ) : (
               <>
                 <div className="relative">
                   <div
                     onClick={handleAssignClick}
-                    className="flex items-center gap-2 cursor-pointer justify-between w-full TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
+                    className={`${clientMenuItemClass} border-b border-Secondary-SelverGray`}
                   >
-                    <div className="flex items-center gap-1">
-                      {' '}
-                      <img src="/icons/assign-green.svg" alt="" />
-                      Assign to
-                    </div>
-
-                    <div
+                    <img
+                      src="/icons/assign-green.svg"
+                      alt=""
+                      className="size-4 w-4 shrink-0"
+                    />
+                    <span className="min-w-0 flex-1 text-start">
+                      {uiText('Assign to')}
+                    </span>
+                    <span
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAssignClick();
                       }}
-                      className={`${showAssign && 'rotate-180'} transition-transform`}
+                      className={`shrink-0 transition-transform rtl:-scale-x-100 ${showAssign ? 'rotate-180' : ''}`}
                     >
                       <SvgIcon
                         src="/icons/arrow-right.svg"
@@ -1122,15 +1132,16 @@ const ClientCard: FC<ClientCardProps> = ({
                         height="20px"
                         color="#888888"
                       />
-                    </div>
+                    </span>
                   </div>
                   {showAssign && (
                     <div
-                      className={`absolute top-0 md:-top-2 ${(indexItem + 1) % 4 == 0 ? '-right-4 md:right-[200px]' : ' -right-4 md:-right-[200px]'} max-h-[300px] overflow-auto ${(indexItem + 1) % 4 == 0 ? 'rounded-tl-2xl rounded-b-2xl' : ' rounded-tr-2xl rounded-b-2xl'} w-[220px] h-[182px] md:h-auto  md:w-[188px] shadow-200 p-3 bg-white flex flex-col gap-3`}
+                      className={`absolute top-0 md:-top-2 -end-4 md:end-[calc(100%+8px)] md:start-auto max-h-[300px] overflow-auto rounded-2xl w-[220px] h-[182px] md:h-auto md:w-[188px] shadow-200 p-3 bg-white flex flex-col gap-3 text-start`}
+                      dir="auto"
                     >
                       <div
                         onClick={() => setshowAssign(false)}
-                        className=" md:hidden size-5 rotate-180"
+                        className="md:hidden size-5 rtl:rotate-0 rotate-180"
                       >
                         <SvgIcon
                           src="/icons/arrow-right.svg"
@@ -1142,10 +1153,9 @@ const ClientCard: FC<ClientCardProps> = ({
 
                       {CoachList.map((coach: Coach) => (
                         <div
-                          // onClick={() => handleCoachSelection(coach)}
                           className={`p-1 cursor-pointer select-none w-full flex items-center gap-2 rounded text-Text-Secondary text-xs ${coach.assigned ? 'bg-[#E9F0F2]' : 'bg-white'}`}
                         >
-                          <div>
+                          <div className="shrink-0">
                             <Checkbox
                               borderColor={
                                 coach.assigned
@@ -1157,7 +1167,7 @@ const ClientCard: FC<ClientCardProps> = ({
                             />
                           </div>
                           <div
-                            className={`${coach.assigned && 'text-Primary-DeepTeal'}`}
+                            className={`min-w-0 flex-1 text-start ${coach.assigned && 'text-Primary-DeepTeal'}`}
                             onClick={() => handleCoachSelection(coach)}
                           >
                             {coach.username}
@@ -1168,42 +1178,28 @@ const ClientCard: FC<ClientCardProps> = ({
                   )}
                 </div>
 
-                <div
-                  onClick={() => {
+                {renderClientMenuItem(
+                  'Send to Archieve',
+                  '/icons/directbox-send.svg',
+                  () => {
                     if (isDemo) return;
                     setshowModal(false);
                     setshowArchiveModal(true);
-                    // Application.archivePatient({
-                    //   member_id: client.member_id,
-                    // });
-                    // onarchive(client.member_id);
-                    // ondelete(client.member_id);
-                  }}
-                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
-                >
-                  <img src="/icons/directbox-send.svg" alt="" />
-                  Send to Archieve
-                </div>
-                {!client.favorite ? (
-                  <div
-                    onClick={handleAddToHighPriority}
-                    className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
-                  >
-                    <img src="/icons/star.svg" alt="" />
-                    Add to High-Priority
-                  </div>
-                ) : (
-                  client.favorite &&
-                  activeTab == 'High-Priority' && (
-                    <div
-                      onClick={handleRemoveFromHighPriority}
-                      className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
-                    >
-                      <img src="/icons/star.svg" alt="" />
-                      Remove from High-Priority
-                    </div>
-                  )
+                  },
                 )}
+                {!client.favorite
+                  ? renderClientMenuItem(
+                      'Add to High-Priority',
+                      '/icons/star.svg',
+                      handleAddToHighPriority,
+                    )
+                  : client.favorite &&
+                    activeTab == 'High-Priority' &&
+                    renderClientMenuItem(
+                      'Remove from High-Priority',
+                      '/icons/star.svg',
+                      handleRemoveFromHighPriority,
+                    )}
                 {/* <div
                   onClick={handleToggleFavoriteAndHighPriority}
                   className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
@@ -1213,42 +1209,31 @@ const ClientCard: FC<ClientCardProps> = ({
                     ? 'Remove from High-Priorities'
                     : 'Add to High-Priorities'}{' '}
                 </div> */}
-                <div
-                  onClick={() => {
+                {renderClientMenuItem(
+                  'Edit Client',
+                  '/icons/keyboard-open.svg',
+                  () => {
                     if (isDemo) return;
                     handleOpenEditModal();
-                  }}
-                  title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
-                  className={`flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDemo ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <img src="/icons/keyboard-open.svg" alt="" />
-                  Edit Client
-                </div>
-                <div
-                  onClick={handleOpenClientAccess}
-                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
-                >
-                  <img src="/icons/keyboard-open.svg" alt="" />
-                  Client Access
-                </div>
-                <div
-                  onClick={() => {
+                  },
+                  {
+                    className: isDemo ? 'opacity-50 cursor-not-allowed' : '',
+                  },
+                )}
+                {renderClientMenuItem(
+                  'Client Access',
+                  '/icons/keyboard-open.svg',
+                  handleOpenClientAccess,
+                )}
+                {renderClientMenuItem(
+                  'Delete',
+                  '/icons/delete-green.svg',
+                  () => {
                     if (isDemo) return;
                     setshowDeleteModal(true);
-                  }}
-                  // onClick={() => {
-                  //   setshowModal(false);
-                  //   Application.deletePatient({
-                  //     member_id: client.member_id,
-                  //   });
-                  //   // onarchive(client.member_id)
-                  //   ondelete(client.member_id);
-                  // }}
-                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 "
-                >
-                  <img src="/icons/delete-green.svg" className="w-4" alt="" />
-                  Delete
-                </div>
+                  },
+                  { border: false },
+                )}
               </>
             )}
           </div>
@@ -1274,7 +1259,7 @@ const ClientCard: FC<ClientCardProps> = ({
             />
             {client.favorite && (
               <img
-                className="absolute md:bottom-0 -bottom-2 -right-1 md:right-0 w-[30px] h-[26px] md:w-[34px] md:h-[30px]"
+                className="absolute md:bottom-0 -bottom-2 -end-1 md:end-0 w-[30px] h-[26px] md:w-[34px] md:h-[30px]"
                 src="/icons/Priority.svg"
                 alt=""
               />
@@ -1290,7 +1275,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 event.preventDefault();
               }
             }}
-            className="pl-2 flex flex-col mt-4 cursor-default"
+            className="ps-2 flex flex-col mt-4 min-w-0 cursor-default"
           >
             <div
               // data-tooltip-id={`${client.member_id}-${client.name}`}
@@ -1321,7 +1306,7 @@ const ClientCard: FC<ClientCardProps> = ({
               {client.age} years{' '}
             </div> */}
             <div className="text-Text-Secondary text-[10px] sm:text-[12px] text-nowrap cursor-default">
-              ID: {client.member_id}
+              {uiText('ID:')} {client.member_id}
             </div>
           </PortalLink>
           <div className="flex md:hidden flex-col w-full items-end justify-end ml-4">
@@ -1351,7 +1336,7 @@ const ClientCard: FC<ClientCardProps> = ({
             e.stopPropagation();
             setshowModal(!showModal);
           }}
-          className="absolute top-2 md:top-7 right-2 cursor-pointer"
+          className="absolute top-2 md:top-7 end-2 cursor-pointer"
         >
           <img src="/icons/client-card/more.svg" alt="" />
         </div>
@@ -1359,7 +1344,7 @@ const ClientCard: FC<ClientCardProps> = ({
           {isExpanded && (
             <div className="flex flex-col h-full">
               <div className="w-full mt-2 flex h-full justify-between">
-                <div className="flex flex-col justify-between h-full border-r border-Gray-50 pr-3 pl-2 py-1">
+                <div className="flex flex-col justify-between h-full border-e border-Gray-50 pe-3 ps-2 py-1">
                   <div className="flex flex-col relative h-[128px] justify-between ">
                     <div className="flex items-center justify-center flex-col">
                       <div className="text-[8px] sm:text-[10px] text-Text-Secondary cursor-default">
@@ -1381,14 +1366,16 @@ const ClientCard: FC<ClientCardProps> = ({
                     </div>
                   </div>
                 </div>
-                <div className="w-full flex flex-col gap-1 justify-between pl-3 py-1">
+                <div className="w-full flex flex-col gap-1 justify-between ps-3 py-1">
                   <div className="flex gap-2 w-full text-Text-Primary text-[10px] sm:text-xs cursor-default">
                     <div className="flex gap-1 w-[85px] items-center  text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] cursor-default">
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
                     <div className="w-[100px]">
-                      <EllipsedTooltip text={client.assigned_to[0] || '-'} />
+                      <EllipsedTooltip
+                        text={String(uiText(client.assigned_to[0] || '-'))}
+                      />
                     </div>
                   </div>
                   <div className="flex gap-2 w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -1401,10 +1388,10 @@ const ClientCard: FC<ClientCardProps> = ({
                       className="flex items-center px-1.5 text-[9px] h-[20px] rounded-[10px] justify-center text-nowrap text-Text-Primary cursor-default"
                     >
                       <div
-                        className="mr-[5px] size-2.5 rounded-full"
+                        className="me-[5px] size-2.5 rounded-full"
                         style={{ backgroundColor: ellipseColor }}
                       ></div>
-                      {client.status}
+                      {uiText(client.status)}
                     </div>
                   </div>
                   <div className="flex gap-2 items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -1412,14 +1399,14 @@ const ClientCard: FC<ClientCardProps> = ({
                       <img src="/icons/client-card/Gender-man.svg" alt="" />
                       Gender
                     </div>
-                    {client.sex}
+                    {uiText(client.sex)}
                   </div>
                   <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/happyemoji.svg" alt="" />
                       Age
                     </div>
-                    {client.age ? client.age + ' Years Old' : null}
+                    {client.age ? `${client.age} ${uiText('Years Old')}` : null}
                   </div>
                   <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center w-[85px] gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
@@ -1436,7 +1423,9 @@ const ClientCard: FC<ClientCardProps> = ({
                       Questionnaire
                     </div>
                     <div className=" max-w-[100px] truncate cursor-default">
-                      <EllipsedTooltip text={client.Questionary} />
+                      <EllipsedTooltip
+                        text={String(uiText(client.Questionary || ''))}
+                      />
                     </div>
                   </div>
                 </div>

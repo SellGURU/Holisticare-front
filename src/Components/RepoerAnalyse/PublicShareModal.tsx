@@ -1,8 +1,10 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Application from '../../api/app';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { copyText } from '../../utils/clipboard';
 import SpinnerLoader from '../SpinnerLoader';
+import Toggle from './Boxs/Toggle';
 
 interface PublicShareModalProps {
   isOpen: boolean;
@@ -24,6 +26,7 @@ export const PublicShareModal: FC<PublicShareModalProps> = ({
   memberId,
   onClose,
 }) => {
+  const { t } = useTranslation('share');
   const modalReference = useRef(null);
   const [shareState, setShareState] = useState<PublicShareState>({
     enabled: false,
@@ -58,21 +61,19 @@ export const PublicShareModal: FC<PublicShareModalProps> = ({
         });
       })
       .catch((err) => {
-        setError(
-          err?.response?.data?.detail || 'Could not load public share state.',
-        );
+        setError(err?.response?.data?.detail || t('errors.loadFailed'));
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [isOpen, memberId]);
+  }, [isOpen, memberId, t]);
 
   if (!isOpen) return null;
 
-  const handleToggle = () => {
+  const applyShareEnabled = (nextEnabled: boolean) => {
     if (!memberId || saving) return;
+    if (nextEnabled === shareState.enabled) return;
     const previousState = shareState;
-    const nextEnabled = !shareState.enabled;
     setShareState({
       ...shareState,
       enabled: nextEnabled,
@@ -94,9 +95,7 @@ export const PublicShareModal: FC<PublicShareModalProps> = ({
       })
       .catch((err) => {
         setShareState(previousState);
-        setError(
-          err?.response?.data?.detail || 'Could not update public sharing.',
-        );
+        setError(err?.response?.data?.detail || t('errors.updateFailed'));
       })
       .finally(() => {
         setSaving(false);
@@ -108,7 +107,7 @@ export const PublicShareModal: FC<PublicShareModalProps> = ({
     const didCopy = await copyText(shareUrl);
     setCopied(didCopy);
     if (!didCopy) {
-      setError('Could not copy the link. Please copy it manually.');
+      setError(t('errors.copyFailed'));
     }
   };
 
@@ -125,20 +124,19 @@ export const PublicShareModal: FC<PublicShareModalProps> = ({
           className="w-full max-w-[560px] rounded-[20px] bg-white shadow-800 p-6"
         >
           <div className="flex items-start justify-between gap-4 border-b border-Gray-50 pb-4">
-            <div>
+            <div className="min-w-0 text-start">
               <div className="text-base font-semibold text-Text-Primary">
-                Share report
+                {t('title')}
               </div>
-              <div className="mt-1 text-xs text-Text-Secondary">
-                Control whether anyone with this link can view the HTML report
-                without signing in.
+              <div className="mt-1 text-xs text-Text-Secondary text-justify">
+                {t('subtitle')}
               </div>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="text-xl leading-none text-[#909090]"
-              aria-label="Close share modal"
+              className="shrink-0 text-xl leading-none text-[#909090]"
+              aria-label={t('closeModal')}
             >
               x
             </button>
@@ -150,42 +148,34 @@ export const PublicShareModal: FC<PublicShareModalProps> = ({
             </div>
           ) : (
             <div className="pt-5">
-              <div className="flex items-center justify-between gap-4 rounded-2xl border border-Gray-50 bg-[#F8FBFC] p-4">
-                <div>
+              <div className="flex items-start justify-between gap-3 rounded-2xl border border-Gray-50 bg-[#F8FBFC] p-4">
+                <div className="min-w-0 flex-1 text-start">
                   <div className="text-sm font-medium text-Text-Primary">
-                    Anyone with the link can view
+                    {t('toggleLabel')}
                   </div>
-                  <div className="mt-1 text-xs text-Text-Secondary">
-                    {shareState.enabled
-                      ? 'Public sharing is on for this report.'
-                      : 'Sharing is off. Turn on to generate a public link that anyone can open without signing in.'}
+                  <div className="mt-1 text-xs text-Text-Secondary text-justify leading-relaxed">
+                    {shareState.enabled ? t('sharingOn') : t('sharingOff')}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleToggle}
-                  disabled={saving || !memberId}
-                  className={`relative h-7 w-12 rounded-full transition ${
-                    shareState.enabled ? 'bg-[#005F73]' : 'bg-[#C8D4DA]'
-                  } ${saving || !memberId ? 'opacity-60' : ''}`}
-                  aria-pressed={shareState.enabled}
+                <div
+                  className={`shrink-0 pt-0.5 ${saving || !memberId ? 'opacity-60 pointer-events-none' : ''}`}
                 >
-                  <span
-                    className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${
-                      shareState.enabled ? 'left-6' : 'left-1'
-                    }`}
+                  <Toggle
+                    checked={shareState.enabled}
+                    setChecked={(next) => applyShareEnabled(next)}
                   />
-                </button>
+                </div>
               </div>
 
               {shareState.enabled && (
                 <div className="mt-5">
                   <label className="text-xs font-medium text-Text-Secondary">
-                    Public link
+                    {t('publicLink')}
                   </label>
                   <div className="mt-2 flex flex-col gap-2 md:flex-row">
                     <input
                       readOnly
+                      dir="ltr"
                       value={shareUrl}
                       className="min-w-0 flex-1 rounded-xl border border-Gray-50 bg-white px-3 py-2 text-xs text-Text-Primary outline-none"
                       onFocus={(event) => event.target.select()}
@@ -195,21 +185,21 @@ export const PublicShareModal: FC<PublicShareModalProps> = ({
                       onClick={handleCopy}
                       className="rounded-xl bg-[#005F73] px-4 py-2 text-xs font-semibold text-white"
                     >
-                      {copied ? 'Copied' : 'Copy link'}
+                      {copied ? t('copied') : t('copyLink')}
                     </button>
                     <button
                       type="button"
                       onClick={handleOpen}
                       className="rounded-xl border border-[#005F73] px-4 py-2 text-xs font-semibold text-[#005F73]"
                     >
-                      Open
+                      {t('open')}
                     </button>
                   </div>
                 </div>
               )}
 
               {error && (
-                <div className="mt-4 rounded-xl bg-[#FFF3F3] px-3 py-2 text-xs text-[#B42318]">
+                <div className="mt-4 rounded-xl bg-[#FFF3F3] px-3 py-2 text-xs text-[#B42318] text-start">
                   {error}
                 </div>
               )}
@@ -220,7 +210,7 @@ export const PublicShareModal: FC<PublicShareModalProps> = ({
                   onClick={onClose}
                   className="text-sm font-medium text-[#005F73]"
                 >
-                  Done
+                  {t('done')}
                 </button>
               </div>
             </div>

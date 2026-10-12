@@ -39,11 +39,19 @@ describe('report section loading contract', () => {
     ).toBe(false);
   });
 
-  it('keeps previous summary text visible during background refresh', () => {
+  it('shows loading during active regen when summaryPending is set', () => {
     expect(
       shouldShowClientSummaryTextLoading({
         hasSummaryText: true,
         isInitialRequest: false,
+        summaryPending: true,
+      }),
+    ).toBe(true);
+    expect(
+      shouldShowClientSummaryTextLoading({
+        hasSummaryText: true,
+        isInitialRequest: false,
+        summaryPending: false,
       }),
     ).toBe(false);
     expect(

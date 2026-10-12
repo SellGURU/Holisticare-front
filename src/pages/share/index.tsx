@@ -82,7 +82,7 @@ const Share = () => {
         >
           <div
             // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`fixed z-[40] top-[50%] left-6 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer ${!isReportAvailable && 'opacity-40'}`}
+            className={`fixed z-[40] top-[50%] start-6 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer ${!isReportAvailable && 'opacity-40'}`}
           >
             <div className="report-sidemenu-layer-icon text-Primary-EmeraldGreen" />
           </div>
@@ -91,10 +91,10 @@ const Share = () => {
           ref={sideMenuRef}
           className={`
         
-          ${isMobileView && !isMobileMenuOpen ? '-left-[178px]' : 'left-0'}
+          ${isMobileView && !isMobileMenuOpen ? '-start-[178px]' : 'start-0'}
           
           transition-all z-[80] fixed top-20 xl:top-16  duration-300 ease-in-out
-          xl:left-4
+          xl:start-4
         `}
         >
           <ReportSideMenu
@@ -105,7 +105,7 @@ const Share = () => {
           ></ReportSideMenu>
         </div>
         {memberId != '123' && (
-          <div className="w-full xl:pl-[200px] fixed">
+          <div className="w-full xl:ps-[200px] fixed">
             <ReportAnalyseView
               setActiveCheckProgress={() => {}}
               memberID={Number(memberId)}

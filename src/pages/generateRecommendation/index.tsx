@@ -29,6 +29,8 @@ import {
 } from '../../utils/lookingForwards';
 import { serializeRescoreSignature } from './rescoreSignature';
 import { useVisibilityAwarePoll } from '../../hooks/useVisibilityAwarePoll';
+import { uiText } from '../../i18n/uiText';
+import { useTranslation } from 'react-i18next';
 
 type CategoryState = {
   name: string;
@@ -91,6 +93,7 @@ const mergeClientInterventionContent = (
 };
 
 export const GenerateRecommendation = () => {
+  const { t } = useTranslation('generateFlow');
   const navigate = useNavigate();
   const steps = ['General Condition', 'Set Orders', 'Overview'];
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -742,7 +745,7 @@ export const GenerateRecommendation = () => {
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
           <Circleloader></Circleloader>
           <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
-            We are generating your Holistic Plan. This may take a moment.
+            {t('generatingHolisticPlan')}
           </div>
         </div>
       )}
@@ -771,7 +774,7 @@ export const GenerateRecommendation = () => {
                 />
               </div>
               <div className="TextStyle-Headline-5 text-Text-Primary">
-                Generate Holistic Plan
+                {String(uiText('Generate Holistic Plan'))}
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -779,7 +782,7 @@ export const GenerateRecommendation = () => {
                 className={` ${currentStepIndex === steps.length - 1 ? 'hidden' : 'hidden'} items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
                 onClick={handleSkip}
               >
-                Skip <img src="/icons/Skip.svg" alt="" />
+                {String(uiText('Skip'))} <img src="/icons/Skip.svg" alt="" />
               </div>
               {currentStepIndex > 0 && (
                 <ButtonPrimary
@@ -793,7 +796,7 @@ export const GenerateRecommendation = () => {
                       color="#005F73"
                     ></SvgIcon>
                   </div>
-                  Back
+                  {String(uiText('Back'))}
                 </ButtonPrimary>
               )}
               <ButtonPrimary
@@ -815,7 +818,9 @@ export const GenerateRecommendation = () => {
                         alt=""
                       />
                     )}
-                    {currentStepIndex === 2 ? 'Generate' : 'Next'}
+                    {String(
+                      uiText(currentStepIndex === 2 ? 'Generate' : 'Next'),
+                    )}
                     <SpinnerLoader></SpinnerLoader>
                   </>
                 ) : (
@@ -827,7 +832,9 @@ export const GenerateRecommendation = () => {
                         alt=""
                       />
                     )}
-                    {currentStepIndex === 2 ? 'Generate' : 'Next'}
+                    {String(
+                      uiText(currentStepIndex === 2 ? 'Generate' : 'Next'),
+                    )}
                     {currentStepIndex !== 2 && (
                       <img src="/icons/arrow-right-white.svg" alt="" />
                     )}
@@ -863,7 +870,7 @@ export const GenerateRecommendation = () => {
                     >
                       {index + 1}
                     </div>
-                    {label}
+                    {String(uiText(label))}
                   </div>
                   {index < steps.length - 1 && (
                     <img

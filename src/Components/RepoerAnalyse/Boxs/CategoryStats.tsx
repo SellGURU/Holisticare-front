@@ -30,7 +30,7 @@ const CategoryStats = ({
       <div className="TextStyle-Body-3 text-Text-Secondary">
         {numOfBiomarkers} {biomarkerLabel}
       </div>
-      <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
+      <div className="TextStyle-Body-3 text-Text-Secondary ms-2">
         {isProcessing ? (
           <span className="inline-flex items-center gap-1 text-Text-Triarty">
             <SpinnerLoader color="#9CA3AF" />

@@ -185,7 +185,7 @@ const Report = () => {
       <Draggable onStart={handleStart} onDrag={handleDrag} onStop={handleStop}>
         <div
           // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className={`fixed z-[40] top-[50%] left-6 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer ${!isReportAvailable && 'opacity-40'}`}
+          className={`fixed z-[40] top-[50%] start-6 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer ${!isReportAvailable && 'opacity-40'}`}
         >
           <div className="report-sidemenu-layer-icon text-Primary-EmeraldGreen" />
         </div>
@@ -194,10 +194,10 @@ const Report = () => {
         ref={sideMenuRef}
         className={`
         
-          ${isMobileView && !isMobileMenuOpen ? '-left-[178px]' : 'left-0'}
+          ${isMobileView && !isMobileMenuOpen ? '-start-[178px]' : 'start-0'}
           
           transition-all z-[80] fixed top-20 xl:top-16  duration-300 ease-in-out
-          xl:left-4
+          xl:start-4
         `}
       >
         <ReportSideMenu
@@ -208,7 +208,7 @@ const Report = () => {
       </div>
 
       <div
-        className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
+        className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:ps-[200px] fixed`}
       >
         <ReportAnalyseView
           setFirst_time_view={setFirst_time_view}
@@ -218,7 +218,7 @@ const Report = () => {
       </div>
 
       <div
-        className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
+        className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:ps-[200px] fixed`}
       >
         {progressMounted ? (
           <Suspense fallback={null}>
@@ -233,7 +233,7 @@ const Report = () => {
       </div>
 
       <div
-        className={`fixed top-10 duration-300 ease-in-out transition-all xl:top-20 xl:right-6 h-[80vh] flex items-center justify-between flex-col ${isVisibleCombo ? 'visible' : 'invisible'}           ${isMobileView && !showCombo ? '-right-[120px]' : 'right-0'}
+        className={`fixed top-10 duration-300 ease-in-out transition-all xl:top-20 xl:end-6 h-[80vh] flex items-center justify-between flex-col ${isVisibleCombo ? 'visible' : 'invisible'}           ${isMobileView && !showCombo ? '-end-[120px]' : 'end-0'}
         `}
       >
         <ComboBar></ComboBar>

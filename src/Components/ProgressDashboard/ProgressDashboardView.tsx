@@ -156,7 +156,7 @@ const ProgressDashboardView = ({
   }, [analyticsData, loading, isActive]);
 
   return (
-    <div className="pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 overflow-x-hidden px-5 xl:px-0">
+    <div className="pt-[20px] scroll-container relative pb-[50px] xl:pe-28 h-[98vh] xl:ms-6 overflow-x-hidden px-5 xl:px-0">
       <ProgressDashboard
         analyticsData={analyticsData}
         loading={loading}

@@ -18,6 +18,10 @@ import {
   DEFAULT_CATEGORY_LABELS,
   type2ToFlatListInIssueOrder,
 } from '../../../utils/lookingForwards';
+import { uiText } from '../../../i18n/uiText';
+import { useTranslation } from 'react-i18next';
+
+const HEALTH_PLANNING_ISSUES_TITLE = 'Health Planning Issues';
 
 // Define types for the data structure
 interface ConditionDataProps {
@@ -436,11 +440,12 @@ const Card: React.FC<CardProps> = ({
   isFormulaIssue,
   formulaRisks,
 }) => {
+  const { t } = useTranslation('generateFlow');
   const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
   const [currentIndex, setCurrentIndex] = useState<any>(null);
   const [openPriorityFor, setOpenPriorityFor] = useState<string | null>(null);
   const priorityDropdownRef = useRef<HTMLDivElement>(null);
-  const isHealthPlanning = title === 'Health Planning Issues';
+  const isHealthPlanning = title === HEALTH_PLANNING_ISSUES_TITLE;
   const [issueCategories, setIssueCategories] = useState<
     Record<string, string>
   >({});
@@ -489,13 +494,13 @@ const Card: React.FC<CardProps> = ({
   return (
     <div className="bg-white p-4 md:p-6 pt-4 border rounded-2xl border-Gray-50 shadow-100 md:min-w-[444px] w-full md:w-[33%] text-Text-Primary">
       <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
-        {title == 'Health Planning Issues' ? (
+        {title === HEALTH_PLANNING_ISSUES_TITLE ? (
           <div className="flex items-center gap-2 text-Primary-DeepTeal">
             <img src="/icons/lamp-on.svg" alt="" />
-            {title}
+            {String(uiText(title))}
           </div>
         ) : (
-          <>{title}</>
+          <>{String(uiText(title))}</>
         )}
 
         {!addNew && (
@@ -543,7 +548,7 @@ const Card: React.FC<CardProps> = ({
           {isHealthPlanning && (
             <div className="mt-3 rounded-2xl border border-[#DCEAE6] bg-[#F8FCFB] px-3 py-2">
               <div className="text-[11px] font-semibold uppercase tracking-wide text-Primary-DeepTeal">
-                Priority Colors
+                {String(uiText('Priority Colors'))}
               </div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {CATEGORY_ORDER.map((key) => {
@@ -556,7 +561,7 @@ const Card: React.FC<CardProps> = ({
                       <span
                         className={`size-2.5 rounded-full ${style.dot}`}
                       ></span>
-                      <span>{style.label}</span>
+                      <span>{String(uiText(style.label))}</span>
                     </div>
                   );
                 })}
@@ -570,7 +575,7 @@ const Card: React.FC<CardProps> = ({
               setNewItem('');
             }}
           >
-            + Add New
+            {t('addNew')}
           </div>
         </>
       )}
@@ -583,7 +588,7 @@ const Card: React.FC<CardProps> = ({
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
               setNewItem(e.target.value);
             }}
-            placeholder="Enter text here..."
+            placeholder={t('enterTextHere')}
             className="w-full min-h-[280px] px-3 py-1 text-justify resize-none text-sm outline-none overflow-hidden border border-Gray-50 bg-backgroundColor-Card rounded-2xl"
           />
           <div className="flex items-center justify-between w-full mt-1">
@@ -595,7 +600,7 @@ const Card: React.FC<CardProps> = ({
                 setAddNew(false);
               }}
             >
-              Cancel
+              {t('cancel', { ns: 'common' })}
             </ButtonPrimary>
             <ButtonPrimary
               ClassName="w-[48%]"
@@ -604,7 +609,7 @@ const Card: React.FC<CardProps> = ({
                 setAddNew(false);
               }}
             >
-              Save
+              {t('save', { ns: 'common' })}
             </ButtonPrimary>
           </div>
         </div>
@@ -662,8 +667,12 @@ const Card: React.FC<CardProps> = ({
                           >
                             {CATEGORY_ORDER.map((key) => (
                               <option key={key} value={key}>
-                                {ISSUE_CATEGORY_STYLES[key]?.label ??
-                                  DEFAULT_CATEGORY_LABELS[key]}
+                                {String(
+                                  uiText(
+                                    ISSUE_CATEGORY_STYLES[key]?.label ??
+                                      DEFAULT_CATEGORY_LABELS[key],
+                                  ),
+                                )}
                               </option>
                             ))}
                           </select>
@@ -688,7 +697,7 @@ const Card: React.FC<CardProps> = ({
                         {currentIndex === index ? (
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-[#909090]">
-                              Delete this issue?
+                              {t('deleteThisIssue')}
                             </span>
                             <img
                               className="size-5 cursor-pointer"
@@ -717,7 +726,7 @@ const Card: React.FC<CardProps> = ({
                               src="/icons/trash-red.svg"
                               alt="Delete"
                             />
-                            Remove
+                            {t('remove')}
                           </button>
                         )}
                       </div>
@@ -795,9 +804,12 @@ const Card: React.FC<CardProps> = ({
                             className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 ${
                               getIssueCategoryStyle(issueCategories[item]).badge
                             }`}
-                            title={
-                              getIssueCategoryStyle(issueCategories[item]).label
-                            }
+                            title={String(
+                              uiText(
+                                getIssueCategoryStyle(issueCategories[item])
+                                  .label,
+                              ),
+                            )}
                           >
                             <span
                               className={`size-2.5 rounded-full ${
@@ -805,10 +817,12 @@ const Card: React.FC<CardProps> = ({
                               }`}
                             ></span>
                             <span className="text-[11px] font-semibold text-Primary-DeepTeal">
-                              {
-                                getIssueCategoryStyle(issueCategories[item])
-                                  .shortLabel
-                              }
+                              {String(
+                                uiText(
+                                  getIssueCategoryStyle(issueCategories[item])
+                                    .shortLabel,
+                                ),
+                              )}
                             </span>
                           </div>
                           {isFormulaIssue?.(item) ? (

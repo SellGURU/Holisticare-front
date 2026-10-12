@@ -112,16 +112,22 @@ export const PopUpChat = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, x: 60 }}
+          initial={{
+            opacity: 0,
+            x: document.documentElement.dir === 'rtl' ? -60 : 60,
+          }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 60 }}
+          exit={{
+            opacity: 0,
+            x: document.documentElement.dir === 'rtl' ? -60 : 60,
+          }}
           transition={{
             type: 'spring',
             stiffness: 250,
             damping: 25,
             duration: 0.8,
           }}
-          className="w-[315px] h-[438px] bg-white border border-Gray-50 z-50 p-4 pb-0 absolute bottom-0 right-16 rounded-2xl space-y-6 shadow-lg"
+          className="w-[315px] h-[438px] bg-white border border-Gray-50 z-50 p-4 pb-0 absolute bottom-0 end-16 rounded-2xl space-y-6 shadow-lg"
         >
           <h1 className={'TextStyle-Headline-6 text-Text-Primary'}>Copilot</h1>
           <div

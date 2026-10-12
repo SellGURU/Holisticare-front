@@ -324,7 +324,7 @@ const CompileButton: FC<CompileButtonProps> = ({
             publish('healthPlanProcessingComplete', {
               member_id: Number(id),
             });
-            publish('syncReport', { silent: true });
+            publish('syncReport', { silent: true, fullReload: true });
             checkRefrashData();
           }
         })
@@ -428,6 +428,7 @@ const CompileButton: FC<CompileButtonProps> = ({
         checkRefrashData();
         publish('syncReport', {
           silent: true,
+          fullReload: true,
         });
       }
     }
