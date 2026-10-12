@@ -169,6 +169,88 @@ export function pruneOptionScores(
   return next;
 }
 
+export type MissingScoringCatalogBiomarker = {
+  ruleIndex: number;
+  ruleName: string;
+  mapTo: string;
+  unit: string;
+};
+
+export function scoringRuleCatalogName(
+  rule: Pick<ScoringRuleType, 'map_to_biomarker' | 'name'> | undefined,
+): string {
+  if (!rule) return '';
+  return String(rule.map_to_biomarker || rule.name || '').trim();
+}
+
+export function missingScoringCatalogBiomarkers(
+  scoring: Array<ScoringRuleType> | undefined,
+  catalog: Array<FormCatalogItem>,
+): MissingScoringCatalogBiomarker[] {
+  const catalogNames = new Set(
+    catalog
+      .map((item) =>
+        String(item?.name || '')
+          .trim()
+          .toLowerCase(),
+      )
+      .filter(Boolean),
+  );
+  const missing: MissingScoringCatalogBiomarker[] = [];
+  const seen = new Set<string>();
+  (scoring || []).forEach((rule, ruleIndex) => {
+    if (!rule || rule.is_biomarker === false) return;
+    const mapTo = scoringRuleCatalogName(rule);
+    if (!mapTo) return;
+    const key = mapTo.toLowerCase();
+    if (catalogNames.has(key) || seen.has(key)) return;
+    seen.add(key);
+    missing.push({
+      ruleIndex,
+      ruleName: String(rule.name || '').trim() || mapTo,
+      mapTo,
+      unit: String(rule.unit || '').trim(),
+    });
+  });
+  return missing;
+}
+
+export function buildScoringBiomarkerAddUrl(
+  missing: Array<Pick<MissingScoringCatalogBiomarker, 'mapTo' | 'unit'>>,
+): string {
+  const params = new URLSearchParams();
+  missing.forEach((item) => {
+    const name = String(item.mapTo || '').trim();
+    if (!name) return;
+    params.append('addNames', name);
+    params.append('units', String(item.unit || '').trim());
+  });
+  const query = params.toString();
+  return query ? `/biomarkers?${query}` : '/biomarkers';
+}
+
+export function isUnrecognizedCatalogBiomarkerError(message: string): boolean {
+  const text = String(message || '').toLowerCase();
+  return (
+    text.includes('not recognized by the system') ||
+    (text.includes('scoring rule') && text.includes('biomarker'))
+  );
+}
+
+export function parseScoringBiomarkerAddParams(
+  searchParams: URLSearchParams,
+): Array<{ name: string; unit: string }> {
+  const names = searchParams
+    .getAll('addNames')
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const units = searchParams.getAll('units');
+  return names.map((name, index) => ({
+    name,
+    unit: String(units[index] || '').trim(),
+  }));
+}
+
 export function mapClinicCatalog(raw: unknown): Array<FormCatalogItem> {
   const rows = Array.isArray(raw)
     ? raw
