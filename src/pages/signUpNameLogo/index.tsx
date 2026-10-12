@@ -8,7 +8,7 @@ import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import { ContentLocalePicker } from '../../i18n/ContentLocalePicker';
 import { applyUiLocale, storedPortalUiLocale } from '../../i18n';
-import { LocaleSelectFields } from '../../i18n/LocaleSelectFields';
+import { PortalLocalePicker } from '../../i18n/PortalLocalePicker';
 import { useLocalePreferences } from '../../i18n/LocalePreferencesContext';
 import { blobToBase64 } from '../../help';
 
@@ -138,33 +138,6 @@ const SignUpNameLogo = () => {
             name and logo — you can always change them later.
           </div>
 
-          <div className="w-full max-w-[300px] mt-4 space-y-4 text-left">
-            <div>
-              <p className="text-xs font-medium mb-2">
-                {t('portalLanguageTitle')}
-              </p>
-              <LocaleSelectFields
-                locale={portalLocale}
-                onLocaleChange={setPortalLocale}
-                idPrefix="register-portal"
-                stacked
-              />
-            </div>
-            <div>
-              <p className="text-xs font-medium mb-1">
-                {t('contentLanguageTitle')}
-              </p>
-              <p className="text-[10px] text-[#888888] mb-2">
-                {t('contentLanguageHelp')}
-              </p>
-              <ContentLocalePicker
-                locale={contentLocale}
-                onLocaleChange={setContentLocale}
-                id="register-content-locale"
-              />
-            </div>
-          </div>
-
           <div className="flex flex-col mt-4 w-full max-w-[300px]">
             <div className="text-Text-Primary font-medium text-xs mb-2">
               Clinic Name
@@ -199,6 +172,7 @@ const SignUpNameLogo = () => {
               )}
             </div>
           </div>
+
           <div
             className={`w-full max-w-[300px] mt-2 ${selectedFiles.length > 0 ? 'flex flex-col items-center justify-center' : ''}`}
           >
@@ -257,6 +231,33 @@ const SignUpNameLogo = () => {
                 {errorLogo}
               </div>
             )}
+          </div>
+
+          <div className="w-full max-w-[300px] mt-4 space-y-4 text-left">
+            <div>
+              <p className="text-xs font-medium mb-2">
+                {t('portalLanguageTitle')}
+              </p>
+              <PortalLocalePicker
+                locale={portalLocale}
+                onLocaleChange={setPortalLocale}
+                id="register-portal-locale"
+                showLabel={false}
+              />
+            </div>
+            <div>
+              <p className="text-xs font-medium mb-1">
+                {t('contentLanguageTitle')}
+              </p>
+              <p className="text-[10px] text-[#888888] mb-2">
+                {t('contentLanguageHelp')}
+              </p>
+              <ContentLocalePicker
+                locale={contentLocale}
+                onLocaleChange={setContentLocale}
+                id="register-content-locale"
+              />
+            </div>
           </div>
         </div>
         <div className="shrink-0 border-t border-Gray-50 bg-white/95 px-6 py-4 flex justify-center">

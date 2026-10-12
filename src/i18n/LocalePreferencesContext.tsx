@@ -8,7 +8,7 @@ import {
 } from 'react';
 
 import Application from '../api/app';
-import { applyUiLocale } from './index';
+import { applyUiLocale, CLINIC_LOCALE_STORAGE_KEY } from './index';
 
 export type LocalePreferencesState = {
   portal_ui_locale: string | null;
@@ -65,6 +65,13 @@ export function LocalePreferencesProvider({
       });
       if (portal) {
         await applyUiLocale(portal);
+      }
+      try {
+        if (content) {
+          window.localStorage.setItem(CLINIC_LOCALE_STORAGE_KEY, content);
+        }
+      } catch {
+        // The server remains authoritative for clinic content language.
       }
     } catch {
       setState((prev) => ({ ...prev, loading: false }));

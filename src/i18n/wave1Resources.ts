@@ -105,10 +105,11 @@ const settings = {
     portalLanguageTitle: 'Idioma del portal',
     portalLanguageHelp:
       'Menús, botones y diseño de su cuenta en este dispositivo.',
-    contentLanguageTitle: 'Idioma de IA e informes (clínica)',
+    contentLanguageTitle: 'Idioma del plan de salud',
     contentLanguageHelp:
       'Los informes, planes de salud y texto de IA nuevos usan este idioma. Vuelva a puntuar o regenerar tras cambiarlo.',
-    contentLocaleField: 'Idioma y formato regional',
+    contentLocaleField: 'Plan de salud',
+    portalLocaleField: 'Idioma y formato regional',
     language: 'Idioma',
     region: 'Formato regional',
     save: 'Guardar idioma',
@@ -149,10 +150,11 @@ const settings = {
     portalLanguageTitle: 'Langue du portail',
     portalLanguageHelp:
       'Menus, boutons et mise en page pour votre compte sur cet appareil.',
-    contentLanguageTitle: "Langue d'IA et des rapports (clinique)",
+    contentLanguageTitle: 'Langue du plan de santé',
     contentLanguageHelp:
       'Les nouveaux rapports, plans de santé et textes IA utilisent cette langue. Rescorez ou régénérez après modification.',
-    contentLocaleField: 'Langue et format régional',
+    contentLocaleField: 'Plan de santé',
+    portalLocaleField: 'Langue et format régional',
     language: 'Langue',
     region: 'Format régional',
     save: 'Enregistrer la langue',
@@ -192,10 +194,11 @@ const settings = {
     languageAndRegion: 'اللغة والمنطقة',
     portalLanguageTitle: 'لغة البوابة',
     portalLanguageHelp: 'القوائم والأزرار والتخطيط لحسابك على هذا الجهاز.',
-    contentLanguageTitle: 'لغة الذكاء الاصطناعي والتقارير (العيادة)',
+    contentLanguageTitle: 'لغة خطة الصحة',
     contentLanguageHelp:
       'التقارير وخطط الصحة والنصوص المولَّدة تستخدم هذه اللغة. أعد التقييم أو التوليد بعد التغيير.',
-    contentLocaleField: 'اللغة والتنسيق الإقليمي',
+    contentLocaleField: 'خطة الصحة',
+    portalLocaleField: 'اللغة والتنسيق الإقليمي',
     language: 'اللغة',
     region: 'التنسيق الإقليمي',
     save: 'حفظ اللغة',

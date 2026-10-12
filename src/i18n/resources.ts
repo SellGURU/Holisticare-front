@@ -66,10 +66,11 @@ export const englishResources = {
     portalLanguageTitle: 'Portal language',
     portalLanguageHelp:
       'Menus, buttons, and layout for your account on this device.',
-    contentLanguageTitle: 'AI and report language (clinic)',
+    contentLanguageTitle: 'Health plan language',
     contentLanguageHelp:
       'New reports, health plans, and AI-generated text use this language. Rescore or regenerate after you change it; existing stored text is not rewritten.',
-    contentLocaleField: 'Language and regional format',
+    contentLocaleField: 'Health plan',
+    portalLocaleField: 'Language and regional format',
     language: 'Language',
     region: 'Regional format',
     save: 'Save language',

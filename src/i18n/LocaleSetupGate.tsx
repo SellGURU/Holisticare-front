@@ -6,7 +6,7 @@ import { ButtonPrimary } from '../Components/Button/ButtonPrimary';
 import SpinnerLoader from '../Components/SpinnerLoader';
 import { useApp } from '../hooks';
 import { ContentLocalePicker } from './ContentLocalePicker';
-import { LocaleSelectFields } from './LocaleSelectFields';
+import { PortalLocalePicker } from './PortalLocalePicker';
 import { useLocalePreferences } from './LocalePreferencesContext';
 import { storedPortalUiLocale } from './index';
 
@@ -55,10 +55,11 @@ export function LocaleSetupGate() {
         <p className="text-xs text-[#888888] mt-2 mb-4">{t('setupIntro')}</p>
 
         <p className="text-xs font-medium mb-2">{t('portalLanguageTitle')}</p>
-        <LocaleSelectFields
+        <PortalLocalePicker
           locale={portalLocale}
           onLocaleChange={setPortalLocale}
-          idPrefix="setup-portal"
+          id="setup-portal-locale"
+          showLabel={false}
         />
 
         {showContentPicker && (

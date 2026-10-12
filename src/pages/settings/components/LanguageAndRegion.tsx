@@ -7,7 +7,7 @@ import Circleloader from '../../../Components/CircleLoader';
 import SpinnerLoader from '../../../Components/SpinnerLoader';
 import { useLocalePreferences } from '../../../i18n/LocalePreferencesContext';
 import { ContentLocalePicker } from '../../../i18n/ContentLocalePicker';
-import { LocaleSelectFields } from '../../../i18n/LocaleSelectFields';
+import { PortalLocalePicker } from '../../../i18n/PortalLocalePicker';
 import { storedPortalUiLocale } from '../../../i18n';
 
 export function LanguageAndRegion() {
@@ -85,10 +85,11 @@ export function LanguageAndRegion() {
         <p className="text-[10px] text-[#888888] my-4">
           {t('portalLanguageHelp')}
         </p>
-        <LocaleSelectFields
+        <PortalLocalePicker
           locale={portalLocale}
           onLocaleChange={selectPortalLocale}
-          idPrefix="portal"
+          id="portal-locale"
+          showLabel={false}
         />
         <div className="flex justify-end mt-6">
           <ButtonPrimary

@@ -45,10 +45,11 @@ export const faResources = {
     languageAndRegion: 'زبان و منطقه',
     portalLanguageTitle: 'زبان پورتال',
     portalLanguageHelp: 'منوها، دکمه‌ها و چیدمان برای حساب شما در این دستگاه.',
-    contentLanguageTitle: 'زبان هوش مصنوعی و گزارش (کلینیک)',
+    contentLanguageTitle: 'زبان برنامه سلامت',
     contentLanguageHelp:
       'گزارش‌ها، برنامه سلامت و متن تولیدی AI از این زبان استفاده می‌کنند. پس از تغییر، rescore یا regenerate کنید؛ متن ذخیره‌شده خودکار عوض نمی‌شود.',
-    contentLocaleField: 'زبان و قالب منطقه‌ای',
+    contentLocaleField: 'برنامه سلامت',
+    portalLocaleField: 'زبان و قالب منطقه‌ای',
     language: 'زبان',
     region: 'قالب منطقه‌ای',
     save: 'ذخیره زبان',

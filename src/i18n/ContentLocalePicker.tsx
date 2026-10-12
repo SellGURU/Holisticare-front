@@ -1,44 +1,18 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import Select, { type StylesConfig } from 'react-select';
+import Select from 'react-select';
 
 import {
   contentLocaleOptions,
   normalizeContentLocaleSelection,
   type ContentLocaleOption,
 } from './contentLocaleCatalog';
+import { localePickerStyles } from './localePickerStyles';
 
 type ContentLocalePickerProps = {
   locale: string;
   onLocaleChange: (next: string) => void;
   id?: string;
-};
-
-const selectStyles: StylesConfig<ContentLocaleOption, false> = {
-  control: (base) => ({
-    ...base,
-    borderRadius: '1rem',
-    borderColor: '#E8E8E8',
-    backgroundColor: '#FDFDFD',
-    minHeight: '40px',
-    boxShadow: 'none',
-    '&:hover': { borderColor: '#E8E8E8' },
-  }),
-  menu: (base) => ({
-    ...base,
-    borderRadius: '1rem',
-    zIndex: 20,
-  }),
-  option: (base, state) => ({
-    ...base,
-    fontSize: '0.875rem',
-    backgroundColor: state.isSelected
-      ? '#005F73'
-      : state.isFocused
-        ? '#F0F4F5'
-        : undefined,
-    color: state.isSelected ? '#fff' : undefined,
-  }),
 };
 
 export function ContentLocalePicker({
@@ -55,6 +29,7 @@ export function ContentLocalePicker({
   const value = normalizeContentLocaleSelection(locale);
   const selected =
     options.find((opt) => opt.value === value) ?? options[0] ?? null;
+  const styles = localePickerStyles<ContentLocaleOption>();
 
   return (
     <label
@@ -68,7 +43,7 @@ export function ContentLocalePicker({
         isSearchable
         options={options}
         value={selected}
-        styles={selectStyles}
+        styles={styles}
         filterOption={(candidate, input) => {
           if (!input) return true;
           const hay =
