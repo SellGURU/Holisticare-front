@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useApp } from '../../../hooks';
-import { localeSelectorEnabled } from '../../../i18n';
 import { navKey } from '../../../i18n/wave1Resources';
 
 type SidebarProps = {
@@ -18,7 +17,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { t } = useTranslation(['settings', 'nav']);
   const { accountRole } = useApp();
-  const showLanguage = localeSelectorEnabled();
   const isAdmin =
     String(accountRole || '')
       .trim()
@@ -37,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         },
         {
           title: 'Language & Region',
-          isActive: showLanguage,
+          isActive: true,
         },
         {
           title: 'Change Password',
@@ -65,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         },
       ],
     }),
-    [isAdmin, loginWithGoogle, showLanguage],
+    [isAdmin, loginWithGoogle],
   );
   const [searchParams, setSearchParams] = useSearchParams();
   const handleMenuClick = (item: string) => {

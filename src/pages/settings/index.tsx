@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import Sidebar from './components/SideBar';
 import { LanguageAndRegion } from './components/LanguageAndRegion';
-import { localeSelectorEnabled } from '../../i18n';
 import { navKey } from '../../i18n/wave1Resources';
 import SearchBox from '../../Components/SearchBox';
 import { Zappier } from './components/Zappier';
@@ -18,7 +17,6 @@ import { useApp } from '../../hooks';
 const Setting: React.FC = () => {
   const { t } = useTranslation(['settings', 'nav']);
   const { accountRole } = useApp();
-  const showLanguage = localeSelectorEnabled();
   const isAdmin =
     String(accountRole || '')
       .trim()
@@ -32,12 +30,12 @@ const Setting: React.FC = () => {
       { title: 'Clinic Profile', isActive: isAdmin },
       { title: 'Notifications', isActive: isAdmin },
       { title: 'Clinic Preferences', isActive: true },
-      { title: 'Language & Region', isActive: showLanguage },
+      { title: 'Language & Region', isActive: true },
       { title: 'Change Password', isActive: loginWithGoogle === false },
       { title: 'Privacy', isActive: true },
     ];
     return items.filter((item) => item.isActive);
-  }, [isAdmin, loginWithGoogle, showLanguage]);
+  }, [isAdmin, loginWithGoogle]);
 
   const getShowBrandInfo = () => {
     fetchBrandInfo()
@@ -79,7 +77,7 @@ const Setting: React.FC = () => {
       case 'Clinic Preferences':
         return <ClinicPreferences />;
       case 'Language & Region':
-        return showLanguage ? <LanguageAndRegion /> : <ClinicPreferences />;
+        return <LanguageAndRegion />;
       case 'Notifications':
         return isAdmin ? <ClinicNotifications /> : <ClinicPreferences />;
       case 'Zapier':
