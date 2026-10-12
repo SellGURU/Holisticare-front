@@ -50,6 +50,7 @@ export function phraseLanguage(
   return 'en';
 }
 
+export function uiText<T>(value: T): T extends string ? string : T;
 export function uiText(value: unknown): unknown {
   if (typeof value !== 'string') return value;
   const key = value.replace(/\s+/g, ' ').trim();

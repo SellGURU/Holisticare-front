@@ -112,7 +112,6 @@ interface ClientCardProps {
 
 const ClientCard: FC<ClientCardProps> = ({
   client,
-  indexItem,
   ondelete,
   onarchive,
   onToggleHighPriority,
