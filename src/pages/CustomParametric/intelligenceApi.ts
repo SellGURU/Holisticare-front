@@ -76,17 +76,67 @@ export function mapFormulaOptions(raw: any): IntelligenceFormulaOptions {
   };
 }
 
+const CATALOG_ID_SEP = '\u001f';
+
+function catalogSearchText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+/** Match every typed word against name, unit, and category. */
+export function filterCatalogBiomarkers<T extends ClinicBiomarkerOption>(
+  items: T[],
+  query: string,
+): T[] {
+  const terms = catalogSearchText(query).split(' ').filter(Boolean);
+  if (!terms.length) return items;
+  return items.filter((item) => {
+    const hay = catalogSearchText(
+      [item.name, item.unit, item.benchmark_area].filter(Boolean).join(' '),
+    );
+    return terms.every((term) => hay.includes(term));
+  });
+}
+
+/** Real biomarker_uid, or a stable name/unit/category id when the catalog row has none. */
+export function catalogSelectionId(item: {
+  biomarker_uid?: string | null;
+  name?: string;
+  unit?: string;
+  benchmark_area?: string;
+}): string {
+  const uid = String(item.biomarker_uid || '').trim();
+  if (uid) return uid;
+  return [
+    'catalog',
+    item.name || '',
+    item.unit || '',
+    item.benchmark_area || '',
+  ].join(CATALOG_ID_SEP);
+}
+
 export function mapCatalogRows(rows: any[]): ClinicBiomarkerOption[] {
   const mapped = rows
     .map((item) => {
       const name = String(item?.Biomarker || item?.name || '').trim();
       if (!name) return null;
+      const unit = String(item?.unit || '').trim();
+      const benchmarkArea = String(
+        item?.['Benchmark areas'] || item?.benchmark_area || '',
+      ).trim();
       const uid = String(item?.biomarker_uid || '').trim();
       return {
-        biomarker_uid: uid || null,
+        biomarker_uid: catalogSelectionId({
+          biomarker_uid: uid || null,
+          name,
+          unit,
+          benchmark_area: benchmarkArea,
+        }),
         name,
-        unit: item?.unit || '',
-        benchmark_area: item?.['Benchmark areas'] || item?.benchmark_area || '',
+        unit,
+        benchmark_area: benchmarkArea,
         has_parametric: Boolean(item?.has_parametric),
         selectable: item?.selectable !== false,
         is_enabled: item?.is_enabled !== false,

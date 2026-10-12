@@ -3,6 +3,7 @@ import AdminApi from '../../api/admin';
 import {
   adminIntelligenceApi,
   clinicIntelligenceApi,
+  filterCatalogBiomarkers,
   mapCatalogRows,
   mapFormulaOptions,
 } from './intelligenceApi';
@@ -70,6 +71,52 @@ describe('mapCatalogRows', () => {
     ]);
     expect(rows.map((row) => row.name)).toEqual(['Glucose', 'Hb A1c']);
     expect(rows[1].biomarker_uid).toBe('u1');
+  });
+
+  it('gives each row without a uid its own selectable id', () => {
+    const rows = mapCatalogRows([
+      {
+        Biomarker: 'Fat',
+        unit: '/HPF',
+        'Benchmark areas': 'Urine Test Parameters',
+      },
+      {
+        Biomarker: 'Fat Intake',
+        unit: 'g',
+        'Benchmark areas': 'Nutrition',
+      },
+      { Biomarker: 'Hb A1c', biomarker_uid: 'u1', unit: '%' },
+    ]);
+    const fat = rows.find((row) => row.name === 'Fat');
+    const intake = rows.find((row) => row.name === 'Fat Intake');
+    expect(fat?.biomarker_uid).toBeTruthy();
+    expect(intake?.biomarker_uid).toBeTruthy();
+    expect(fat?.biomarker_uid).not.toBe(intake?.biomarker_uid);
+    expect(rows.find((row) => row.name === 'Hb A1c')?.biomarker_uid).toBe(
+      'u1',
+    );
+  });
+
+  it('finds Body Mass Index when the query is body mass', () => {
+    const rows = mapCatalogRows([
+      {
+        Biomarker: '25 OH Vitamin D',
+        unit: 'nmol/L',
+        'Benchmark areas': 'Vitamins',
+      },
+      {
+        Biomarker: 'Body Mass Index',
+        unit: 'kg/m2',
+        'Benchmark areas': 'Body Composition',
+      },
+      {
+        Biomarker: 'Accumulated Steps',
+        unit: '',
+        'Benchmark areas': 'Activity',
+      },
+    ]);
+    const matches = filterCatalogBiomarkers(rows, 'body mass');
+    expect(matches.map((row) => row.name)).toEqual(['Body Mass Index']);
   });
 });
 

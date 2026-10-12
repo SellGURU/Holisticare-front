@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { invalidate } from '../../utils/pageCache';
 import CatalogBiomarkerPicker from './CatalogBiomarkerPicker';
 import {
+  catalogSelectionId,
   getDefaultIntelligenceApi,
   type IntelligenceApi,
 } from './intelligenceApi';
@@ -78,7 +79,7 @@ export default function ParametricEditorModal({
 
   const pickerItems = useMemo(() => {
     return catalog.map((item) => {
-      const itemUid = item.biomarker_uid || '';
+      const itemUid = catalogSelectionId(item);
       const alreadyAttached =
         attachedSet.has(itemUid) &&
         itemUid !== (domain?.catalogBiomarkerUid || '');
@@ -90,7 +91,9 @@ export default function ParametricEditorModal({
     });
   }, [catalog, attachedSet, domain?.catalogBiomarkerUid]);
 
-  const selected = pickerItems.find((item) => item.biomarker_uid === uid);
+  const selected = pickerItems.find(
+    (item) => catalogSelectionId(item) === uid,
+  );
   const formulaInvalid = formulaHasUnknownBiomarkers(
     formulaCode,
     catalog.map((item) => item.name),
