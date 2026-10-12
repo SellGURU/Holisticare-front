@@ -25,11 +25,7 @@ import {
   HEALTH_PLAN_TTL_MS,
 } from '../../utils/cacheKeys';
 import { visibilityPollMs } from '../../utils/visibilityPoll';
-import { useVisibilityAwarePoll } from '../../hooks/useVisibilityAwarePoll';
-import {
-  CHAT_PRESENCE_HEARTBEAT_MS,
-  unreadPollIntervalMs,
-} from './components/chatMessageUtils';
+import { unreadPollIntervalMs } from './components/chatMessageUtils';
 
 // import { Tooltip } from 'react-tooltip';
 interface ComboBarProps {
@@ -237,14 +233,6 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     };
   }, [id, chatOpen]);
 
-  useVisibilityAwarePoll(
-    () => {
-      void Application.chatPresenceHeartbeat().catch(() => {});
-    },
-    CHAT_PRESENCE_HEARTBEAT_MS,
-    true,
-    { immediate: true },
-  );
   const handleCloseSlideOutPanel = () => {
     if (isSlideOutPanel && isUploading) {
       publish('isuploadingBackGround', {

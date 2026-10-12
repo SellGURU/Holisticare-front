@@ -6,6 +6,7 @@ import {
   canDeleteChatMessage,
   canReactToChatMessage,
   canSendChatText,
+  CHAT_PRESENCE_HEARTBEAT_MS,
   findMessageByConversationId,
   groupMessagesByDay,
   livePollAddedMessages,
@@ -193,6 +194,11 @@ describe('canReactToChatMessage', () => {
 });
 
 describe('chat presence', () => {
+  it('keeps heartbeat below the 3-minute online window', () => {
+    expect(CHAT_PRESENCE_HEARTBEAT_MS).toBe(45000);
+    expect(CHAT_PRESENCE_HEARTBEAT_MS).toBeLessThan(180000);
+  });
+
   it('reads both sides from a history page', () => {
     expect(
       presenceFromHistoryResponse({
