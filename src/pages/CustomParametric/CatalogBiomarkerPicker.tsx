@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Search } from 'lucide-react';
-import {
-  catalogSelectionId,
-  filterCatalogBiomarkers,
-} from './intelligenceApi';
+import { catalogSelectionId, filterCatalogBiomarkers } from './intelligenceApi';
 import type { ClinicBiomarkerOption } from './types';
 
 interface CatalogBiomarkerPickerProps {

@@ -92,9 +92,7 @@ describe('mapCatalogRows', () => {
     expect(fat?.biomarker_uid).toBeTruthy();
     expect(intake?.biomarker_uid).toBeTruthy();
     expect(fat?.biomarker_uid).not.toBe(intake?.biomarker_uid);
-    expect(rows.find((row) => row.name === 'Hb A1c')?.biomarker_uid).toBe(
-      'u1',
-    );
+    expect(rows.find((row) => row.name === 'Hb A1c')?.biomarker_uid).toBe('u1');
   });
 
   it('finds Body Mass Index when the query is body mass', () => {

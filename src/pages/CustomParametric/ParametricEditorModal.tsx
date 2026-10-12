@@ -91,9 +91,7 @@ export default function ParametricEditorModal({
     });
   }, [catalog, attachedSet, domain?.catalogBiomarkerUid]);
 
-  const selected = pickerItems.find(
-    (item) => catalogSelectionId(item) === uid,
-  );
+  const selected = pickerItems.find((item) => catalogSelectionId(item) === uid);
   const formulaInvalid = formulaHasUnknownBiomarkers(
     formulaCode,
     catalog.map((item) => item.name),
