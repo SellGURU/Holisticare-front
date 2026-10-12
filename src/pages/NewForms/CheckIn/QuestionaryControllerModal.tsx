@@ -418,7 +418,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
               if (
                 current.some(
                   (item) =>
-                    item.name.trim().toLowerCase() === name.trim().toLowerCase(),
+                    item.name.trim().toLowerCase() ===
+                    name.trim().toLowerCase(),
                 )
               ) {
                 return current;

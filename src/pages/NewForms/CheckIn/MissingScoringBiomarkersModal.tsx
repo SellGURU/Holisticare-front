@@ -25,9 +25,13 @@ const itemKey = (item: MissingScoringCatalogBiomarker) =>
 const catalogRows = (raw: unknown): any[] => {
   if (Array.isArray(raw)) return raw;
   if (raw && typeof raw === 'object') {
-    const record = raw as { chart_bounds?: unknown; configs?: { more_info?: unknown } };
+    const record = raw as {
+      chart_bounds?: unknown;
+      configs?: { more_info?: unknown };
+    };
     if (Array.isArray(record.chart_bounds)) return record.chart_bounds;
-    if (Array.isArray(record.configs?.more_info)) return record.configs.more_info;
+    if (Array.isArray(record.configs?.more_info))
+      return record.configs.more_info;
   }
   return [];
 };
@@ -220,7 +224,9 @@ const MissingScoringBiomarkersModal: FC<MissingScoringBiomarkersModalProps> = ({
                   )}
                 </div>
                 {rowErrors[key] ? (
-                  <div className="mt-1 text-[10px] text-Red">{rowErrors[key]}</div>
+                  <div className="mt-1 text-[10px] text-Red">
+                    {rowErrors[key]}
+                  </div>
                 ) : null}
               </li>
             );

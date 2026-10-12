@@ -117,10 +117,7 @@ const CustomBiomarkers = () => {
   const clearQueuedAdds = () => {
     setQueuedAdds([]);
     appliedQueueKeyRef.current = '';
-    if (
-      searchParams.has('addNames') ||
-      searchParams.has('units')
-    ) {
+    if (searchParams.has('addNames') || searchParams.has('units')) {
       const next = new URLSearchParams(searchParams);
       next.delete('addNames');
       next.delete('units');

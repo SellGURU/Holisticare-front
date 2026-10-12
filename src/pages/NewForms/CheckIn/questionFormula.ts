@@ -189,7 +189,11 @@ export function missingScoringCatalogBiomarkers(
 ): MissingScoringCatalogBiomarker[] {
   const catalogNames = new Set(
     catalog
-      .map((item) => String(item?.name || '').trim().toLowerCase())
+      .map((item) =>
+        String(item?.name || '')
+          .trim()
+          .toLowerCase(),
+      )
       .filter(Boolean),
   );
   const missing: MissingScoringCatalogBiomarker[] = [];
