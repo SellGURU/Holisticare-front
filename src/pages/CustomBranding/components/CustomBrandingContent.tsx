@@ -58,16 +58,6 @@ const CustomBrandingContent = () => {
   const handleDeleteImage = () => {
     updateCustomTheme('selectedImage', null);
   };
-  const handleCoachImageUpload = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      blobToBase64(file).then((resolve: any) => {
-        updateCustomTheme('coachPhoto', resolve);
-      });
-    }
-  };
   const handleDeleteCoachImage = () => {
     updateCustomTheme('coachPhoto', null);
   };
@@ -238,7 +228,6 @@ const CustomBrandingContent = () => {
           handleResetTheme={handleResetTheme}
           updateCustomTheme={updateCustomTheme}
           handleDeleteImage={handleDeleteImage}
-          handleCoachImageUpload={handleCoachImageUpload}
           handleDeleteCoachImage={handleDeleteCoachImage}
           onSave={onSave}
           loading={loading}
