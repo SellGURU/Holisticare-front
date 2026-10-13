@@ -13,7 +13,12 @@ export function filenameFromContentDisposition(
   } catch {
     candidate = plain || fallback;
   }
-  return candidate.split(/[\\/]/).pop()?.replace(/[\r\n"]/g, '_') || fallback;
+  return (
+    candidate
+      .split(/[\\/]/)
+      .pop()
+      ?.replace(/[\r\n"]/g, '_') || fallback
+  );
 }
 
 export async function responseBlob(data: unknown): Promise<Blob> {

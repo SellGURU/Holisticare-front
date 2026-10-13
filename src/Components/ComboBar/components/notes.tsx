@@ -105,10 +105,7 @@ export const Notes = () => {
         setLoading(false);
       });
   };
-  const handleAttachmentDownload = async (
-    noteId: string,
-    fileName: string,
-  ) => {
+  const handleAttachmentDownload = async (noteId: string, fileName: string) => {
     if (!id || downloadingNoteId) return;
     setDownloadingNoteId(noteId);
     setDownloadError(null);
