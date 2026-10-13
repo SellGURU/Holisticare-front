@@ -46,6 +46,15 @@ describe('shouldShowLocaleSetup', () => {
     ).toBe(false);
   });
 
+  it('stays closed on the platform admin login and admin pages', () => {
+    expect(
+      shouldShowLocaleSetup({ ...readyAdmin, pathname: '/admin/login' }),
+    ).toBe(false);
+    expect(
+      shouldShowLocaleSetup({ ...readyAdmin, pathname: '/admin/overview' }),
+    ).toBe(false);
+  });
+
   it('stays closed on public questionnaire, check-in, and survey links', () => {
     expect(
       shouldShowLocaleSetup({

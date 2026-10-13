@@ -7,6 +7,10 @@ function isClientFillPath(pathname: string): boolean {
   return pathname === '/surveys' || pathname.startsWith('/surveys/');
 }
 
+function isPlatformAdminPath(pathname: string): boolean {
+  return pathname === '/admin' || pathname.startsWith('/admin/');
+}
+
 export function shouldShowLocaleSetup(input: {
   loading: boolean;
   preferencesLoaded: boolean;
@@ -21,7 +25,8 @@ export function shouldShowLocaleSetup(input: {
   }
   if (
     input.pathname === '/register-profile' ||
-    isClientFillPath(input.pathname)
+    isClientFillPath(input.pathname) ||
+    isPlatformAdminPath(input.pathname)
   ) {
     return false;
   }
