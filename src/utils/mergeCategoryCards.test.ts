@@ -183,9 +183,9 @@ describe('lab-only category merge', () => {
       client_summary: 'fresh narrative',
     };
 
-    expect(
-      applyClientSummaryCategories(prev, incoming).client_summary,
-    ).toBe('fresh narrative');
+    expect(applyClientSummaryCategories(prev, incoming).client_summary).toBe(
+      'fresh narrative',
+    );
   });
 
   it('does not treat pending empty categories as no findings', () => {
