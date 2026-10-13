@@ -19,7 +19,10 @@ export function shouldShowLocaleSetup(input: {
   if (input.loading || !input.preferencesLoaded || !input.hasToken) {
     return false;
   }
-  if (input.pathname === '/register-profile' || isClientFillPath(input.pathname)) {
+  if (
+    input.pathname === '/register-profile' ||
+    isClientFillPath(input.pathname)
+  ) {
     return false;
   }
   const contentLocaleMissing =
