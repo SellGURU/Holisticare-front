@@ -14,7 +14,7 @@ import { ToastContainer } from 'react-toastify';
 import { runPortalBootGuard } from './utils/bootGuard';
 import { ClinicLocaleSync } from './i18n/ClinicLocaleSync';
 import { LocalePreferencesProvider } from './i18n/LocalePreferencesContext';
-import { LocaleSetupGate } from './i18n/LocaleSetupGate';
+import { LocaleSetupGate } from './i18n/LocaleSetupGate.tsx';
 import { LocaleRoot } from './i18n/LocaleRoot';
 import { i18n, initializeI18n } from './i18n';
 import { I18nextProvider } from 'react-i18next';

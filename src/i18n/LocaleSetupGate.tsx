@@ -8,7 +8,7 @@ import { useApp } from '../hooks';
 import { ContentLocalePicker } from './ContentLocalePicker';
 import { PortalLocalePicker } from './PortalLocalePicker';
 import { useLocalePreferences } from './LocalePreferencesContext';
-import { shouldShowLocaleSetup } from './localeSetupGate';
+import { shouldShowLocaleSetup } from './shouldShowLocaleSetup';
 import { storedPortalUiLocale } from './index';
 
 export function LocaleSetupGate() {

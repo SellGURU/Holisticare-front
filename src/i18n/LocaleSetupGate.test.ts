@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { shouldShowLocaleSetup } from './localeSetupGate';
+import { shouldShowLocaleSetup } from './shouldShowLocaleSetup';
 
 const readyAdmin = {
   loading: false,
