@@ -535,6 +535,17 @@ class Application extends Api {
     const response = this.post(`/questionary_tracking/action_preview`, data);
     return response;
   };
+  static downloadQuestionaryPdf = (data: {
+    member_id: string | number;
+    q_unique_id: string;
+    f_unique_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/action_preview_pdf`, data, {
+      responseType: 'blob',
+      noPending: true,
+      headers: { Accept: 'application/pdf' },
+    });
+  };
   static QuestionaryAction = (data: any) => {
     const response = this.post(
       `/questionary_tracking/action_assign_or_fill`,
@@ -578,6 +589,15 @@ class Application extends Api {
   }) => {
     const response = this.post(`/health_profile/notes/add_notes`, data);
     return response;
+  };
+  static downloadNoteAttachment = (data: {
+    member_id: string | number;
+    note_unique_id: string;
+  }) => {
+    return this.post(`/health_profile/notes/download_attachment`, data, {
+      responseType: 'blob',
+      noPending: true,
+    });
   };
   static getFilleList = (data: any) => {
     const response = this.post(`/patients/get_list_lab_report`, data);

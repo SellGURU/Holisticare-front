@@ -14,6 +14,11 @@ import {
   noteAttachmentFileType,
   validateNoteAttachmentFile,
 } from '../../../utils/expertNoteAttachment';
+import {
+  downloadBlob,
+  filenameFromContentDisposition,
+  responseBlob,
+} from '../../../utils/fileDownload';
 
 const NOTE_EXTRACTION_POLL_MS = 5000;
 
@@ -31,6 +36,10 @@ export const Notes = () => {
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
   const [isSavingNote, setIsSavingNote] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [downloadingNoteId, setDownloadingNoteId] = useState<string | null>(
+    null,
+  );
+  const [downloadError, setDownloadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   // A note is either written text OR an attached file - never both, never
   // neither. See doc/EXPERT_NOTE_FILE_ATTACHMENT_PLAN.md.
@@ -95,6 +104,31 @@ export const Notes = () => {
       .finally(() => {
         setLoading(false);
       });
+  };
+  const handleAttachmentDownload = async (
+    noteId: string,
+    fileName: string,
+  ) => {
+    if (!id || downloadingNoteId) return;
+    setDownloadingNoteId(noteId);
+    setDownloadError(null);
+    try {
+      const response = await Application.downloadNoteAttachment({
+        member_id: id,
+        note_unique_id: noteId,
+      });
+      const blob = await responseBlob(response.data);
+      const resolvedName = filenameFromContentDisposition(
+        response.headers?.['content-disposition'],
+        fileName || 'attachment',
+      );
+      downloadBlob(blob, resolvedName);
+    } catch (error) {
+      console.error('Error downloading note attachment:', error);
+      setDownloadError('Failed to download attachment. Please try again.');
+    } finally {
+      setDownloadingNoteId(null);
+    }
   };
   const handleNoteUpdate = (noteId: string) => {
     if (isDemo) return;
@@ -410,6 +444,9 @@ export const Notes = () => {
           </div>
         </div>
       )}
+      {downloadError && (
+        <div className="mb-2 text-[11px] text-red-500">{downloadError}</div>
+      )}
       <div
         className={`flex w-full justify-center items-center h-[500px] ${data?.length > 6 && 'overflow-y-scroll pr-1'}`}
         style={{
@@ -447,7 +484,18 @@ export const Notes = () => {
                           )}
                           {el.has_attachment && (
                             <div className="flex items-center flex-wrap gap-1.5 mt-1.5">
-                              <div className="flex items-center gap-1.5 px-2 py-1 bg-Primary-DeepTeal/10 border border-Primary-DeepTeal/30 rounded-md">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleAttachmentDownload(
+                                    el.unique_id,
+                                    el.attachment_file_name,
+                                  )
+                                }
+                                disabled={downloadingNoteId !== null}
+                                aria-label={`Download ${el.attachment_file_name || 'attachment'}`}
+                                className="flex items-center gap-1.5 px-2 py-1 bg-Primary-DeepTeal/10 border border-Primary-DeepTeal/30 rounded-md disabled:cursor-wait disabled:opacity-60"
+                              >
                                 <img
                                   className="size-4 shrink-0"
                                   src="/icons/attach-svgrepo-com 1.svg"
@@ -457,9 +505,11 @@ export const Notes = () => {
                                   File:
                                 </span>
                                 <span className="text-[11px] font-medium text-Primary-DeepTeal truncate max-w-[160px]">
-                                  {el.attachment_file_name}
+                                  {downloadingNoteId === el.unique_id
+                                    ? 'Downloading…'
+                                    : el.attachment_file_name}
                                 </span>
-                              </div>
+                              </button>
                               {el.attachment_extraction_status === 'failed' && (
                                 <span
                                   className="text-[10px] text-amber-600"

@@ -1,0 +1,72 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+  downloadBlob,
+  filenameFromContentDisposition,
+  responseBlob,
+} from './fileDownload';
+
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
+
+describe('filenameFromContentDisposition', () => {
+  it('prefers and decodes RFC 5987 filenames', () => {
+    expect(
+      filenameFromContentDisposition(
+        `attachment; filename="fallback.pdf"; filename*=UTF-8''Health%20Form.pdf`,
+        'download.pdf',
+      ),
+    ).toBe('Health Form.pdf');
+  });
+
+  it('removes path components from server filenames', () => {
+    expect(
+      filenameFromContentDisposition(
+        'attachment; filename="../private.txt"',
+        'attachment',
+      ),
+    ).toBe('private.txt');
+  });
+});
+
+describe('responseBlob', () => {
+  it('accepts downloadable blobs', async () => {
+    const blob = new Blob(['file'], { type: 'application/pdf' });
+    await expect(responseBlob(blob)).resolves.toBe(blob);
+  });
+
+  it('uses a JSON error detail', async () => {
+    const blob = new Blob([JSON.stringify({ detail: 'Not allowed' })], {
+      type: 'application/json',
+    });
+    await expect(responseBlob(blob)).rejects.toThrow('Not allowed');
+  });
+});
+
+describe('downloadBlob', () => {
+  it('creates a temporary download link', () => {
+    const click = vi.fn();
+    const link = { href: '', download: '', rel: '', click };
+    const appendChild = vi.fn((node) => node);
+    const removeChild = vi.fn((node) => node);
+    vi.stubGlobal('document', {
+      createElement: vi.fn(() => link),
+      body: { appendChild, removeChild },
+    });
+    const createObjectURL = vi.fn(() => 'blob:test');
+    const revokeObjectURL = vi.fn();
+    vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
+    vi.useFakeTimers();
+
+    downloadBlob(new Blob(['file']), 'note.txt');
+
+    expect(click).toHaveBeenCalledOnce();
+    expect(appendChild).toHaveBeenCalledWith(link);
+    expect(removeChild).toHaveBeenCalledWith(link);
+    expect(link.download).toBe('note.txt');
+    vi.runAllTimers();
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:test');
+  });
+});
