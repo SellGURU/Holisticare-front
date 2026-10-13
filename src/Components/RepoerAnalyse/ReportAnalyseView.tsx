@@ -874,6 +874,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         return;
       }
       if (detail.fullReload === true) {
+        // Compile completion starts a new read generation. Ignore any older
+        // category response that was already in flight before the compile.
+        sourceRefreshGenRef.current += 1;
+        queryTokensRef.current = {};
+        pendingRevisionsRef.current = {};
+        if (resolvedMemberID != null) {
+          invalidateHealthPlanCache(resolvedMemberID);
+        }
         fetchData({ force: true, silent: true });
         return;
       }
@@ -891,7 +899,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return () => {
       unsubscribe('syncReport', handleSyncReport);
     };
-  }, [isHaveReport, location.pathname, location.search, navigate]);
+  }, [
+    isHaveReport,
+    location.pathname,
+    location.search,
+    navigate,
+    resolvedMemberID,
+  ]);
 
   const labDeleteRefreshPendingRef = useRef(false);
 

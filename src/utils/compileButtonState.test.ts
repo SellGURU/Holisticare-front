@@ -33,6 +33,15 @@ describe('resolveCompileButtonState', () => {
     ).toBe('IDLE');
   });
 
+  it('returns Compiled when completed progress rows have not been cleared yet', () => {
+    expect(
+      resolveCompileButtonState({
+        ...idleInput,
+        progressData: [{ category: 'refresh', process_status: true }],
+      }),
+    ).toBe('IDLE');
+  });
+
   it('shows Processing while a questionnaire or file is in flight', () => {
     expect(
       resolveCompileButtonState({

@@ -169,6 +169,25 @@ describe('lab-only category merge', () => {
     expect(next.client_summary).toBe('previous narrative');
   });
 
+  it('applies a fresh summary from a settled legacy response without domain outcomes', () => {
+    const prev = {
+      subcategories: [{ subcategory: 'Blood', num_of_biomarkers: 2 }],
+      client_summary: 'previous narrative',
+    };
+    const incoming = {
+      processing: false,
+      background_processing: false,
+      subcategories: [{ subcategory: 'Blood', num_of_biomarkers: 2 }],
+      total_subcategory: 2,
+      total_category: 1,
+      client_summary: 'fresh narrative',
+    };
+
+    expect(
+      applyClientSummaryCategories(prev, incoming).client_summary,
+    ).toBe('fresh narrative');
+  });
+
   it('does not treat pending empty categories as no findings', () => {
     const prev = {
       subcategories: [{ subcategory: 'Blood', num_of_biomarkers: 2 }],

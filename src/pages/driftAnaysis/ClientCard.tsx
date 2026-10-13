@@ -7,9 +7,9 @@ import { Tooltip } from 'react-tooltip';
 interface ClientCardProps {
   index: number;
   picture?: string;
-  name: string;
-  email: string;
-  status: string;
+  name?: string | null;
+  email?: string | null;
+  status?: string | null;
   tags: string[];
   cardActive: null | number;
   // onClick: () => void;
@@ -29,8 +29,12 @@ export const ClientCard: FC<ClientCardProps> = ({
   isSwitch,
   status,
 }) => {
-  const getStatusStyles = (status: string) => {
-    switch (status.toLowerCase()) {
+  const safeName = String(name || '');
+  const safeEmail = String(email || '');
+  const safeStatus = String(status || '');
+
+  const getStatusStyles = (value: string) => {
+    switch (value.toLowerCase()) {
       case 'normal':
       case 'checked':
         return {
@@ -50,7 +54,7 @@ export const ClientCard: FC<ClientCardProps> = ({
         };
     }
   };
-  const { backgroundColor, ellipseColor } = getStatusStyles(status);
+  const { backgroundColor, ellipseColor } = getStatusStyles(safeStatus);
 
   return (
     <div
@@ -73,26 +77,28 @@ export const ClientCard: FC<ClientCardProps> = ({
             src={
               picture != ''
                 ? picture
-                : `https://ui-avatars.com/api/?name=${name}`
+                : `https://ui-avatars.com/api/?name=${encodeURIComponent(safeName || 'Client')}`
             }
             onError={(e: any) => {
-              e.target.src = `https://ui-avatars.com/api/?name=${name}`; // Set fallback image
+              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(safeName || 'Client')}`; // Set fallback image
             }}
             alt=""
           />
           <div
             className="text-xs font-medium flex flex-col"
-            data-tooltip-id={`tooltip-${name}`}
+            data-tooltip-id={`tooltip-${safeName}`}
           >
-            {name.length > 15 ? name.substring(0, 15) + '...' : name}
+            {safeName.length > 15
+              ? safeName.substring(0, 15) + '...'
+              : safeName}
           </div>
-          {name.length > 15 && (
+          {safeName.length > 15 && (
             <Tooltip
-              id={`tooltip-${name}`}
+              id={`tooltip-${safeName}`}
               place="bottom"
               className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20 break-words"
             >
-              {name}
+              {safeName}
             </Tooltip>
           )}
         </div>
@@ -105,7 +111,7 @@ export const ClientCard: FC<ClientCardProps> = ({
               className="mr-[5px] size-3 rounded-full"
               style={{ backgroundColor: ellipseColor }}
             ></div>
-            {status}
+            {safeStatus}
           </div>
           {/* {tags?.map((tag) => (
             <div
@@ -129,23 +135,25 @@ export const ClientCard: FC<ClientCardProps> = ({
           </span>
           <span
             className="text-[10px] text-Text-Primary font-normal"
-            data-tooltip-id={`tooltip-${email}`}
+            data-tooltip-id={`tooltip-${safeEmail}`}
           >
-            {email.length > 30 ? email.substring(0, 30) + '...' : email}
+            {safeEmail.length > 30
+              ? safeEmail.substring(0, 30) + '...'
+              : safeEmail}
           </span>
-          {email.length > 30 && (
+          {safeEmail.length > 30 && (
             <Tooltip
-              id={`tooltip-${email}`}
+              id={`tooltip-${safeEmail}`}
               place="bottom"
               className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20 break-words"
             >
-              {email}
+              {safeEmail}
             </Tooltip>
           )}
         </div>
         <div className={` ${isSwitch && 'hidden'} flex flex-col gap-4`}>
           <PortalLink
-            to={`/report/${memberID}/${name}`}
+            to={`/report/${memberID}/${encodeURIComponent(safeName)}`}
             className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8 rounded-full p-2 flex items-center justify-center"
           >
             <SvgIcon src="/icons/export.svg" color="#005F73" />

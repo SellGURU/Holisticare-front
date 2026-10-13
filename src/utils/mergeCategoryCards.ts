@@ -92,6 +92,9 @@ export const shouldShowNeedFocusEmptyIllustration = ({
 /** Replace or merge category poll/fetch payloads — never keep stale cards on empty/delete. */
 export const applyClientSummaryCategories = (prev: any, incoming: any): any => {
   const summaryState = incoming?.domain_outcomes?.client_summary?.state;
+  const summaryAuthoritative =
+    isDomainAuthoritative(summaryState) ||
+    (summaryState == null && isOverviewDataSettled(incoming || {}));
   const cardsAuthoritative = shouldApplyCategoryResponse(incoming);
   let next = prev;
 
@@ -107,12 +110,12 @@ export const applyClientSummaryCategories = (prev: any, incoming: any): any => {
     } else {
       next = mergeClientSummaryCategories(prev, incoming);
     }
-    if (!isDomainAuthoritative(summaryState) && prev?.client_summary != null) {
+    if (!summaryAuthoritative && prev?.client_summary != null) {
       next = { ...next, client_summary: prev.client_summary };
     }
   }
 
-  if (isDomainAuthoritative(summaryState) && incoming) {
+  if (summaryAuthoritative && incoming) {
     return { ...(next || incoming), client_summary: incoming.client_summary };
   }
   return next;

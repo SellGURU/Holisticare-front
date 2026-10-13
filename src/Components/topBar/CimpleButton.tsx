@@ -314,13 +314,7 @@ const CompileButton: FC<CompileButtonProps> = ({
             setNeedCompile(false);
             setshowProgressModal(false);
             markCompileFinished();
-            setProgressData((prev) =>
-              prev.map((item) =>
-                item.category === 'refresh'
-                  ? { ...item, process_status: true }
-                  : item,
-              ),
-            );
+            setProgressData([]);
             publish('healthPlanProcessingComplete', {
               member_id: Number(id),
             });
@@ -430,6 +424,7 @@ const CompileButton: FC<CompileButtonProps> = ({
           silent: true,
           fullReload: true,
         });
+        setProgressData([]);
       }
     }
   }, [progressData]);

@@ -18,7 +18,7 @@ export function isOverviewDataSettled(data: {
   processing?: unknown;
   background_processing?: unknown;
 }): boolean {
-  return !Boolean(data.processing) && !Boolean(data.background_processing);
+  return !data.processing && !data.background_processing;
 }
 
 export function resolveOverviewPageAndButtonProcessing(data: {
@@ -64,6 +64,7 @@ export function resolveCompileButtonState(input: {
   if (input.needCompile) return 'READY_TO_COMPILE';
   if (input.isSyncing) return 'SYNCING';
   if (input.beRecompile) return 'RECOMPILE';
-  if (input.progressData.length === 0) return 'IDLE';
-  return 'READY_TO_COMPILE';
+  // Completed progress rows are historical UI data, not a signal that another
+  // compile is required. `needCompile` is the source of truth for that.
+  return 'IDLE';
 }
