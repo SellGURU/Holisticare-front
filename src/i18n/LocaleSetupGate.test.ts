@@ -45,4 +45,25 @@ describe('shouldShowLocaleSetup', () => {
       shouldShowLocaleSetup({ ...readyAdmin, preferencesLoaded: false }),
     ).toBe(false);
   });
+
+  it('stays closed on public questionnaire, check-in, and survey links', () => {
+    expect(
+      shouldShowLocaleSetup({
+        ...readyAdmin,
+        pathname: '/questionary/gAAAAABqmZA2/1e5d26a080/5040f90d3e',
+      }),
+    ).toBe(false);
+    expect(
+      shouldShowLocaleSetup({
+        ...readyAdmin,
+        pathname: '/checkin/enc/id',
+      }),
+    ).toBe(false);
+    expect(
+      shouldShowLocaleSetup({
+        ...readyAdmin,
+        pathname: '/surveys/member/q/f/fill',
+      }),
+    ).toBe(false);
+  });
 });
