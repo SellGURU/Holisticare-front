@@ -8,6 +8,7 @@ import { useApp } from '../hooks';
 import { ContentLocalePicker } from './ContentLocalePicker';
 import { PortalLocalePicker } from './PortalLocalePicker';
 import { useLocalePreferences } from './LocalePreferencesContext';
+import { shouldShowLocaleSetup } from './localeSetupGate';
 import { storedPortalUiLocale } from './index';
 
 export function LocaleSetupGate() {
@@ -16,6 +17,7 @@ export function LocaleSetupGate() {
   const {
     locale_setup_completed,
     loading,
+    preferences_loaded,
     content_locale,
     applyPortalLocale,
     refreshLocalePreferences,
@@ -31,13 +33,17 @@ export function LocaleSetupGate() {
   const [contentLocale, setContentLocale] = useState(content_locale || 'en-US');
   const [saving, setSaving] = useState(false);
 
-  if (loading || locale_setup_completed) {
-    return null;
-  }
-  if (window.location.pathname === '/register-profile') {
-    return null;
-  }
-  if (!window.localStorage.getItem('token')) {
+  if (
+    !shouldShowLocaleSetup({
+      loading,
+      preferencesLoaded: preferences_loaded,
+      hasToken: Boolean(window.localStorage.getItem('token')),
+      pathname: window.location.pathname,
+      localeSetupCompleted: locale_setup_completed,
+      isAdmin,
+      contentLocale: content_locale,
+    })
+  ) {
     return null;
   }
 

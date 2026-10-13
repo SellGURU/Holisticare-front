@@ -16,6 +16,7 @@ export type LocalePreferencesState = {
   locale_setup_completed: boolean;
   can_edit_content_locale: boolean;
   loading: boolean;
+  preferences_loaded: boolean;
 };
 
 type LocalePreferencesContextValue = LocalePreferencesState & {
@@ -29,6 +30,7 @@ const defaultState: LocalePreferencesState = {
   locale_setup_completed: true,
   can_edit_content_locale: false,
   loading: true,
+  preferences_loaded: false,
 };
 
 const LocalePreferencesContext =
@@ -62,6 +64,7 @@ export function LocalePreferencesProvider({
         locale_setup_completed: Boolean(data.locale_setup_completed),
         can_edit_content_locale: Boolean(data.can_edit_content_locale),
         loading: false,
+        preferences_loaded: true,
       });
       if (portal) {
         await applyUiLocale(portal);
