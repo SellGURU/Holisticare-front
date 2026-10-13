@@ -45,7 +45,7 @@ export function LocalePreferencesProvider({
 
   const refreshLocalePreferences = useCallback(async () => {
     if (!window.localStorage.getItem('token')) {
-      setState((prev) => ({ ...prev, loading: false }));
+      setState({ ...defaultState, loading: false });
       return;
     }
     setState((prev) => ({ ...prev, loading: true }));
