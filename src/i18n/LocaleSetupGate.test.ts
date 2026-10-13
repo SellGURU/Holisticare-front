@@ -18,9 +18,9 @@ describe('shouldShowLocaleSetup', () => {
   });
 
   it('stays closed after the clinic content language is saved', () => {
-    expect(
-      shouldShowLocaleSetup({ ...readyAdmin, contentLocale: 'en' }),
-    ).toBe(false);
+    expect(shouldShowLocaleSetup({ ...readyAdmin, contentLocale: 'en' })).toBe(
+      false,
+    );
   });
 
   it('does not block staff who cannot edit the clinic language', () => {
