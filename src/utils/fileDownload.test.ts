@@ -37,6 +37,25 @@ describe('responseBlob', () => {
     await expect(responseBlob(blob)).resolves.toBe(blob);
   });
 
+  it('converts a binary PDF string returned by Axios', async () => {
+    const result = await responseBlob(
+      '%PDF-1.4\r\n',
+      'application/pdf',
+    );
+    expect(result).toBeInstanceOf(Blob);
+    expect(result.type).toBe('application/pdf');
+    expect(await result.text()).toBe('%PDF-1.4\r\n');
+  });
+
+  it('converts an ArrayBuffer response', async () => {
+    const input = new Uint8Array([0x25, 0x50, 0x44, 0x46]).buffer;
+    const result = await responseBlob(input, 'application/pdf');
+    expect(result.type).toBe('application/pdf');
+    expect(Array.from(new Uint8Array(await result.arrayBuffer()))).toEqual([
+      0x25, 0x50, 0x44, 0x46,
+    ]);
+  });
+
   it('uses a JSON error detail', async () => {
     const blob = new Blob([JSON.stringify({ detail: 'Not allowed' })], {
       type: 'application/json',

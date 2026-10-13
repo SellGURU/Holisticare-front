@@ -79,7 +79,10 @@ export default function SurveyResponsesPage() {
         q_unique_id: qId,
         f_unique_id: fId,
       });
-      const blob = await responseBlob(response.data);
+      const blob = await responseBlob(
+        response.data,
+        response.headers?.['content-type'],
+      );
       const fileName = filenameFromContentDisposition(
         response.headers?.['content-disposition'],
         `${title}.pdf`,

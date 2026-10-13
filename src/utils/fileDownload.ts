@@ -1,4 +1,7 @@
-import { readBlobErrorDetail } from './htmlReportDownload';
+import {
+  detailFromUnknownError,
+  readBlobErrorDetail,
+} from './htmlReportDownload';
 
 export function filenameFromContentDisposition(
   disposition: unknown,
@@ -21,18 +24,40 @@ export function filenameFromContentDisposition(
   );
 }
 
-export async function responseBlob(data: unknown): Promise<Blob> {
-  if (!(data instanceof Blob)) {
-    throw new Error('The requested file is not available.');
-  }
-  if (
-    data.type.toLowerCase().includes('application/json') ||
-    data.type.toLowerCase().includes('text/html')
-  ) {
-    const detail = await readBlobErrorDetail(data);
+export async function responseBlob(
+  data: unknown,
+  contentType: unknown = 'application/octet-stream',
+): Promise<Blob> {
+  const mediaType =
+    typeof contentType === 'string' && contentType
+      ? contentType
+      : 'application/octet-stream';
+  let blob: Blob;
+  if (data instanceof Blob) {
+    blob = data;
+  } else if (data instanceof ArrayBuffer) {
+    blob = new Blob([data], { type: mediaType });
+  } else if (ArrayBuffer.isView(data)) {
+    blob = new Blob([data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)], {
+      type: mediaType,
+    });
+  } else if (typeof data === 'string') {
+    // Some Axios/browser combinations return binary responses as a binary
+    // string even when responseType is "blob". Preserve each byte verbatim.
+    const bytes = Uint8Array.from(data, (character) => character.charCodeAt(0) & 0xff);
+    blob = new Blob([bytes], { type: mediaType });
+  } else {
+    const detail = detailFromUnknownError(data);
     throw new Error(detail || 'The requested file is not available.');
   }
-  return data;
+  if (
+    blob.type.toLowerCase().includes('application/json') ||
+    blob.type.toLowerCase().includes('text/html')
+  ) {
+    const detail = await readBlobErrorDetail(blob);
+    throw new Error(detail || 'The requested file is not available.');
+  }
+  return blob;
 }
 
 export function downloadBlob(blob: Blob, fileName: string): void {

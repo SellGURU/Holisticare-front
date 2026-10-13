@@ -114,7 +114,10 @@ export const Notes = () => {
         member_id: id,
         note_unique_id: noteId,
       });
-      const blob = await responseBlob(response.data);
+      const blob = await responseBlob(
+        response.data,
+        response.headers?.['content-type'],
+      );
       const resolvedName = filenameFromContentDisposition(
         response.headers?.['content-disposition'],
         fileName || 'attachment',
