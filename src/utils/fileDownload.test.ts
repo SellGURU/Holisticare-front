@@ -38,10 +38,7 @@ describe('responseBlob', () => {
   });
 
   it('converts a binary PDF string returned by Axios', async () => {
-    const result = await responseBlob(
-      '%PDF-1.4\r\n',
-      'application/pdf',
-    );
+    const result = await responseBlob('%PDF-1.4\r\n', 'application/pdf');
     expect(result).toBeInstanceOf(Blob);
     expect(result.type).toBe('application/pdf');
     expect(await result.text()).toBe('%PDF-1.4\r\n');

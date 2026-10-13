@@ -38,13 +38,19 @@ export async function responseBlob(
   } else if (data instanceof ArrayBuffer) {
     blob = new Blob([data], { type: mediaType });
   } else if (ArrayBuffer.isView(data)) {
-    blob = new Blob([data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)], {
-      type: mediaType,
-    });
+    blob = new Blob(
+      [data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)],
+      {
+        type: mediaType,
+      },
+    );
   } else if (typeof data === 'string') {
     // Some Axios/browser combinations return binary responses as a binary
     // string even when responseType is "blob". Preserve each byte verbatim.
-    const bytes = Uint8Array.from(data, (character) => character.charCodeAt(0) & 0xff);
+    const bytes = Uint8Array.from(
+      data,
+      (character) => character.charCodeAt(0) & 0xff,
+    );
     blob = new Blob([bytes], { type: mediaType });
   } else {
     const detail = detailFromUnknownError(data);
