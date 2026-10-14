@@ -19,6 +19,9 @@ import {
   filenameFromContentDisposition,
   responseBlob,
 } from '../../../utils/fileDownload';
+import { fetchBrandInfo } from '../../../utils/brandInfoCache';
+import { resolveExpertNoteDisplayAuthor } from '../../../utils/expertNoteDisplayAuthor';
+import { subscribe } from '../../../utils/event';
 
 const NOTE_EXTRACTION_POLL_MS = 5000;
 
@@ -44,6 +47,23 @@ export const Notes = () => {
   // A note is either written text OR an attached file - never both, never
   // neither. See doc/EXPERT_NOTE_FILE_ATTACHMENT_PLAN.md.
   const [noteMode, setNoteMode] = useState<'text' | 'file'>('text');
+  const [displayAuthor, setDisplayAuthor] = useState<string | null>(null);
+  const loadDisplayAuthor = useCallback(() => {
+    fetchBrandInfo()
+      .then((res) => {
+        setDisplayAuthor(
+          resolveExpertNoteDisplayAuthor(res.brand_elements ?? {}),
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+        setDisplayAuthor('');
+      });
+  }, []);
+  useEffect(() => {
+    loadDisplayAuthor();
+    subscribe('refreshBrandInfo', loadDisplayAuthor);
+  }, [loadDisplayAuthor]);
   const getNotes = useCallback((Id: any, options?: { silent?: boolean }) => {
     const silent = options?.silent === true;
     if (!silent) {
@@ -476,9 +496,11 @@ export const Notes = () => {
                         />
                       ) : (
                         <>
-                          <div className="text-[#005F73] text-xs">
-                            {el.writer}
-                          </div>
+                          {displayAuthor !== null && displayAuthor !== '' && (
+                            <div className="text-[#005F73] text-xs">
+                              {displayAuthor}
+                            </div>
+                          )}
                           {el.note && (
                             <p className="text-[12px] break-words">{el.note}</p>
                           )}
