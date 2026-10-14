@@ -112,7 +112,8 @@ const settings = {
     useClinicLanguage: 'Usar el idioma de la clínica',
     customHealthPlanLanguage: 'Idioma personalizado',
     clinicLanguageNamed: 'Idioma de la clínica: {language}',
-    healthPlanLanguageCustom: 'Idioma del plan de salud: {language} (personalizado)',
+    healthPlanLanguageCustom:
+      'Idioma del plan de salud: {language} (personalizado)',
     healthPlanLanguageUnavailable:
       'La preferencia de idioma del plan de salud no está disponible — se usa el idioma de la clínica',
     portalLocaleField: 'Idioma y formato regional',
@@ -163,7 +164,8 @@ const settings = {
     useClinicLanguage: 'Utiliser la langue de la clinique',
     customHealthPlanLanguage: 'Langue personnalisée',
     clinicLanguageNamed: 'Langue de la clinique : {language}',
-    healthPlanLanguageCustom: 'Langue du plan de santé : {language} (personnalisée)',
+    healthPlanLanguageCustom:
+      'Langue du plan de santé : {language} (personnalisée)',
     healthPlanLanguageUnavailable:
       'Préférence de langue du plan de santé indisponible — langue de la clinique utilisée',
     portalLocaleField: 'Langue et format régional',

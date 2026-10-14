@@ -71,7 +71,9 @@ export function HealthPlanLanguageFields({
         options={options}
         value={selected}
         styles={styles}
-        menuPortalTarget={typeof document === 'undefined' ? null : document.body}
+        menuPortalTarget={
+          typeof document === 'undefined' ? null : document.body
+        }
         menuPosition="fixed"
         filterOption={(candidate, input) => {
           if (!input) return true;
