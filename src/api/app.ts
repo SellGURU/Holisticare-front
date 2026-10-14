@@ -541,7 +541,7 @@ class Application extends Api {
     f_unique_id: string;
   }) => {
     return this.post(`/questionary_tracking/action_preview_pdf`, data, {
-      responseType: 'blob',
+      responseType: 'arraybuffer',
       noPending: true,
       headers: { Accept: 'application/pdf' },
     });
@@ -595,7 +595,7 @@ class Application extends Api {
     note_unique_id: string;
   }) => {
     return this.post(`/health_profile/notes/download_attachment`, data, {
-      responseType: 'blob',
+      responseType: 'arraybuffer',
       noPending: true,
     });
   };

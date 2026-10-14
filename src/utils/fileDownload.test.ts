@@ -53,6 +53,21 @@ describe('responseBlob', () => {
     ]);
   });
 
+  it('normalizes a Blob from another browser realm', async () => {
+    const result = await responseBlob(
+      {
+        type: 'application/pdf',
+        arrayBuffer: async () =>
+          new Uint8Array([0x25, 0x50, 0x44, 0x46]).buffer,
+      },
+      'application/octet-stream',
+    );
+    expect(result.type).toBe('application/pdf');
+    expect(Array.from(new Uint8Array(await result.arrayBuffer()))).toEqual([
+      0x25, 0x50, 0x44, 0x46,
+    ]);
+  });
+
   it('uses a JSON error detail', async () => {
     const blob = new Blob([JSON.stringify({ detail: 'Not allowed' })], {
       type: 'application/json',

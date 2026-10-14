@@ -35,6 +35,23 @@ export async function responseBlob(
   let blob: Blob;
   if (data instanceof Blob) {
     blob = data;
+  } else if (
+    data !== null &&
+    typeof data === 'object' &&
+    'arrayBuffer' in data &&
+    typeof (data as { arrayBuffer?: unknown }).arrayBuffer === 'function'
+  ) {
+    // Blob objects originating in another window/service-worker realm fail
+    // `instanceof Blob`; normalize them through their standard API.
+    const blobLike = data as {
+      arrayBuffer: () => Promise<ArrayBuffer>;
+      type?: unknown;
+    };
+    const blobType =
+      typeof blobLike.type === 'string' && blobLike.type
+        ? blobLike.type
+        : mediaType;
+    blob = new Blob([await blobLike.arrayBuffer()], { type: blobType });
   } else if (data instanceof ArrayBuffer) {
     blob = new Blob([data], { type: mediaType });
   } else if (ArrayBuffer.isView(data)) {
