@@ -17,8 +17,15 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import CustomTimezoneField from '../../Components/CustomTimezoneField/CustomTimezoneField';
 import { allTimezones } from 'react-timezone-select';
+import { HealthPlanLanguageFields } from '../clientList/HealthPlanLanguageFields';
+import { useLocalePreferences } from '../../i18n/LocalePreferencesContext';
 
 const AddClient = () => {
+  const preferences = useLocalePreferences();
+  const [healthPlanMode, setHealthPlanMode] = useState<
+    'clinic_default' | 'custom'
+  >('clinic_default');
+  const [healthPlanLocale, setHealthPlanLocale] = useState('en');
   const [showValidation, setShowValidation] = useState(false);
   const [apiError, setApiError] = useState('');
   const [dobApiError, setDobApiError] = useState('');
@@ -141,6 +148,11 @@ const AddClient = () => {
     if (formik.values.timeZone) payload.timezone = formik.values.timeZone;
     if (formik.values.address) payload.address = formik.values.address;
     if (formik.values.phone) payload.phone_number = '+' + formik.values.phone;
+    payload.health_plan_language_mode = healthPlanMode;
+    payload.health_plan_content_locale =
+      healthPlanMode === 'custom'
+        ? healthPlanLocale || preferences.content_locale || 'en'
+        : null;
 
     Application.addClient(payload)
       .then((res) => {
@@ -541,6 +553,24 @@ const AddClient = () => {
                         placeholder="Enter client’s address (e.g., 221B Baker Street, London)"
                         className=" w-full h-[89px] rounded-2xl border border-Gray-50 py-1 px-3 bg-backgroundColor-Card resize-none outline-none text-xs placeholder:text-[#B0B0B0] placeholder:font-light text-Text-Primary shadow-100"
                         {...formik.getFieldProps('address')}
+                      />
+                    </div>
+
+                    <div className="mb-3">
+                      <HealthPlanLanguageFields
+                        mode={healthPlanMode}
+                        locale={
+                          healthPlanLocale || preferences.content_locale || 'en'
+                        }
+                        onModeChange={(mode) => {
+                          setHealthPlanMode(mode);
+                          if (mode === 'custom' && !healthPlanLocale) {
+                            setHealthPlanLocale(
+                              preferences.content_locale || 'en',
+                            );
+                          }
+                        }}
+                        onLocaleChange={setHealthPlanLocale}
                       />
                     </div>
 

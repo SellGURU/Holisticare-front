@@ -10,6 +10,7 @@ import { publish } from '../../utils/event';
 import { Tooltip } from 'react-tooltip';
 // import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import EllipsedTooltip from '../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip';
+import { HealthPlanLanguagePill } from '../../pages/clientList/HealthPlanLanguagePill';
 // import SvgIcon from '../../utils/svgIcon';
 // import CircularProgressBar from '../charts/CircularProgressBar';
 
@@ -50,6 +51,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                     Demo
                   </span>
                 )}
+                <HealthPlanLanguagePill client={row.original} />
                 {/* <div className="truncate  max-w-[120px]">
                   <TooltipTextAuto maxWidth="120px">
                     {row.original?.name || 'No Data'}

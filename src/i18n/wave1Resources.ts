@@ -109,6 +109,12 @@ const settings = {
     contentLanguageHelp:
       'Los informes, planes de salud y texto de IA nuevos usan este idioma. Vuelva a puntuar o regenerar tras cambiarlo.',
     contentLocaleField: 'Plan de salud',
+    useClinicLanguage: 'Usar el idioma de la clínica',
+    customHealthPlanLanguage: 'Idioma personalizado',
+    clinicLanguageNamed: 'Idioma de la clínica: {language}',
+    healthPlanLanguageCustom: 'Idioma del plan de salud: {language} (personalizado)',
+    healthPlanLanguageUnavailable:
+      'La preferencia de idioma del plan de salud no está disponible — se usa el idioma de la clínica',
     portalLocaleField: 'Idioma y formato regional',
     language: 'Idioma',
     region: 'Formato regional',
@@ -154,6 +160,12 @@ const settings = {
     contentLanguageHelp:
       'Les nouveaux rapports, plans de santé et textes IA utilisent cette langue. Rescorez ou régénérez après modification.',
     contentLocaleField: 'Plan de santé',
+    useClinicLanguage: 'Utiliser la langue de la clinique',
+    customHealthPlanLanguage: 'Langue personnalisée',
+    clinicLanguageNamed: 'Langue de la clinique : {language}',
+    healthPlanLanguageCustom: 'Langue du plan de santé : {language} (personnalisée)',
+    healthPlanLanguageUnavailable:
+      'Préférence de langue du plan de santé indisponible — langue de la clinique utilisée',
     portalLocaleField: 'Langue et format régional',
     language: 'Langue',
     region: 'Format régional',
@@ -198,6 +210,12 @@ const settings = {
     contentLanguageHelp:
       'التقارير وخطط الصحة والنصوص المولَّدة تستخدم هذه اللغة. أعد التقييم أو التوليد بعد التغيير.',
     contentLocaleField: 'خطة الصحة',
+    useClinicLanguage: 'استخدام لغة العيادة',
+    customHealthPlanLanguage: 'لغة مخصصة',
+    clinicLanguageNamed: 'لغة العيادة: {language}',
+    healthPlanLanguageCustom: 'لغة خطة الصحة: {language} (مخصصة)',
+    healthPlanLanguageUnavailable:
+      'تفضيل لغة خطة الصحة غير متاح — يتم استخدام لغة العيادة',
     portalLocaleField: 'اللغة والتنسيق الإقليمي',
     language: 'اللغة',
     region: 'التنسيق الإقليمي',

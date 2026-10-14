@@ -20,6 +20,9 @@ import EllipsedTooltip from '../../Components/LibraryThreePages/components/Table
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
 import useIsDemo from '../../hooks/useIsDemo.ts';
 import { uiText } from '../../i18n/uiText';
+import { HealthPlanLanguageFields } from './HealthPlanLanguageFields';
+import { HealthPlanLanguagePill } from './HealthPlanLanguagePill';
+import { useLocalePreferences } from '../../i18n/LocalePreferencesContext';
 
 const parseDateOfBirth = (value: unknown): Date | null => {
   if (value == null || value === '' || value === '-') return null;
@@ -120,6 +123,7 @@ const ClientCard: FC<ClientCardProps> = ({
   onClientUpdated,
 }) => {
   const isDemo = useIsDemo();
+  const preferences = useLocalePreferences();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
@@ -284,6 +288,10 @@ const ClientCard: FC<ClientCardProps> = ({
     address: '',
   });
   const [editDateOfBirth, setEditDateOfBirth] = useState<Date | null>(null);
+  const [healthPlanMode, setHealthPlanMode] = useState<
+    'clinic_default' | 'custom'
+  >('clinic_default');
+  const [healthPlanLocale, setHealthPlanLocale] = useState('en');
   const [editPhoto, setEditPhoto] = useState('');
   const [photoError, setPhotoError] = useState('');
   const editPhotoInputRef = useRef<HTMLInputElement>(null);
@@ -373,6 +381,19 @@ const ClientCard: FC<ClientCardProps> = ({
       pickDateOfBirth(client.date_of_birth, client.dateOfBirth),
     );
     setEditPhoto(String(client.picture || ''));
+    const savedMode =
+      client.health_plan_language_mode === 'custom'
+        ? 'custom'
+        : 'clinic_default';
+    setHealthPlanMode(savedMode);
+    setHealthPlanLocale(
+      String(
+        client.health_plan_content_locale ||
+          client.clinic_content_locale ||
+          preferences.content_locale ||
+          'en',
+      ),
+    );
     setPhotoError('');
     if (editPhotoInputRef.current) {
       editPhotoInputRef.current.value = '';
@@ -453,6 +474,25 @@ const ClientCard: FC<ClientCardProps> = ({
     if (editDateOfBirth) {
       payload.date_of_birth = formatDateOfBirth(editDateOfBirth);
     }
+    const nextHealthPlanLocale =
+      healthPlanMode === 'custom'
+        ? healthPlanLocale || preferences.content_locale || 'en'
+        : null;
+    const currentHealthPlanMode =
+      client.health_plan_language_mode === 'custom'
+        ? 'custom'
+        : 'clinic_default';
+    const currentHealthPlanLocale =
+      currentHealthPlanMode === 'custom'
+        ? (client.health_plan_content_locale ?? null)
+        : null;
+    const healthPlanLanguageChanged =
+      healthPlanMode !== currentHealthPlanMode ||
+      nextHealthPlanLocale !== currentHealthPlanLocale;
+    if (healthPlanLanguageChanged) {
+      payload.health_plan_language_mode = healthPlanMode;
+      payload.health_plan_content_locale = nextHealthPlanLocale;
+    }
 
     setIsSavingClientInfo(true);
     Application.updateClientInfo(payload)
@@ -468,6 +508,12 @@ const ClientCard: FC<ClientCardProps> = ({
           ...(nextAge != null ? { age: nextAge } : {}),
           ...(editDateOfBirth
             ? { date_of_birth: formatDateOfBirth(editDateOfBirth) }
+            : {}),
+          ...(healthPlanLanguageChanged
+            ? {
+                health_plan_language_mode: healthPlanMode,
+                health_plan_content_locale: nextHealthPlanLocale,
+              }
             : {}),
         });
         invalidateHealthPlanCache(client.member_id);
@@ -946,6 +992,22 @@ const ClientCard: FC<ClientCardProps> = ({
                 className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
               />
             </div>
+            <HealthPlanLanguageFields
+              idPrefix={`edit-health-plan-${client.member_id}`}
+              mode={healthPlanMode}
+              locale={healthPlanLocale}
+              onModeChange={(mode) => {
+                setHealthPlanMode(mode);
+                if (mode === 'custom' && !healthPlanLocale) {
+                  setHealthPlanLocale(
+                    client.clinic_content_locale ||
+                      preferences.content_locale ||
+                      'en',
+                  );
+                }
+              }}
+              onLocaleChange={setHealthPlanLocale}
+            />
           </div>
           {editError && (
             <div className="mt-3 text-xs text-[#FC5474]">{editError}</div>
@@ -1289,6 +1351,7 @@ const ClientCard: FC<ClientCardProps> = ({
                     Demo
                   </span>
                 )}
+                <HealthPlanLanguagePill client={client} />
               </div>
               {/* {client.name} */}
               {/* {client.name.length > 15 && (

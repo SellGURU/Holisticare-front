@@ -70,6 +70,12 @@ export const englishResources = {
     contentLanguageHelp:
       'New reports, health plans, and AI-generated text use this language. Rescore or regenerate after you change it; existing stored text is not rewritten.',
     contentLocaleField: 'Health plan',
+    useClinicLanguage: 'Use clinic language',
+    customHealthPlanLanguage: 'Custom language',
+    clinicLanguageNamed: 'Clinic language: {language}',
+    healthPlanLanguageCustom: 'Health Plan language: {language} (custom)',
+    healthPlanLanguageUnavailable:
+      'Health Plan language preference unavailable — using clinic language',
     portalLocaleField: 'Language and regional format',
     language: 'Language',
     region: 'Regional format',

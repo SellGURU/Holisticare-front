@@ -49,6 +49,12 @@ export const faResources = {
     contentLanguageHelp:
       'گزارش‌ها، برنامه سلامت و متن تولیدی AI از این زبان استفاده می‌کنند. پس از تغییر، rescore یا regenerate کنید؛ متن ذخیره‌شده خودکار عوض نمی‌شود.',
     contentLocaleField: 'برنامه سلامت',
+    useClinicLanguage: 'زبان کلینیک',
+    customHealthPlanLanguage: 'زبان سفارشی',
+    clinicLanguageNamed: 'زبان کلینیک: {language}',
+    healthPlanLanguageCustom: 'زبان برنامه سلامت: {language} (سفارشی)',
+    healthPlanLanguageUnavailable:
+      'ترجیح زبان برنامه سلامت در دسترس نیست — از زبان کلینیک استفاده می‌شود',
     portalLocaleField: 'زبان و قالب منطقه‌ای',
     language: 'زبان',
     region: 'قالب منطقه‌ای',
