@@ -320,8 +320,22 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           }).then((res) => res.data),
         HEALTH_PLAN_TTL_MS,
       )
-        .then((data) => {
+        .then(async (data) => {
           if (gen !== sourceRefreshGenRef.current) return;
+          const needsFreshGate =
+            data.show_report === false &&
+            data.first_time_view !== true &&
+            !(Array.isArray(data.questionnaires) && data.questionnaires.length > 0);
+          if (needsFreshGate) {
+            data = await fetchFresh(
+              HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
+              () =>
+                Application.getPatientsInfo({
+                  member_id: resolvedMemberID,
+                }).then((res) => res.data),
+            );
+            if (gen !== sourceRefreshGenRef.current) return;
+          }
           if (setFirst_time_view) {
             setFirst_time_view?.(data.first_time_view);
           }
@@ -331,7 +345,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setIsHaveReport(data.show_report);
           setHasPartialReport(Boolean(data.has_partial_report));
           setLoading(false);
-          if (data.show_report === false && data.first_time_view !== true) {
+          if (
+            data.show_report === false &&
+            data.first_time_view !== true &&
+            !(Array.isArray(data.questionnaires) && data.questionnaires.length > 0)
+          ) {
             setShowUploadTest(true);
           }
           setHasWearableData(data.has_wearable_data);

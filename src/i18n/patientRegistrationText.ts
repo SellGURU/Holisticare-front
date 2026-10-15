@@ -37,7 +37,10 @@ export const patientRegistrationEn = {
     'This is the form a patient sees before the final registration submit.',
   editQuestionnaire: 'Edit questionnaire',
   questionnaireHelp:
-    'Add a plain question to the registration form. These fields are not used for biomarkers or insights.',
+    'These questions use the same types, formulas, biomarkers, and insights as a clinic questionnaire.',
+  assignOpen: 'Assign questionnaires',
+  assignConfirm: 'Save selection',
+  assignedNone: 'No questionnaires selected.',
   fieldPrompt: 'Question',
   fieldText: 'Text',
   fieldYesNo: 'Yes / No',
@@ -57,6 +60,10 @@ export const patientRegistrationEn = {
   groupAccess: 'Patient access',
   groupApi: 'Clinic API',
   groupRecords: 'Received registrations',
+  assignQuestionnaires: 'Questionnaires to assign',
+  assignQuestionnairesHelp:
+    'After the patient account is created, these questionnaires are assigned and the completion email is sent.',
+  noQuestionnaires: 'This clinic has no questionnaires yet.',
   groupFormHelp: 'The registration form and any extra questions you add.',
   groupAccessHelp: 'A reusable public link and one-time email invites.',
   groupApiHelp:
@@ -130,7 +137,10 @@ export const patientRegistrationFa = {
   previewHelp: 'بیمار قبل از ثبت نهایی همین فرم را می‌بیند.',
   editQuestionnaire: 'ویرایش پرسشنامه',
   questionnaireHelp:
-    'یک سوال ساده به فرم ثبت‌نام اضافه کنید. این فیلدها برای بایومارکر یا اینسایت استفاده نمی‌شوند.',
+    'نوع سوال، فرمول، بایومارکر و اینسایت اینجا همان پرسشنامهٔ کلینیک است.',
+  assignOpen: 'اختصاص پرسشنامه',
+  assignConfirm: 'تأیید انتخاب',
+  assignedNone: 'پرسشنامه‌ای انتخاب نشده است.',
   fieldPrompt: 'سوال',
   fieldText: 'متن',
   fieldYesNo: 'بله / خیر',
@@ -150,7 +160,11 @@ export const patientRegistrationFa = {
   groupAccess: 'دسترسی بیمار',
   groupApi: 'API کلینیک',
   groupRecords: 'ثبت‌های دریافت‌شده',
-  groupFormHelp: 'فرم ثبت‌نام و سوال‌های ساده‌ای که اضافه می‌کنید.',
+  assignQuestionnaires: 'پرسشنامه‌های بعد از ثبت‌نام',
+  assignQuestionnairesHelp:
+    'بعد از ساخته شدن حساب بیمار، این پرسشنامه‌ها اختصاص داده می‌شوند و ایمیل تکمیل برایش می‌رود.',
+  noQuestionnaires: 'این کلینیک هنوز پرسشنامه‌ای ندارد.',
+  groupFormHelp: 'فرم ثبت‌نام و سوال‌هایی که مثل پرسشنامه اضافه می‌کنید.',
   groupAccessHelp: 'لینک عمومی چندبارمصرف و دعوت یک‌بارمصرف ایمیلی.',
   groupApiHelp:
     'هر کلینیک یک کلید دارد. ساخت دوباره، کلید قبلی را باطل می‌کند.',

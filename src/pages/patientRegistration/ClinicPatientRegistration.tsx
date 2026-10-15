@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { resolveBaseEndPoint } from '../../api/base';
+import FormsApi from '../../api/Forms';
 import PatientRegistrationApi from '../../api/patientRegistration';
 import { fetchBrandInfo } from '../../utils/brandInfoCache';
 import Circleloader from '../../Components/CircleLoader';
@@ -18,6 +19,7 @@ import {
   registrationApiSamples,
   type RegistrationApiSampleId,
 } from './registrationApiSamples';
+import QuestionaryControllerModal from '../NewForms/CheckIn/QuestionaryControllerModal';
 import RegistrationBrandFrame, {
   brandButtonStyle,
   brandFromSources,
@@ -37,6 +39,7 @@ type Settings = {
   consentText: string;
   additionalQuestions: QuestionaryType[];
   disabledStandardFields: string[];
+  assignedQuestionnaires: string[];
 };
 
 const emptySettings = (): Settings => ({
@@ -48,36 +51,8 @@ const emptySettings = (): Settings => ({
   consentText: '',
   additionalQuestions: [],
   disabledStandardFields: [],
+  assignedQuestionnaires: [],
 });
-
-const plainQuestion = (
-  question: Partial<QuestionaryType> | undefined,
-  index: number,
-): QuestionaryType => {
-  const kind = String(question?.type || '').toLowerCase();
-  return {
-    id: String(question?.id || `field-${index + 1}`),
-    question: String(question?.question || ''),
-    type: kind.includes('yes') ? 'Yes/No' : 'Paragraph',
-    required: Boolean(question?.required),
-    order: index + 1,
-    hide: false,
-    response: '',
-    options: [],
-    conditions: [],
-    is_biomarker: false,
-    map_to_biomarker: '',
-    use_in_insight: false,
-    use_in_insights: false,
-    use_function_calculation: false,
-    is_goal: false,
-    is_medication: false,
-    is_condition: false,
-    is_allergy: false,
-    skip_validation: false,
-    unit: '',
-  } as QuestionaryType;
-};
 
 const registrationPublicUrl = (slug: string) => {
   const cleaned = slug.trim();
@@ -107,6 +82,11 @@ const readSettings = (
       : Array.isArray(data.disabled_standard_fields)
         ? data.disabled_standard_fields.map((item) => String(item))
         : [],
+    assignedQuestionnaires: Array.isArray(data.assignedQuestionnaires)
+      ? data.assignedQuestionnaires.map((item) => String(item))
+      : Array.isArray(data.assigned_questionnaires)
+        ? data.assigned_questionnaires.map((item) => String(item))
+        : [],
   };
 };
 
@@ -118,6 +98,7 @@ const snapshot = (value: Settings) =>
     publicSlug: value.publicSlug,
     additionalQuestions: value.additionalQuestions,
     disabledStandardFields: value.disabledStandardFields,
+    assignedQuestionnaires: value.assignedQuestionnaires,
   });
 
 const errorText = (err: unknown, fallback: string) => {
@@ -146,14 +127,12 @@ const ClinicPatientRegistration = () => {
   const [linkError, setLinkError] = useState('');
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState<Settings>(emptySettings());
-  const [fieldDraft, setFieldDraft] = useState<{
-    id: string;
-    question: string;
-    required: boolean;
-    type: 'Paragraph' | 'Yes/No';
-    isNew: boolean;
-  } | null>(null);
-  const [fieldError, setFieldError] = useState('');
+  const [clinicQuestionnaires, setClinicQuestionnaires] = useState<
+    Array<{ id: string; title: string }>
+  >([]);
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [assignDraft, setAssignDraft] = useState<string[]>([]);
+  const [questionEditorOpen, setQuestionEditorOpen] = useState(false);
   const [savedSnapshot, setSavedSnapshot] = useState(snapshot(emptySettings()));
   const [secret, setSecret] = useState('');
   const [keys, setKeys] = useState<Array<Record<string, string | null>>>([]);
@@ -174,6 +153,10 @@ const ClinicPatientRegistration = () => {
   const questions = settings.additionalQuestions.filter(
     (item) => item && !('__scoring__' in item),
   );
+  const assignedTitles = settings.assignedQuestionnaires.map((id) => {
+    const match = clinicQuestionnaires.find((form) => form.id === id);
+    return { id, title: match?.title || id };
+  });
   const dirty = useMemo(
     () => snapshot(settings) !== savedSnapshot,
     [settings, savedSnapshot],
@@ -187,6 +170,19 @@ const ClinicPatientRegistration = () => {
   };
 
   useEffect(() => {
+    FormsApi.getQuestionaryList()
+      .then((res) => {
+        const rows = Array.isArray(res.data) ? res.data : [];
+        setClinicQuestionnaires(
+          rows
+            .map((item: { id?: unknown; title?: unknown }) => ({
+              id: String(item.id || ''),
+              title: String(item.title || ''),
+            }))
+            .filter((item: { id: string }) => item.id),
+        );
+      })
+      .catch(() => setClinicQuestionnaires([]));
     setLoading(true);
     const brandSlug = fetchBrandInfo()
       .then((res) => {
@@ -211,6 +207,7 @@ const ClinicPatientRegistration = () => {
             publicSlug: next.publicSlug,
             additionalQuestions: next.additionalQuestions,
             disabledStandardFields: next.disabledStandardFields,
+            assignedQuestionnaires: next.assignedQuestionnaires,
           })
             .then((saved) =>
               applySettings(
@@ -263,15 +260,13 @@ const ClinicPatientRegistration = () => {
       sendWelcomeEmail: next.sendWelcomeEmail,
       consentText: next.consentText,
       publicSlug: next.publicSlug,
-      additionalQuestions: next.additionalQuestions
-        .filter(
-          (item) =>
-            item &&
-            !('__scoring__' in item) &&
-            String(item.question || '').trim(),
-        )
-        .map((item, index) => plainQuestion(item, index)),
+      additionalQuestions: next.additionalQuestions.filter((item) => {
+        if (!item) return false;
+        if ('__scoring__' in item) return true;
+        return Boolean(String(item.question || '').trim());
+      }),
       disabledStandardFields: next.disabledStandardFields,
+      assignedQuestionnaires: next.assignedQuestionnaires,
     })
       .then((res) => {
         applySettings({ ...next, ...(res.data || {}) });
@@ -482,6 +477,43 @@ const ClinicPatientRegistration = () => {
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div>
                             <div className="text-sm font-medium">
+                              {text('assignQuestionnaires')}
+                            </div>
+                            <p className="mt-1 max-w-xl text-xs leading-5 text-[#667085]">
+                              {text('assignQuestionnairesHelp')}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setAssignDraft(settings.assignedQuestionnaires);
+                              setAssignOpen(true);
+                            }}
+                            className="rounded-full bg-Primary-DeepTeal px-4 py-2 text-xs text-white"
+                          >
+                            {text('assignOpen')}
+                          </button>
+                        </div>
+                        <div className="mt-4 space-y-2">
+                          {assignedTitles.length === 0 && (
+                            <div className="rounded-xl border border-dashed border-[#D0D5DD] px-3 py-6 text-center text-xs text-[#667085]">
+                              {text('assignedNone')}
+                            </div>
+                          )}
+                          {assignedTitles.map((form) => (
+                            <div
+                              key={form.id}
+                              className="rounded-xl bg-[#F7F8FA] px-3 py-2.5 text-xs"
+                            >
+                              {form.title}
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+                      <section>
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <div className="text-sm font-medium">
                               {text('additional')}
                             </div>
                             <p className="mt-1 max-w-xl text-xs leading-5 text-[#667085]">
@@ -490,19 +522,10 @@ const ClinicPatientRegistration = () => {
                           </div>
                           <button
                             type="button"
-                            onClick={() => {
-                              setFieldError('');
-                              setFieldDraft({
-                                id: `field-${Date.now()}`,
-                                question: '',
-                                required: false,
-                                type: 'Paragraph',
-                                isNew: true,
-                              });
-                            }}
+                            onClick={() => setQuestionEditorOpen(true)}
                             className="rounded-full bg-Primary-DeepTeal px-4 py-2 text-xs text-white"
                           >
-                            {text('addQuestion')}
+                            {text('editQuestionnaire')}
                           </button>
                         </div>
                         <div className="mt-4 space-y-2">
@@ -519,22 +542,7 @@ const ClinicPatientRegistration = () => {
                               <button
                                 type="button"
                                 className="flex min-w-0 flex-1 items-start gap-3 text-start"
-                                onClick={() => {
-                                  setFieldError('');
-                                  setFieldDraft({
-                                    id: String(
-                                      question.id || `field-${index + 1}`,
-                                    ),
-                                    question: question.question || '',
-                                    required: Boolean(question.required),
-                                    type: String(question.type || '')
-                                      .toLowerCase()
-                                      .includes('yes')
-                                      ? 'Yes/No'
-                                      : 'Paragraph',
-                                    isNew: false,
-                                  });
-                                }}
+                                onClick={() => setQuestionEditorOpen(true)}
                               >
                                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E6EEF5] text-[11px] font-medium text-Primary-DeepTeal">
                                   {index + 1}
@@ -545,11 +553,7 @@ const ClinicPatientRegistration = () => {
                                   </div>
                                   <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-[#667085]">
                                     <span className="rounded-full bg-[#F4F7F8] px-2 py-0.5">
-                                      {String(question.type || '')
-                                        .toLowerCase()
-                                        .includes('yes')
-                                        ? text('fieldYesNo')
-                                        : text('fieldText')}
+                                      {question.type || text('fieldText')}
                                     </span>
                                     {question.required && (
                                       <span>{text('required')}</span>
@@ -871,79 +875,49 @@ const ClinicPatientRegistration = () => {
         </div>
       )}
 
-      {fieldDraft && (
-        <MainModal
-          isOpen
-          onClose={() => {
-            setFieldDraft(null);
-            setFieldError('');
-          }}
-        >
-          <div className="w-[min(92vw,420px)] rounded-2xl bg-white p-5">
+      {assignOpen && (
+        <MainModal isOpen onClose={() => setAssignOpen(false)}>
+          <div className="w-[min(92vw,480px)] rounded-2xl bg-white p-5">
             <div className="text-sm font-medium">
-              {fieldDraft.isNew ? text('addQuestion') : text('editQuestion')}
+              {text('assignQuestionnaires')}
             </div>
-            <label className="mt-4 block text-xs">
-              {text('fieldPrompt')}
-              <input
-                className="mt-1 w-full rounded-xl border border-[#E6EEF2] px-3 py-2 text-sm"
-                value={fieldDraft.question}
-                autoFocus
-                onChange={(event) =>
-                  setFieldDraft((current) =>
-                    current
-                      ? { ...current, question: event.target.value }
-                      : current,
-                  )
-                }
-              />
-            </label>
-            <div className="mt-4 flex items-center justify-between gap-3 text-xs">
-              <span>{text('required')}</span>
-              <EnabledSwitch
-                enabled={fieldDraft.required}
-                title={text('required')}
-                onChange={(next) =>
-                  setFieldDraft((current) =>
-                    current ? { ...current, required: next } : current,
-                  )
-                }
-              />
+            <p className="mt-1 text-xs leading-5 text-[#667085]">
+              {text('assignQuestionnairesHelp')}
+            </p>
+            <div className="mt-4 max-h-80 space-y-2 overflow-auto">
+              {clinicQuestionnaires.length === 0 && (
+                <div className="rounded-xl border border-dashed border-[#D0D5DD] px-3 py-6 text-center text-xs text-[#667085]">
+                  {text('noQuestionnaires')}
+                </div>
+              )}
+              {clinicQuestionnaires.map((form) => {
+                const selected = assignDraft.includes(form.id);
+                return (
+                  <label
+                    key={form.id}
+                    className="flex cursor-pointer items-center gap-3 rounded-xl bg-[#F7F8FA] px-3 py-2.5 text-xs"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selected}
+                      onChange={() =>
+                        setAssignDraft((current) =>
+                          selected
+                            ? current.filter((id) => id !== form.id)
+                            : [...current, form.id],
+                        )
+                      }
+                    />
+                    <span>{form.title || form.id}</span>
+                  </label>
+                );
+              })}
             </div>
-            <label className="mt-4 block text-xs">
-              {text('fieldType')}
-              <select
-                className="mt-1 w-full rounded-xl border border-[#E6EEF2] bg-white px-3 py-2 text-sm"
-                value={fieldDraft.type}
-                onChange={(event) =>
-                  setFieldDraft((current) =>
-                    current
-                      ? {
-                          ...current,
-                          type:
-                            event.target.value === 'Yes/No'
-                              ? 'Yes/No'
-                              : 'Paragraph',
-                        }
-                      : current,
-                  )
-                }
-              >
-                <option value="Paragraph">{text('fieldText')}</option>
-                <option value="Yes/No">{text('fieldYesNo')}</option>
-              </select>
-            </label>
-            {fieldError && (
-              <div className="mt-3 text-xs text-[#B42318]">{fieldError}</div>
-            )}
             <div className="mt-5 flex justify-end gap-2">
               <button
                 type="button"
                 className="rounded-full border border-[#D0D5DD] px-4 py-2 text-xs"
-                onClick={() => {
-                  setFieldDraft(null);
-                  setFieldError('');
-                }}
+                onClick={() => setAssignOpen(false)}
               >
                 {text('cancel')}
               </button>
@@ -951,35 +925,44 @@ const ClinicPatientRegistration = () => {
                 type="button"
                 className="rounded-full bg-Primary-DeepTeal px-4 py-2 text-xs text-white"
                 onClick={() => {
-                  const question = fieldDraft.question.trim();
-                  if (!question) {
-                    setFieldError(text('fieldRequired'));
-                    return;
-                  }
-                  setSettings((current) => {
-                    const next = plainQuestion(
-                      { ...fieldDraft, question },
-                      current.additionalQuestions.length,
-                    );
-                    return {
-                      ...current,
-                      additionalQuestions: fieldDraft.isNew
-                        ? [...current.additionalQuestions, next]
-                        : current.additionalQuestions.map((item) =>
-                            item.id === fieldDraft.id
-                              ? { ...item, ...next, id: item.id }
-                              : item,
-                          ),
-                    };
-                  });
-                  setFieldDraft(null);
-                  setFieldError('');
+                  setSettings((current) => ({
+                    ...current,
+                    assignedQuestionnaires: assignDraft,
+                  }));
+                  setAssignOpen(false);
                 }}
               >
-                {fieldDraft.isNew ? text('addQuestion') : text('saveField')}
+                {text('assignConfirm')}
               </button>
             </div>
           </div>
+        </MainModal>
+      )}
+      {questionEditorOpen && (
+        <MainModal isOpen onClose={() => setQuestionEditorOpen(false)}>
+          <QuestionaryControllerModal
+            mode="Edit"
+            isQuestionary
+            allowEmptyQuestions
+            questionsOnly
+            templateData={{
+              title: text('title'),
+              questions: settings.additionalQuestions,
+            }}
+            error=""
+            textErrorMessage=""
+            onClose={() => setQuestionEditorOpen(false)}
+            onSave={(values) => {
+              const nextQuestions = Array.isArray(values?.questions)
+                ? values.questions
+                : [];
+              setSettings((current) => ({
+                ...current,
+                additionalQuestions: nextQuestions,
+              }));
+              setQuestionEditorOpen(false);
+            }}
+          />
         </MainModal>
       )}
     </div>

@@ -70,6 +70,7 @@ interface QuestionaryControllerModalProps {
   isQuestionary?: boolean;
   textErrorMessage: string;
   allowEmptyQuestions?: boolean;
+  questionsOnly?: boolean;
   fetchForm?: (id: string) => Promise<{ data: any }>;
   fetchCatalog?: () => Promise<{ data: any }>;
 }
@@ -84,11 +85,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   isQuestionary,
   textErrorMessage,
   allowEmptyQuestions = false,
+  questionsOnly = false,
   fetchForm,
   fetchCatalog,
 }) => {
   const [isError, setIsError] = useState(false);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(questionsOnly ? 1 : 0);
   const [checked, setChecked] = useState(false);
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(15);
@@ -171,6 +173,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     }
   };
   const resolveFormTitle = () => {
+    if (questionsOnly) {
+      return 'Questions';
+    }
     if (templateData == null && mode == 'Add') {
       return (
         'Create Personal Form' + ' - Step ' + (step + 1) + stepTitleInfo(step)
@@ -294,7 +299,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   };
   const [titleForm, setTitleForm] = useState(templateData?.title || '');
   const [descriptionForm, setDescriptionForm] = useState(
-    templateData?.description || '',
+    typeof templateData?.description === 'string'
+      ? templateData.description
+      : '',
   );
   const [consentText, setConsentText] = useState(
     templateData?.consent_text || '',
@@ -514,7 +521,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
               )}
             </>
           )}
-          {AddquestionStep == 0 && step === 1 && (
+          {AddquestionStep == 0 && step === 1 && !questionsOnly && (
             <div className="w-full text-xs text-Text-Primary font-medium mt-6">
               {templateData == null ? 'Questions' : 'Initial Questionnaire'}
             </div>
@@ -540,11 +547,11 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             </div>
           )}
         <div
-          className={`w-full flex shrink-0 ${step === 0 ? 'justify-end' : 'justify-between'} items-center p-2 ${
+          className={`w-full flex shrink-0 ${step === 0 || questionsOnly ? 'justify-end' : 'justify-between'} items-center p-2 ${
             AddquestionStep == 1 && 'hidden'
           } `}
         >
-          {step !== 0 && (
+          {step !== 0 && !questionsOnly && (
             <div
               className={`text-sm text-Primary-DeepTeal font-medium cursor-pointer`}
               onClick={() => {
@@ -568,7 +575,11 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
                 if (isSaveLoding) return;
                 setShowValidation(true);
                 if (!isDisable()) {
-                  if ((step === 0 || step === 1) && mode != 'Reposition') {
+                  if (
+                    !questionsOnly &&
+                    (step === 0 || step === 1) &&
+                    mode != 'Reposition'
+                  ) {
                     setStep(step + 1);
                     setShowValidation(false);
                   } else {
@@ -585,13 +596,15 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
                 <BeatLoader size={6}></BeatLoader>
               ) : (
                 <>
-                  {mode == 'Reposition'
-                    ? 'Update'
-                    : step === 0 || step === 1
-                      ? 'Next'
-                      : mode == 'Edit'
-                        ? 'Update'
-                        : 'Save'}
+                  {questionsOnly
+                    ? 'Save'
+                    : mode == 'Reposition'
+                      ? 'Update'
+                      : step === 0 || step === 1
+                        ? 'Next'
+                        : mode == 'Edit'
+                          ? 'Update'
+                          : 'Save'}
                 </>
               )}
             </div>

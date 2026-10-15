@@ -175,7 +175,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [uploadedFile, setUploadedFile] = useState<FileUpload | null>(null); // ✅ single file
   const [uploadWarningMessage, setUploadWarningMessage] = useState('');
   const [errorMessage] = useState<string>('');
-  const [, setQuestionaryLength] = useState(false);
+  const [hasCompletedQuestionnaire, setHasCompletedQuestionnaire] =
+    useState(false);
 
   const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([]);
   const [fileType, setfileType] = useState('more_info');
@@ -635,9 +636,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     };
   }, [uploadedFile?.file_id, polling]);
   useEffect(() => {
-    subscribe('questionaryLength', (value: any) => {
-      setQuestionaryLength(value.detail.questionaryLength);
-    });
+    const handleQuestionaryLength = (value: any) => {
+      setHasCompletedQuestionnaire(Boolean(value?.detail?.questionaryLength));
+    };
+    subscribe('questionaryLength', handleQuestionaryLength);
+    return () => {
+      unsubscribe('questionaryLength', handleQuestionaryLength);
+    };
   }, []);
 
   const formatFileSize = (bytes: number): string => {
@@ -1620,6 +1625,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     onGenderate(undefined);
   };
 
+  useEffect(() => {
+    if (!hasCompletedQuestionnaire || isDemo) return;
+    if (autoContinueTriggeredRef.current) return;
+    if (step !== 0) return;
+    if (uploadedFile != null || hasComboBarFile) return;
+    autoContinueTriggeredRef.current = true;
+    invalidateHealthPlanCache(memberId);
+    clickContinueToHealthPlan();
+  }, [hasCompletedQuestionnaire]);
+
   const runAutoContinueToHealthPlan = () => {
     if (autoContinueTriggeredRef.current || isDemo) return;
     if (stepRef.current !== 0) return;
@@ -1631,6 +1646,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       Boolean(uploadedFileRef.current) ||
       extractedBiomarkersRef.current.length > 0 ||
       questionnaires.length > 0 ||
+      hasCompletedQuestionnaire ||
       has_wearable_data ||
       showReport;
     if (!canContinue) return;
@@ -2307,7 +2323,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     ) {
       return true;
     }
-    if (questionnaires.length > 0) {
+    if (questionnaires.length > 0 || hasCompletedQuestionnaire) {
       return true;
     }
     return false;

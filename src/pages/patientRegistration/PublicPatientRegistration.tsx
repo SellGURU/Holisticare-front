@@ -59,8 +59,42 @@ const visibleExtraQuestions = (questions: ExtraQuestion[]) =>
 
 const questionOptions = (question: ExtraQuestion) => {
   const raw = question.options;
-  return Array.isArray(raw) ? raw.map((item) => String(item)) : [];
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item) => {
+      if (typeof item === 'string') return item.trim();
+      if (item && typeof item === 'object') {
+        const record = item as Record<string, unknown>;
+        return String(record.label || record.value || record.text || '').trim();
+      }
+      return String(item ?? '').trim();
+    })
+    .filter(Boolean);
 };
+
+const choiceKind = (type: string, options: string[]) => {
+  if (type === 'checkbox' || type === 'check box' || type === 'checkboxes') {
+    return 'checkbox';
+  }
+  if (type === 'multiple_choice' || type === 'multiple choice') {
+    return 'multiple_choice';
+  }
+  if (
+    options.length > 0 &&
+    (type === 'paragraph' || type === 'text' || type === '')
+  ) {
+    return 'checkbox';
+  }
+  return '';
+};
+
+const REGISTRATION_EMOJIS = [
+  { name: 'Angry', icon: '/images/emoji/angery.gif' },
+  { name: 'Sad', icon: '/images/emoji/sad.gif' },
+  { name: 'Neutral', icon: '/images/emoji/poker.gif' },
+  { name: 'Smile', icon: '/images/emoji/smile.gif' },
+  { name: 'Loved', icon: '/images/emoji/love.gif' },
+];
 
 const blankAnswer = (value: unknown) => {
   if (value == null || value === '') return true;
@@ -437,22 +471,32 @@ const ExtraQuestions = ({
   answers: Record<string, unknown>;
   onChange: (id: string, value: unknown) => void;
 }) => {
+  const { t } = useTranslation('settings');
   if (questions.length === 0) return null;
   return (
-    <div className="space-y-4 border-t border-[#E6EEF2] pt-4">
-      {questions.map((question) => {
+    <div className="space-y-3 border-t border-[#E6EEF2] pt-4">
+      {questions.map((question, index) => {
         const id = String(question.id || '');
         const label = String(question.question || question.text || '');
         const type = String(question.type || 'paragraph').toLowerCase();
         const options = questionOptions(question);
+        const choices = choiceKind(type, options);
         const value = answers[id];
         return (
-          <div key={id || label} className="text-sm">
-            <div>
-              {label}
-              {question.required ? ' *' : ''}
+          <div
+            key={id || label}
+            className="rounded-2xl border border-[#E4E7EC] bg-[#F9FAFB] px-4 py-3 text-sm"
+          >
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#E4E7EC] bg-white text-[11px] font-medium text-[#344054]">
+                {index + 1}
+              </span>
+              <div className="font-medium leading-6 text-[#101828]">
+                {label}
+                {question.required ? ' *' : ''}
+              </div>
             </div>
-            {(type === 'paragraph' || type === 'text') && (
+            {(type === 'paragraph' || type === 'text') && choices === '' && (
               <textarea
                 className={`${inputClass} min-h-24`}
                 value={typeof value === 'string' ? value : ''}
@@ -490,7 +534,7 @@ const ExtraQuestions = ({
                 ))}
               </div>
             )}
-            {(type === 'multiple_choice' || type === 'multiple choice') && (
+            {choices === 'multiple_choice' && (
               <div className="mt-2 flex flex-col gap-2">
                 {options.map((option) => (
                   <label
@@ -509,7 +553,7 @@ const ExtraQuestions = ({
                 ))}
               </div>
             )}
-            {type === 'checkbox' && (
+            {choices === 'checkbox' && (
               <div className="mt-2 flex flex-col gap-2">
                 {options.map((option) => {
                   const selected = Array.isArray(value)
@@ -539,15 +583,60 @@ const ExtraQuestions = ({
                 })}
               </div>
             )}
-            {(type === 'scale' || type === 'star rating') && (
+            {type === 'scale' && (
               <input
                 type="range"
-                min={0}
+                min={1}
                 max={10}
                 className="mt-3 w-full"
-                value={typeof value === 'number' ? value : 0}
+                value={typeof value === 'number' ? value : 1}
                 onChange={(event) => onChange(id, Number(event.target.value))}
               />
+            )}
+            {type === 'star rating' && (
+              <div className="mt-2 flex gap-2">
+                {[1, 2, 3, 4, 5].map((score) => (
+                  <button
+                    key={score}
+                    type="button"
+                    className={`h-11 w-11 rounded-full border text-sm ${
+                      value === score
+                        ? 'border-Primary-DeepTeal bg-Primary-DeepTeal text-white'
+                        : 'border-[#E6EEF2]'
+                    }`}
+                    onClick={() => onChange(id, score)}
+                  >
+                    {score}
+                  </button>
+                ))}
+              </div>
+            )}
+            {type === 'emojis' && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {REGISTRATION_EMOJIS.map((emoji) => (
+                  <button
+                    key={emoji.name}
+                    type="button"
+                    className={`rounded-xl border p-1 ${
+                      value === emoji.name
+                        ? 'border-Primary-DeepTeal'
+                        : 'border-[#E6EEF2]'
+                    }`}
+                    onClick={() => onChange(id, emoji.name)}
+                  >
+                    <img
+                      src={emoji.icon}
+                      alt={emoji.name}
+                      className="h-10 w-10"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+            {type === 'file uploader' && (
+              <p className="mt-2 text-xs text-[#667085]">
+                {t('registration.fileUnsupported')}
+              </p>
             )}
           </div>
         );

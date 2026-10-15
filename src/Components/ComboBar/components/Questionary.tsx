@@ -110,12 +110,10 @@ export const Questionary: React.FC<QuestionaryProps> = ({
               // isNeedSync: unsyncedIdes.includes(file.forms_unique_id),
             })),
           );
-          if (res.data.length > 0) {
-            if (res.data[0].status === 'completed') {
-              publish('questionaryLength', {
-                questionaryLength: true,
-              });
-            }
+          if (res.data.some((file: any) => file.status === 'completed')) {
+            publish('questionaryLength', {
+              questionaryLength: true,
+            });
           }
         } else {
           throw new Error('Unexpected data format');

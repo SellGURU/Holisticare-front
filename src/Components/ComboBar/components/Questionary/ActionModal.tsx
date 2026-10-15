@@ -5,6 +5,10 @@ const REMIND_COOLDOWN_MS = 20_000;
 import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
 import Application from '../../../../api/app';
 import { publish } from '../../../../utils/event';
+import {
+  downloadBlob,
+  filenameFromContentDisposition,
+} from '../../../../utils/fileDownload';
 
 interface ActionModalProps {
   OnClose: () => void;
@@ -30,7 +34,10 @@ const ActionModal: FC<ActionModalProps> = ({
     OnClose();
   };
   const [sureRemove, setSureRemove] = useState<boolean>(false);
+  const [downloading, setDownloading] = useState(false);
   const [reminding, setReminding] = useState(false);
+  const viewOnly =
+    Boolean(el?.view_only) || el?.title === 'Registration form';
   const remindCooldownRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(
@@ -57,6 +64,28 @@ const ActionModal: FC<ActionModalProps> = ({
     refrence: modalRef,
     close: CloseAction,
   });
+  const handleDownload = () => {
+    if (downloading) return;
+    setDownloading(true);
+    Application.downloadQuestionaryPdf({
+      member_id,
+      q_unique_id: el.unique_id,
+      f_unique_id: el.forms_unique_id,
+    })
+      .then((response) => {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const fileName = filenameFromContentDisposition(
+          response.headers?.['content-disposition'],
+          `${el.title || 'Registration form'}.pdf`,
+        );
+        downloadBlob(blob, fileName);
+        OnClose();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => setDownloading(false));
+  };
   const handlePreview = () => {
     Application.PreviewQuestionary({
       member_id: member_id,
@@ -89,7 +118,16 @@ const ActionModal: FC<ActionModalProps> = ({
           <img className="size-5" src="/icons/eye-green.svg" alt="" />
           Preview
         </div>
-        {status == 'completed' && (
+        {viewOnly && (
+          <div
+            onClick={handleDownload}
+            className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1 cursor-pointer"
+          >
+            <img className="size-5" src="/icons/document-download.svg" alt="" />
+            {downloading ? 'Downloading…' : 'Download'}
+          </div>
+        )}
+        {!viewOnly && status == 'completed' && (
           <>
             <div
               onClick={() => {
@@ -110,7 +148,7 @@ const ActionModal: FC<ActionModalProps> = ({
             </div>
           </>
         )}
-        {status != 'completed' && (
+        {!viewOnly && status != 'completed' && (
           <>
             <div
               onClick={() => {
@@ -176,7 +214,8 @@ const ActionModal: FC<ActionModalProps> = ({
             ) : null}
           </>
         )}
-        {!sureRemove ? (
+        {!viewOnly ? (
+          !sureRemove ? (
           <>
             <div
               onClick={() => {
@@ -213,7 +252,8 @@ const ActionModal: FC<ActionModalProps> = ({
               onClick={() => setSureRemove(false)}
             />
           </div>
-        )}
+          )
+        ) : null}
       </div>
     </>
   );
