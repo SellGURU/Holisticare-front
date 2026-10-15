@@ -388,7 +388,9 @@ export function PublicSurveyForm({
         (question) => !String(question?.id || '').startsWith('registration_'),
       );
     }
-    const fillable = fillableQuestions(Array.isArray(questions) ? questions : []);
+    const fillable = fillableQuestions(
+      Array.isArray(questions) ? questions : [],
+    );
     setSortedQuestions(fillable);
     // --- NEW: Initialize responses for all questions ---
     const initialResponses: Record<
