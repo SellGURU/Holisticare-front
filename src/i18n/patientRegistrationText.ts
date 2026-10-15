@@ -61,6 +61,16 @@ export const patientRegistrationEn = {
   groupAccessHelp: 'A reusable public link and one-time email invites.',
   groupApiHelp:
     'This clinic has one API key. Regenerating replaces it, and the previous key stops working.',
+  apiDocsTitle: 'How to use the API',
+  apiDocsLead:
+    'Send the key in the X-API-Key header. This call creates the patient immediately and does not wait in Received registrations.',
+  apiDocsSchema: 'Read the published form and the ids of extra questions.',
+  apiDocsCreate: 'Create the patient.',
+  apiDocsNotes:
+    'gender is male or female, consent must be true, and age must be 18 to 60. Names can only contain letters. phoneNumber can be left out. Put extra answers in answers using the question ids from the schema. An email that already exists returns 409. Sending the same Idempotency-Key again returns the original patient_id.',
+  apiDocsResponse:
+    'A successful response includes patient_id, submission_id, status, and idempotent.',
+  apiDocsCopy: 'Copy sample',
   groupRecordsHelp:
     'Review each submitted form. The patient is created only after you approve it.',
   review: 'Review',
@@ -144,6 +154,16 @@ export const patientRegistrationFa = {
   groupAccessHelp: 'لینک عمومی چندبارمصرف و دعوت یک‌بارمصرف ایمیلی.',
   groupApiHelp:
     'هر کلینیک یک کلید دارد. ساخت دوباره، کلید قبلی را باطل می‌کند.',
+  apiDocsTitle: 'روش استفاده از API',
+  apiDocsLead:
+    'کلید را در هدر X-API-Key بفرستید. این درخواست بیمار را همان لحظه می‌سازد و در فهرست بازبینی نمی‌ماند.',
+  apiDocsSchema: 'خواندن فرم منتشرشده و شناسهٔ سوال‌های تکمیلی.',
+  apiDocsCreate: 'ساخت بیمار.',
+  apiDocsNotes:
+    'gender فقط male یا female است، consent باید true باشد و سن بین ۱۸ تا ۶۰ سال. نام و نام خانوادگی فقط حرف دارند. phoneNumber را می‌توان نفرستاد. پاسخ سوال‌های تکمیلی در answers با شناسهٔ سوال از schema می‌آید. اگر ایمیل از قبل وجود داشته باشد پاسخ ۴۰۹ است. فرستادن دوبارهٔ همان Idempotency-Key همان patient_id قبلی را برمی‌گرداند.',
+  apiDocsResponse:
+    'پاسخ موفق patient_id، submission_id، status و idempotent دارد.',
+  apiDocsCopy: 'کپی نمونه کد',
   groupRecordsHelp:
     'هر فرم را بازبینی کنید. بیمار فقط بعد از تأیید شما ساخته می‌شود.',
   review: 'بازبینی',

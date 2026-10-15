@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { resolveBaseEndPoint } from '../../api/base';
 import PatientRegistrationApi from '../../api/patientRegistration';
 import { fetchBrandInfo } from '../../utils/brandInfoCache';
 import Circleloader from '../../Components/CircleLoader';
@@ -11,6 +12,12 @@ import {
   PATIENT_GENDERS,
   STANDARD_PATIENT_FIELDS,
 } from './patientRegistrationForm';
+import {
+  REGISTRATION_API_SAMPLE_IDS,
+  REGISTRATION_API_SAMPLE_LABELS,
+  registrationApiSamples,
+  type RegistrationApiSampleId,
+} from './registrationApiSamples';
 import RegistrationBrandFrame, {
   brandButtonStyle,
   brandFromSources,
@@ -808,6 +815,7 @@ const ClinicPatientRegistration = () => {
                     </button>
                   </div>
                 )}
+                <ApiUsage text={text} />
               </section>
             )}
 
@@ -974,6 +982,68 @@ const ClinicPatientRegistration = () => {
           </div>
         </MainModal>
       )}
+    </div>
+  );
+};
+
+const ApiUsage = ({ text }: { text: (key: string) => string }) => {
+  const base = resolveBaseEndPoint().replace(/\/$/, '');
+  const samples = registrationApiSamples(base);
+  const [language, setLanguage] = useState<RegistrationApiSampleId>('curl');
+  const example = samples[language];
+  return (
+    <div className="mt-4 rounded-xl border border-[#E6EEF2] bg-[#F7F8FA] p-4">
+      <div className="text-sm font-medium">{text('apiDocsTitle')}</div>
+      <p className="mt-1 text-xs leading-5 text-[#667085]">
+        {text('apiDocsLead')}
+      </p>
+      <div className="mt-4 space-y-3 text-xs">
+        <div>
+          <div className="font-medium text-[#344054]">{text('apiDocsSchema')}</div>
+          <code dir="ltr" className="mt-1 block break-all text-left text-[#667085]">
+            GET {base}/v1/clinic-registration/schema
+          </code>
+        </div>
+        <div>
+          <div className="font-medium text-[#344054]">{text('apiDocsCreate')}</div>
+          <code dir="ltr" className="mt-1 block break-all text-left text-[#667085]">
+            POST {base}/v1/clinic-registration/patients
+          </code>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2" dir="ltr">
+        {REGISTRATION_API_SAMPLE_IDS.map((id) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setLanguage(id)}
+            className={`rounded-full px-3 py-1 text-[11px] ${
+              language === id
+                ? 'bg-Primary-DeepTeal text-white'
+                : 'bg-white text-[#344054]'
+            }`}
+          >
+            {REGISTRATION_API_SAMPLE_LABELS[id]}
+          </button>
+        ))}
+      </div>
+      <pre
+        dir="ltr"
+        className="mt-3 overflow-x-auto rounded-lg bg-white p-3 text-left text-[11px] leading-5 text-[#344054]"
+      >
+        {example}
+      </pre>
+      <button
+        type="button"
+        className="mt-2 text-xs text-Primary-DeepTeal"
+        onClick={() => copyText(example).then(() => toast.success(text('copied')))}
+      >
+        {text('apiDocsCopy')}
+      </button>
+      <p className="mt-3 text-xs leading-5 text-[#667085]">{text('apiDocsNotes')}</p>
+      <p className="mt-2 text-xs leading-5 text-[#667085]">
+        {text('apiDocsResponse')}
+      </p>
     </div>
   );
 };
