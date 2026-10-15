@@ -1067,7 +1067,9 @@ const RecordsSection = ({
                   <div className="mt-3 space-y-2">
                     {fields.map(([label, value]) => (
                       <div key={String(label)} className="text-xs">
-                        <span className="text-[#667085]">{String(label)}: </span>
+                        <span className="text-[#667085]">
+                          {String(label)}:{' '}
+                        </span>
                         <span>{String(value)}</span>
                       </div>
                     ))}
