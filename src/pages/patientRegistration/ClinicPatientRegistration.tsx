@@ -1144,8 +1144,20 @@ const RecordsSection = ({
                       const question = questions.find(
                         (entry) => entry.id === answerId,
                       );
-                      const shown = Array.isArray(value)
-                        ? value.join(', ')
+                      const labels = Array.isArray(value)
+                        ? value
+                        : typeof value === 'string' &&
+                            value.trim().startsWith('[')
+                          ? value
+                              .slice(1, -1)
+                              .split(/'\s*,\s*'|"\s*,\s*"/)
+                              .map((item) =>
+                                item.replace(/^['"]|['"]$/g, '').trim(),
+                              )
+                              .filter(Boolean)
+                          : null;
+                      const shown = labels
+                        ? labels.join(', ')
                         : String(value ?? '');
                       return (
                         <div key={answerId} className="text-xs">

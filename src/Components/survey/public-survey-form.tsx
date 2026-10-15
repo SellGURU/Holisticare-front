@@ -383,15 +383,19 @@ export function PublicSurveyForm({
     }
 
     console.log('Final processed questions:', questions);
-    setSortedQuestions(
-      fillableQuestions(Array.isArray(questions) ? questions : []),
-    );
+    if (action === 'edit') {
+      questions = questions.filter(
+        (question) => !String(question?.id || '').startsWith('registration_'),
+      );
+    }
+    const fillable = fillableQuestions(Array.isArray(questions) ? questions : []);
+    setSortedQuestions(fillable);
     // --- NEW: Initialize responses for all questions ---
     const initialResponses: Record<
       number,
       string | string[] | MultiFileResponse | null
     > = {};
-    questions.forEach((q, index) => {
+    fillable.forEach((q, index) => {
       // Set initial response based on type.
       // For text, paragraph, scale, star rating, yes/no, and emojis, default to empty string.
       // For checkbox, default to empty array.
@@ -462,7 +466,7 @@ export function PublicSurveyForm({
     });
     setResponses(initialResponses);
     // --- END NEW INITIALIZATION ---
-  }, [survey]);
+  }, [survey, action]);
 
   const getQuestionOptions = (question: ApiQuestion): string[] => {
     if (!question.options) return [];
@@ -746,34 +750,44 @@ export function PublicSurveyForm({
               // }, 2000);
             });
         } else if (action === 'edit') {
-          await Application.EditQuestionary({
-            member_id: memberId,
-            q_unique_id: qId,
-            f_unique_id: fId,
-            respond,
-          })
-            .catch((err) => {
-              console.error('Error editing questionary:', err);
-            })
-            .finally(() => {
-              // setTimeout(() => {
-              // publish('closeFullscreenModal',{});
-              parent.postMessage(
-                {
-                  type: 'closeFullscreenModal',
-                  data: {
-                    isUpdate: true,
-                    isFill: false,
-                    member_id: memberId as string,
-                    q_unique_id: qId as string,
-                    f_unique_id: fId as string,
-                  },
-                },
-                '*',
-              );
-              // navigate('/report/' + memberId + '/' + 'N');
-              // }, 2000);
+          try {
+            await Application.EditQuestionary({
+              member_id: memberId,
+              q_unique_id: qId,
+              f_unique_id: fId,
+              respond,
             });
+          } catch (err) {
+            console.error('Error editing questionary:', err);
+            const detail =
+              err &&
+              typeof err === 'object' &&
+              'response' in err &&
+              (err as { response?: { data?: { detail?: string } } }).response
+                ?.data?.detail;
+            toast({
+              title: 'Could not save',
+              description:
+                typeof detail === 'string' && detail
+                  ? detail
+                  : 'The questionnaire was not saved. Please try again.',
+              className: 'bg-red-600 text-white',
+            });
+            return;
+          }
+          parent.postMessage(
+            {
+              type: 'closeFullscreenModal',
+              data: {
+                isUpdate: true,
+                isFill: false,
+                member_id: memberId as string,
+                q_unique_id: qId as string,
+                f_unique_id: fId as string,
+              },
+            },
+            '*',
+          );
         }
       }
 
@@ -1004,13 +1018,68 @@ export function PublicSurveyForm({
     const questionOptions = getQuestionOptions(question);
     const response = responses[questionIndex];
     const validationError = validationErrors[questionIndex];
+    const registrationEdit =
+      action === 'edit' &&
+      Array.isArray(survey?.questions) &&
+      survey.questions.some((item: ApiQuestion) =>
+        String(item?.id || '').startsWith('registration_'),
+      );
+    const selectedChoices = Array.isArray(response)
+      ? response.map((item) => String(item))
+      : response
+        ? [String(response)]
+        : [];
+    const renderChoice = (single: boolean) => (
+      <div className="space-y-3">
+        {questionOptions.map((option, index) => {
+          const isChecked = selectedChoices.includes(option);
+          return (
+            <div
+              key={index}
+              role="checkbox"
+              aria-checked={isChecked}
+              tabIndex={0}
+              className={`cursor-pointer flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
+                validationError ? 'border-red-500' : ''
+              } ${isChecked ? 'border-green-500 bg-green-50' : ''}`}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (single) {
+                  handleResponseChange([option]);
+                  return;
+                }
+                const currentValue = selectedChoices;
+                handleResponseChange(
+                  isChecked
+                    ? currentValue.filter((item) => item !== option)
+                    : [...currentValue, option],
+                );
+              }}
+            >
+              <Checkbox
+                checked={isChecked}
+                onCheckedChange={() => {}}
+                className="mt-1 text-green-600 border-green-600 pointer-events-none"
+              />
+              <span className="flex-grow cursor-pointer font-medium">
+                {option}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    );
 
     switch (questionType.toLowerCase()) {
       case 'paragraph':
       case 'text':
+        if (questionOptions.length > 0) {
+          return renderChoice(true);
+        }
         return (
           <Textarea
-            value={(response as string) || ''}
+            value={typeof response === 'string' ? response : ''}
             onChange={(e) => handleResponseChange(e.target.value)}
             placeholder="Type your answer here..."
             className={`min-h-[120px] mt-2 text-base ${
@@ -1067,46 +1136,7 @@ export function PublicSurveyForm({
         );
 
       case 'checkbox':
-        return (
-          <div className="space-y-3">
-            {questionOptions.map((option, index) => {
-              const isChecked =
-                Array.isArray(response) && response.includes(option);
-
-              return (
-                <div
-                  key={index}
-                  role="checkbox"
-                  aria-checked={isChecked}
-                  tabIndex={0}
-                  className={`cursor-pointer flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
-                    validationError ? 'border-red-500' : ''
-                  } ${isChecked ? 'border-green-500 bg-green-50' : ''}`}
-                  onClick={() => {
-                    const currentValue = Array.isArray(response)
-                      ? response
-                      : [];
-                    if (isChecked) {
-                      handleResponseChange(
-                        currentValue.filter((item) => item !== option),
-                      );
-                    } else {
-                      handleResponseChange([...currentValue, option]);
-                    }
-                  }}
-                >
-                  <Checkbox
-                    id={`option-${questionIndex}-${index}`}
-                    checked={isChecked}
-                    onCheckedChange={() => {}}
-                    className="mt-1 text-green-600 border-green-600 pointer-events-none"
-                  />
-                  <Label>{option}</Label>
-                </div>
-              );
-            })}
-          </div>
-        );
+        return renderChoice(registrationEdit);
 
       case 'scale':
         return renderScaleSlider(

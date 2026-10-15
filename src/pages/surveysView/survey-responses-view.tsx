@@ -44,6 +44,21 @@ const emojeysData = [
   { name: 'Loved', order: 4, icon: '/images/emoji/love.gif' },
 ];
 
+function unwrapStoredList(response: unknown): unknown {
+  if (typeof response !== 'string') return response;
+  const text = response.trim();
+  if (!text.startsWith('[') || !text.endsWith(']')) return response;
+  const labels: string[] = [];
+  const pattern = /'((?:\\'|[^'])*)'|"((?:\\"|[^"])*)"/g;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(text))) {
+    labels.push(
+      (match[1] ?? match[2] ?? '').replace(/\\'/g, "'").replace(/\\"/g, '"'),
+    );
+  }
+  return labels.length > 0 ? labels : response;
+}
+
 export function SurveyResponsesView({
   questions,
   filled_by,
@@ -54,24 +69,28 @@ export function SurveyResponsesView({
   const sortedQuestions = [...questions].sort((a, b) => a.order - b.order);
 
   const getResponseDisplay = (question: Question) => {
-    if (question.response === undefined || question.response === null) {
+    const response = unwrapStoredList(question.response);
+    if (response === undefined || response === null || response === '') {
       return <span className="text-gray-400 italic">No response</span>;
     }
 
-    // Handle Checkbox type
-    if (
-      question.type.toLowerCase() === 'checkbox' &&
-      Array.isArray(question.response)
-    ) {
-      return (
-        <ul className="list-disc pl-5 space-y-1">
-          {question.response.length === 0 ? (
-            <li className="text-gray-400 italic">None selected</li>
-          ) : (
-            question.response.map((item, i) => <li key={i}>{item}</li>)
-          )}
-        </ul>
-      );
+    if (Array.isArray(response)) {
+      const labels = response.map((item) => String(item)).filter(Boolean);
+      if (
+        question.type.toLowerCase() === 'checkbox' ||
+        (question.options && question.options.length > 0)
+      ) {
+        return (
+          <ul className="list-disc pl-5 space-y-1">
+            {labels.length === 0 ? (
+              <li className="text-gray-400 italic">None selected</li>
+            ) : (
+              labels.map((item, i) => <li key={i}>{item}</li>)
+            )}
+          </ul>
+        );
+      }
+      return <span>{labels.join(', ')}</span>;
     }
 
     // Handle "File Uploader" type
