@@ -147,7 +147,7 @@ export function SurveyResponsesView({
 
     // Handle "Star Rating" type
     if (question.type.toLowerCase() === 'star rating') {
-      const rating = Number.parseInt(question.response.toString()) || 0;
+      const rating = Number.parseInt(String(question.response ?? '')) || 0;
       const maxStars = question.options?.length || 5;
 
       return (
@@ -175,7 +175,7 @@ export function SurveyResponsesView({
 
     // Handle "Scale" type
     if (question.type.toLowerCase() === 'scale') {
-      const value = Number.parseInt(question.response.toString()) || 0;
+      const value = Number.parseInt(String(question.response ?? '')) || 0;
       const min = Number.parseInt(question.options?.[0] || '1');
       const max = Number.parseInt(question.options?.[1] || '10');
 
@@ -198,7 +198,7 @@ export function SurveyResponsesView({
 
     // Handle "Emojis" type
     if (question.type.toLowerCase() === 'emojis') {
-      const selectedEmojiName = question.response.toString();
+      const selectedEmojiName = String(question.response ?? '');
       const selectedEmoji = emojeysData.find(
         (el) => el.name === selectedEmojiName,
       );
@@ -230,7 +230,7 @@ export function SurveyResponsesView({
     }
 
     // For all other types, show as text
-    return <span>{question.response.toString()}</span>;
+    return <span>{String(question.response ?? '')}</span>;
   };
 
   return (
