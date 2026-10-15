@@ -22,7 +22,10 @@ class PatientRegistrationApi extends Api {
   }
 
   static rotateApiKey(id: string) {
-    return this.post(`/settings/patient-registration/api-keys/${id}/rotate`, {});
+    return this.post(
+      `/settings/patient-registration/api-keys/${id}/rotate`,
+      {},
+    );
   }
 
   static listInvites() {
@@ -49,11 +52,17 @@ class PatientRegistrationApi extends Api {
   }
 
   static approveSubmission(id: string) {
-    return this.post(`/settings/patient-registration/submissions/${id}/approve`, {});
+    return this.post(
+      `/settings/patient-registration/submissions/${id}/approve`,
+      {},
+    );
   }
 
   static declineSubmission(id: string) {
-    return this.post(`/settings/patient-registration/submissions/${id}/decline`, {});
+    return this.post(
+      `/settings/patient-registration/submissions/${id}/decline`,
+      {},
+    );
   }
 
   static publicBrand(slug: string) {
@@ -64,9 +73,12 @@ class PatientRegistrationApi extends Api {
   }
 
   static publicForm(slug: string) {
-    return this.get(`/public/patient-registration/${encodeURIComponent(slug)}`, {
-      noAuth: true,
-    });
+    return this.get(
+      `/public/patient-registration/${encodeURIComponent(slug)}`,
+      {
+        noAuth: true,
+      },
+    );
   }
 
   static submitPublic(slug: string, payload: Record<string, unknown>) {
@@ -78,9 +90,12 @@ class PatientRegistrationApi extends Api {
   }
 
   static inviteForm(token: string) {
-    return this.get(`/public/patient-registration/invite/${encodeURIComponent(token)}`, {
-      noAuth: true,
-    });
+    return this.get(
+      `/public/patient-registration/invite/${encodeURIComponent(token)}`,
+      {
+        noAuth: true,
+      },
+    );
   }
 
   static submitInvite(token: string, payload: Record<string, unknown>) {

@@ -105,7 +105,9 @@ function isPastOrToday(value: string): boolean {
   return date.getTime() <= today.getTime();
 }
 
-export function emptyStandardPatient(timezone = 'Europe/London'): StandardPatientInput {
+export function emptyStandardPatient(
+  timezone = 'Europe/London',
+): StandardPatientInput {
   return {
     firstName: '',
     lastName: '',
@@ -127,7 +129,10 @@ export function validateStandardPatient(
   if (!input.firstName.trim() || !input.lastName.trim()) {
     return 'First name and last name are required';
   }
-  if (!NAME_RE.test(input.firstName.trim()) || !NAME_RE.test(input.lastName.trim())) {
+  if (
+    !NAME_RE.test(input.firstName.trim()) ||
+    !NAME_RE.test(input.lastName.trim())
+  ) {
     return 'First and last name must only contain letters';
   }
   if (!EMAIL_RE.test(input.email.trim())) {

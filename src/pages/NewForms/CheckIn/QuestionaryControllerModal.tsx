@@ -529,10 +529,10 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           !allowEmptyQuestions &&
           questions.length == 0 &&
           step === 1 && (
-          <div className="text-[10px] text-Red shrink-0">
-            Add question to continue.
-          </div>
-        )}
+            <div className="text-[10px] text-Red shrink-0">
+              Add question to continue.
+            </div>
+          )}
         {textErrorMessage &&
           !isUnrecognizedCatalogBiomarkerError(textErrorMessage) && (
             <div className="text-xs text-Red shrink-0 px-2 whitespace-pre-line">

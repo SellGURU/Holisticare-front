@@ -7,7 +7,10 @@ import Circleloader from '../../Components/CircleLoader';
 import EnabledSwitch from '../../Components/EnabledSwitch';
 import MainModal from '../../Components/MainModal';
 import { copyText } from '../../utils/clipboard';
-import { PATIENT_GENDERS, STANDARD_PATIENT_FIELDS } from './patientRegistrationForm';
+import {
+  PATIENT_GENDERS,
+  STANDARD_PATIENT_FIELDS,
+} from './patientRegistrationForm';
 import RegistrationBrandFrame, {
   brandButtonStyle,
   brandFromSources,
@@ -79,7 +82,9 @@ const readSettings = (
   data: Record<string, unknown>,
   brandSlug = '',
 ): Settings => {
-  const slug = String(data.publicSlug || data.public_slug || brandSlug || '').trim();
+  const slug = String(
+    data.publicSlug || data.public_slug || brandSlug || '',
+  ).trim();
   const questions = data.additionalQuestions || data.additional_questions;
   return {
     enabled: data.enabled !== false,
@@ -149,12 +154,14 @@ const ClinicPatientRegistration = () => {
   const [invites, setInvites] = useState<
     Array<Record<string, string | number | null>>
   >([]);
-  const [submissions, setSubmissions] = useState<Array<Record<string, unknown>>>(
-    [],
-  );
+  const [submissions, setSubmissions] = useState<
+    Array<Record<string, unknown>>
+  >([]);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState('');
   const [reviewing, setReviewing] = useState(false);
-  const [brand, setBrand] = useState<RegistrationBrand>(emptyRegistrationBrand());
+  const [brand, setBrand] = useState<RegistrationBrand>(
+    emptyRegistrationBrand(),
+  );
 
   const text = (key: string) => t(`registration.${key}`);
   const questions = settings.additionalQuestions.filter(
@@ -184,7 +191,9 @@ const ClinicPatientRegistration = () => {
     Promise.all([PatientRegistrationApi.getSettings(), brandSlug])
       .then(([res, slug]) => {
         const body = (res.data || {}) as Record<string, unknown>;
-        const serverSlug = String(body.publicSlug || body.public_slug || '').trim();
+        const serverSlug = String(
+          body.publicSlug || body.public_slug || '',
+        ).trim();
         const next = applySettings(body, slug);
         setLinkError('');
         if (!serverSlug && next.publicSlug) {
@@ -196,8 +205,15 @@ const ClinicPatientRegistration = () => {
             additionalQuestions: next.additionalQuestions,
             disabledStandardFields: next.disabledStandardFields,
           })
-            .then((saved) => applySettings((saved.data || {}) as Record<string, unknown>, slug))
-            .catch((err) => setLinkError(errorText(err, 'Could not publish the form')));
+            .then((saved) =>
+              applySettings(
+                (saved.data || {}) as Record<string, unknown>,
+                slug,
+              ),
+            )
+            .catch((err) =>
+              setLinkError(errorText(err, 'Could not publish the form')),
+            );
         }
       })
       .catch((err) => {
@@ -220,12 +236,16 @@ const ClinicPatientRegistration = () => {
     if (section === 'access') {
       PatientRegistrationApi.listInvites()
         .then((res) => setInvites(res.data?.invites || []))
-        .catch((err) => toast.error(errorText(err, 'Could not load invitations')));
+        .catch((err) =>
+          toast.error(errorText(err, 'Could not load invitations')),
+        );
     }
     if (section === 'records') {
       PatientRegistrationApi.listSubmissions()
         .then((res) => setSubmissions(res.data?.submissions || []))
-        .catch((err) => toast.error(errorText(err, 'Could not load registrations')));
+        .catch((err) =>
+          toast.error(errorText(err, 'Could not load registrations')),
+        );
     }
   }, [section]);
 
@@ -237,7 +257,12 @@ const ClinicPatientRegistration = () => {
       consentText: next.consentText,
       publicSlug: next.publicSlug,
       additionalQuestions: next.additionalQuestions
-        .filter((item) => item && !('__scoring__' in item) && String(item.question || '').trim())
+        .filter(
+          (item) =>
+            item &&
+            !('__scoring__' in item) &&
+            String(item.question || '').trim(),
+        )
         .map((item, index) => plainQuestion(item, index)),
       disabledStandardFields: next.disabledStandardFields,
     })
@@ -256,7 +281,11 @@ const ClinicPatientRegistration = () => {
     { id: 'form', label: text('groupForm'), hint: text('groupFormHelp') },
     { id: 'access', label: text('groupAccess'), hint: text('groupAccessHelp') },
     { id: 'api', label: text('groupApi'), hint: text('groupApiHelp') },
-    { id: 'records', label: text('groupRecords'), hint: text('groupRecordsHelp') },
+    {
+      id: 'records',
+      label: text('groupRecords'),
+      hint: text('groupRecordsHelp'),
+    },
   ];
 
   const formTabs: Array<{ id: FormTab; label: string }> = [
@@ -271,7 +300,9 @@ const ClinicPatientRegistration = () => {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-base font-medium">{text('title')}</h1>
-            <p className="mt-1 max-w-2xl text-xs leading-5 text-[#667085]">{text('intro')}</p>
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-[#667085]">
+              {text('intro')}
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-2 text-[11px]">
             <span
@@ -321,12 +352,16 @@ const ClinicPatientRegistration = () => {
               >
                 <div
                   className={`text-sm font-medium ${
-                    section === item.id ? 'text-Primary-DeepTeal' : 'text-Text-Primary'
+                    section === item.id
+                      ? 'text-Primary-DeepTeal'
+                      : 'text-Text-Primary'
                   }`}
                 >
                   {item.label}
                 </div>
-                <div className="mt-1 text-[11px] leading-4 text-[#667085]">{item.hint}</div>
+                <div className="mt-1 text-[11px] leading-4 text-[#667085]">
+                  {item.hint}
+                </div>
               </button>
             ))}
           </nav>
@@ -356,13 +391,18 @@ const ClinicPatientRegistration = () => {
                   {formTab === 'form' && (
                     <>
                       <section>
-                        <div className="text-sm font-medium">{text('groupForm')}</div>
+                        <div className="text-sm font-medium">
+                          {text('groupForm')}
+                        </div>
                         <div className="mt-4 space-y-3">
                           <ToggleRow
                             checked={settings.enabled}
                             label={text('enabled')}
                             onChange={(enabled) =>
-                              setSettings((current) => ({ ...current, enabled }))
+                              setSettings((current) => ({
+                                ...current,
+                                enabled,
+                              }))
                             }
                           />
                           <ToggleRow
@@ -378,11 +418,18 @@ const ClinicPatientRegistration = () => {
                         </div>
                       </section>
                       <section>
-                        <div className="text-sm font-medium">{text('locked')}</div>
-                        <p className="mt-1 text-xs text-[#667085]">{text('lockedHelp')}</p>
+                        <div className="text-sm font-medium">
+                          {text('locked')}
+                        </div>
+                        <p className="mt-1 text-xs text-[#667085]">
+                          {text('lockedHelp')}
+                        </p>
                         <div className="mt-4 grid gap-2 sm:grid-cols-2">
                           {STANDARD_PATIENT_FIELDS.map((field) => {
-                            const enabled = !settings.disabledStandardFields.includes(field.key);
+                            const enabled =
+                              !settings.disabledStandardFields.includes(
+                                field.key,
+                              );
                             return (
                               <div
                                 key={field.key}
@@ -397,7 +444,9 @@ const ClinicPatientRegistration = () => {
                                   </span>
                                 ) : (
                                   <span className="flex items-center gap-2">
-                                    <span className="text-[10px] text-[#667085]">{text('optional')}</span>
+                                    <span className="text-[10px] text-[#667085]">
+                                      {text('optional')}
+                                    </span>
                                     <EnabledSwitch
                                       enabled={enabled}
                                       title={field.label}
@@ -408,7 +457,10 @@ const ClinicPatientRegistration = () => {
                                             ? current.disabledStandardFields.filter(
                                                 (key) => key !== field.key,
                                               )
-                                            : [...current.disabledStandardFields, field.key],
+                                            : [
+                                                ...current.disabledStandardFields,
+                                                field.key,
+                                              ],
                                         }))
                                       }
                                     />
@@ -422,7 +474,9 @@ const ClinicPatientRegistration = () => {
                       <section>
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div>
-                            <div className="text-sm font-medium">{text('additional')}</div>
+                            <div className="text-sm font-medium">
+                              {text('additional')}
+                            </div>
                             <p className="mt-1 max-w-xl text-xs leading-5 text-[#667085]">
                               {text('questionnaireHelp')}
                             </p>
@@ -461,7 +515,9 @@ const ClinicPatientRegistration = () => {
                                 onClick={() => {
                                   setFieldError('');
                                   setFieldDraft({
-                                    id: String(question.id || `field-${index + 1}`),
+                                    id: String(
+                                      question.id || `field-${index + 1}`,
+                                    ),
                                     question: question.question || '',
                                     required: Boolean(question.required),
                                     type: String(question.type || '')
@@ -477,7 +533,9 @@ const ClinicPatientRegistration = () => {
                                   {index + 1}
                                 </div>
                                 <div className="min-w-0">
-                                  <div className="text-sm">{question.question}</div>
+                                  <div className="text-sm">
+                                    {question.question}
+                                  </div>
                                   <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-[#667085]">
                                     <span className="rounded-full bg-[#F4F7F8] px-2 py-0.5">
                                       {String(question.type || '')
@@ -486,7 +544,9 @@ const ClinicPatientRegistration = () => {
                                         ? text('fieldYesNo')
                                         : text('fieldText')}
                                     </span>
-                                    {question.required && <span>{text('required')}</span>}
+                                    {question.required && (
+                                      <span>{text('required')}</span>
+                                    )}
                                   </div>
                                 </div>
                               </button>
@@ -496,9 +556,10 @@ const ClinicPatientRegistration = () => {
                                 onClick={() =>
                                   setSettings((current) => ({
                                     ...current,
-                                    additionalQuestions: current.additionalQuestions.filter(
-                                      (item) => item.id !== question.id,
-                                    ),
+                                    additionalQuestions:
+                                      current.additionalQuestions.filter(
+                                        (item) => item.id !== question.id,
+                                      ),
                                   }))
                                 }
                               >
@@ -531,7 +592,9 @@ const ClinicPatientRegistration = () => {
             {section === 'access' && (
               <>
                 <section className={cardClass}>
-                  <div className="text-sm font-medium">{text('publicLink')}</div>
+                  <div className="text-sm font-medium">
+                    {text('publicLink')}
+                  </div>
                   <label className="mt-4 block text-xs">
                     {text('slug')}
                     <input
@@ -546,14 +609,18 @@ const ClinicPatientRegistration = () => {
                     />
                   </label>
                   <div className="mt-3 min-h-16 select-all break-all rounded-xl bg-[#F7F8FA] px-3 py-3 text-sm leading-6">
-                    {registrationPublicUrl(settings.publicSlug) || linkError || '—'}
+                    {registrationPublicUrl(settings.publicSlug) ||
+                      linkError ||
+                      '—'}
                   </div>
                   <div className="mt-3 flex gap-3 text-xs">
                     <button
                       type="button"
                       className="text-Primary-DeepTeal"
                       onClick={() =>
-                        copyText(registrationPublicUrl(settings.publicSlug)).then((ok) => {
+                        copyText(
+                          registrationPublicUrl(settings.publicSlug),
+                        ).then((ok) => {
                           if (ok) toast.success(text('copied'));
                         })
                       }
@@ -575,7 +642,9 @@ const ClinicPatientRegistration = () => {
 
                 <section className={cardClass}>
                   <div className="text-sm font-medium">{text('emails')}</div>
-                  <p className="mt-1 text-xs text-[#667085]">{text('emailsHelp')}</p>
+                  <p className="mt-1 text-xs text-[#667085]">
+                    {text('emailsHelp')}
+                  </p>
                   <textarea
                     className="mt-4 w-full rounded-xl border border-[#E6EEF2] px-3 py-2 text-xs"
                     rows={3}
@@ -599,7 +668,9 @@ const ClinicPatientRegistration = () => {
                           toast.success(text('send'));
                         })
                         .catch((err) =>
-                          toast.error(errorText(err, 'Could not send invitations')),
+                          toast.error(
+                            errorText(err, 'Could not send invitations'),
+                          ),
                         );
                     }}
                   >
@@ -621,14 +692,14 @@ const ClinicPatientRegistration = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              PatientRegistrationApi.resendInvite(String(invite.id)).then(
-                                (res) => {
-                                  if (res.data?.invite?.link) {
-                                    copyText(res.data.invite.link);
-                                    toast.success(text('copied'));
-                                  }
-                                },
-                              )
+                              PatientRegistrationApi.resendInvite(
+                                String(invite.id),
+                              ).then((res) => {
+                                if (res.data?.invite?.link) {
+                                  copyText(res.data.invite.link);
+                                  toast.success(text('copied'));
+                                }
+                              })
                             }
                           >
                             {text('resend')}
@@ -636,9 +707,15 @@ const ClinicPatientRegistration = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              PatientRegistrationApi.revokeInvite(String(invite.id))
-                                .then(() => PatientRegistrationApi.listInvites())
-                                .then((res) => setInvites(res.data?.invites || []))
+                              PatientRegistrationApi.revokeInvite(
+                                String(invite.id),
+                              )
+                                .then(() =>
+                                  PatientRegistrationApi.listInvites(),
+                                )
+                                .then((res) =>
+                                  setInvites(res.data?.invites || []),
+                                )
                             }
                           >
                             {text('revoke')}
@@ -647,7 +724,9 @@ const ClinicPatientRegistration = () => {
                       </div>
                     ))}
                     {invites.length === 0 && (
-                      <div className="py-4 text-xs text-[#667085]">{text('empty')}</div>
+                      <div className="py-4 text-xs text-[#667085]">
+                        {text('empty')}
+                      </div>
                     )}
                   </div>
                 </section>
@@ -657,12 +736,16 @@ const ClinicPatientRegistration = () => {
             {section === 'api' && (
               <section className={cardClass}>
                 <div className="text-sm font-medium">{text('keys')}</div>
-                <p className="mt-1 text-xs text-[#667085]">{text('groupApiHelp')}</p>
+                <p className="mt-1 text-xs text-[#667085]">
+                  {text('groupApiHelp')}
+                </p>
                 {keys[0] ? (
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[#F7F8FA] px-3 py-3 text-xs">
                     <div>
                       <div className="font-medium">{keys[0].name}</div>
-                      <div className="mt-1 text-[#667085]">{keys[0].prefix}…</div>
+                      <div className="mt-1 text-[#667085]">
+                        {keys[0].prefix}…
+                      </div>
                     </div>
                     <button
                       type="button"
@@ -675,7 +758,12 @@ const ClinicPatientRegistration = () => {
                           })
                           .then((list) => setKeys(list.data?.keys || []))
                           .catch((err) =>
-                            toast.error(errorText(err, 'Could not regenerate the API key')),
+                            toast.error(
+                              errorText(
+                                err,
+                                'Could not regenerate the API key',
+                              ),
+                            ),
                           )
                       }
                     >
@@ -694,7 +782,9 @@ const ClinicPatientRegistration = () => {
                         })
                         .then((res) => setKeys(res.data?.keys || []))
                         .catch((err) =>
-                          toast.error(errorText(err, 'Could not create an API key')),
+                          toast.error(
+                            errorText(err, 'Could not create an API key'),
+                          ),
                         )
                     }
                   >
@@ -709,7 +799,9 @@ const ClinicPatientRegistration = () => {
                       type="button"
                       className="mt-2 text-Primary-DeepTeal"
                       onClick={() =>
-                        copyText(secret).then(() => toast.success(text('copied')))
+                        copyText(secret).then(() =>
+                          toast.success(text('copied')),
+                        )
                       }
                     >
                       {text('copyKey')}
@@ -743,7 +835,11 @@ const ClinicPatientRegistration = () => {
                       setSubmissions(res.data?.submissions || []);
                       toast.success(text('accepted'));
                     })
-                    .catch((err) => toast.error(errorText(err, 'Could not approve this registration')))
+                    .catch((err) =>
+                      toast.error(
+                        errorText(err, 'Could not approve this registration'),
+                      ),
+                    )
                     .finally(() => setReviewing(false));
                 }}
                 onDecline={(id) => {
@@ -754,7 +850,11 @@ const ClinicPatientRegistration = () => {
                       setSubmissions(res.data?.submissions || []);
                       toast.success(text('declined'));
                     })
-                    .catch((err) => toast.error(errorText(err, 'Could not decline this registration')))
+                    .catch((err) =>
+                      toast.error(
+                        errorText(err, 'Could not decline this registration'),
+                      ),
+                    )
                     .finally(() => setReviewing(false));
                 }}
               />
@@ -783,7 +883,9 @@ const ClinicPatientRegistration = () => {
                 autoFocus
                 onChange={(event) =>
                   setFieldDraft((current) =>
-                    current ? { ...current, question: event.target.value } : current,
+                    current
+                      ? { ...current, question: event.target.value }
+                      : current,
                   )
                 }
               />
@@ -810,7 +912,10 @@ const ClinicPatientRegistration = () => {
                     current
                       ? {
                           ...current,
-                          type: event.target.value === 'Yes/No' ? 'Yes/No' : 'Paragraph',
+                          type:
+                            event.target.value === 'Yes/No'
+                              ? 'Yes/No'
+                              : 'Paragraph',
                         }
                       : current,
                   )
@@ -820,7 +925,9 @@ const ClinicPatientRegistration = () => {
                 <option value="Yes/No">{text('fieldYesNo')}</option>
               </select>
             </label>
-            {fieldError && <div className="mt-3 text-xs text-[#B42318]">{fieldError}</div>}
+            {fieldError && (
+              <div className="mt-3 text-xs text-[#B42318]">{fieldError}</div>
+            )}
             <div className="mt-5 flex justify-end gap-2">
               <button
                 type="button"
@@ -851,7 +958,9 @@ const ClinicPatientRegistration = () => {
                       additionalQuestions: fieldDraft.isNew
                         ? [...current.additionalQuestions, next]
                         : current.additionalQuestions.map((item) =>
-                            item.id === fieldDraft.id ? { ...item, ...next, id: item.id } : item,
+                            item.id === fieldDraft.id
+                              ? { ...item, ...next, id: item.id }
+                              : item,
                           ),
                     };
                   });
@@ -913,7 +1022,10 @@ const RecordsSection = ({
           const id = String(item.id);
           const open = id === selectedId;
           const itemStatus = String(item.status || 'accepted');
-          const application = (item.application || {}) as Record<string, unknown>;
+          const application = (item.application || {}) as Record<
+            string,
+            unknown
+          >;
           const answers = (item.answers || {}) as Record<string, unknown>;
           const fields = [
             ['First name', application.firstName || item.firstName],
@@ -941,7 +1053,8 @@ const RecordsSection = ({
                     {String(item.firstName || '')} {String(item.lastName || '')}
                   </span>
                   <span className="mt-1 block text-xs text-[#667085]">
-                    {String(item.email || '')} · {sourceLabel} {String(item.source || '')}
+                    {String(item.email || '')} · {sourceLabel}{' '}
+                    {String(item.source || '')}
                   </span>
                 </span>
                 <span className="shrink-0 rounded-full bg-[#F4F7F8] px-2 py-1 text-[11px] text-[#667085]">
@@ -959,8 +1072,12 @@ const RecordsSection = ({
                       </div>
                     ))}
                     {Object.entries(answers).map(([answerId, value]) => {
-                      const question = questions.find((entry) => entry.id === answerId);
-                      const shown = Array.isArray(value) ? value.join(', ') : String(value ?? '');
+                      const question = questions.find(
+                        (entry) => entry.id === answerId,
+                      );
+                      const shown = Array.isArray(value)
+                        ? value.join(', ')
+                        : String(value ?? '');
                       return (
                         <div key={answerId} className="text-xs">
                           <span className="text-[#667085]">
@@ -1026,7 +1143,10 @@ const fieldInput = (key: string) => {
     return (
       <div className="mt-2 flex flex-wrap gap-4">
         {PATIENT_GENDERS.map((option) => (
-          <span key={option.value} className="flex items-center gap-2 text-[11px] text-[#667085]">
+          <span
+            key={option.value}
+            className="flex items-center gap-2 text-[11px] text-[#667085]"
+          >
             <span className="h-3.5 w-3.5 rounded-full border border-[#D0D5DD] bg-white" />
             {option.label}
           </span>
@@ -1049,7 +1169,9 @@ const fieldInput = (key: string) => {
       </div>
     );
   }
-  return <div className="mt-1 h-9 rounded-xl border border-[#E6EEF2] bg-[#F7F8FA]" />;
+  return (
+    <div className="mt-1 h-9 rounded-xl border border-[#E6EEF2] bg-[#F7F8FA]" />
+  );
 };
 
 const QuestionPreview = ({ question }: { question: QuestionaryType }) => {
@@ -1073,7 +1195,10 @@ const QuestionPreview = ({ question }: { question: QuestionaryType }) => {
     return (
       <div className="mt-2 space-y-1.5">
         {options.map((option) => (
-          <div key={option} className="flex items-center gap-2 text-[11px] text-[#667085]">
+          <div
+            key={option}
+            className="flex items-center gap-2 text-[11px] text-[#667085]"
+          >
             <span className="h-3.5 w-3.5 rounded border border-[#D0D5DD] bg-white" />
             {option}
           </div>
@@ -1082,9 +1207,13 @@ const QuestionPreview = ({ question }: { question: QuestionaryType }) => {
     );
   }
   if (type.includes('paragraph') || type.includes('long')) {
-    return <div className="mt-2 h-16 rounded-xl border border-[#E6EEF2] bg-[#F7F8FA]" />;
+    return (
+      <div className="mt-2 h-16 rounded-xl border border-[#E6EEF2] bg-[#F7F8FA]" />
+    );
   }
-  return <div className="mt-2 h-9 rounded-xl border border-[#E6EEF2] bg-[#F7F8FA]" />;
+  return (
+    <div className="mt-2 h-9 rounded-xl border border-[#E6EEF2] bg-[#F7F8FA]" />
+  );
 };
 
 const FormPreview = ({
@@ -1116,7 +1245,9 @@ const FormPreview = ({
     <div className="pointer-events-none mt-4 rounded-2xl bg-[#F4F4F4] p-4">
       <RegistrationBrandFrame brand={brand} title={formTitle}>
         <div className="space-y-3">
-          {STANDARD_PATIENT_FIELDS.filter((field) => !hiddenFields.includes(field.key)).map((field) => (
+          {STANDARD_PATIENT_FIELDS.filter(
+            (field) => !hiddenFields.includes(field.key),
+          ).map((field) => (
             <div key={field.key}>
               <div className="text-xs text-[#344054]">{field.label}</div>
               {fieldInput(field.key)}

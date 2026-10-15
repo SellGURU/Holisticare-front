@@ -26,9 +26,7 @@ describe('isPublicClientPath', () => {
     expect(isPublicClientPath('/tasks/enc/id')).toBe(true);
     expect(isPublicClientPath('/share/12/name')).toBe(true);
     expect(isPublicClientPath('/patient-registration/clinic-name')).toBe(true);
-    expect(isPublicClientPath('/patient-registration/invite/token')).toBe(
-      true,
-    );
+    expect(isPublicClientPath('/patient-registration/invite/token')).toBe(true);
   });
 
   it('does not treat portal pages as public fill links', () => {

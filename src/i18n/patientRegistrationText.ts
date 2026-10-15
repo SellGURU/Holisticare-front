@@ -33,7 +33,8 @@ export const patientRegistrationEn = {
   empty: 'No records yet',
   preview: 'Preview',
   previewTitle: 'Form preview',
-  previewHelp: 'This is the form a patient sees before the final registration submit.',
+  previewHelp:
+    'This is the form a patient sees before the final registration submit.',
   editQuestionnaire: 'Edit questionnaire',
   questionnaireHelp:
     'Add a plain question to the registration form. These fields are not used for biomarkers or insights.',

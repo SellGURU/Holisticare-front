@@ -793,7 +793,8 @@ export function PublicSurveyForm({
       ) {
         toast({
           title: 'Could not submit',
-          description: error instanceof Error ? error.message : 'Please try again.',
+          description:
+            error instanceof Error ? error.message : 'Please try again.',
           className: 'bg-red-600 text-white',
         });
         return;
