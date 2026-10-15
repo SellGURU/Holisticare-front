@@ -325,7 +325,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           const needsFreshGate =
             data.show_report === false &&
             data.first_time_view !== true &&
-            !(Array.isArray(data.questionnaires) && data.questionnaires.length > 0);
+            !(
+              Array.isArray(data.questionnaires) &&
+              data.questionnaires.length > 0
+            );
           if (needsFreshGate) {
             data = await fetchFresh(
               HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
@@ -348,7 +351,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           if (
             data.show_report === false &&
             data.first_time_view !== true &&
-            !(Array.isArray(data.questionnaires) && data.questionnaires.length > 0)
+            !(
+              Array.isArray(data.questionnaires) &&
+              data.questionnaires.length > 0
+            )
           ) {
             setShowUploadTest(true);
           }

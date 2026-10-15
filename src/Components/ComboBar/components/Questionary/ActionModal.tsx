@@ -36,8 +36,7 @@ const ActionModal: FC<ActionModalProps> = ({
   const [sureRemove, setSureRemove] = useState<boolean>(false);
   const [downloading, setDownloading] = useState(false);
   const [reminding, setReminding] = useState(false);
-  const viewOnly =
-    Boolean(el?.view_only) || el?.title === 'Registration form';
+  const viewOnly = Boolean(el?.view_only) || el?.title === 'Registration form';
   const remindCooldownRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(
@@ -216,42 +215,42 @@ const ActionModal: FC<ActionModalProps> = ({
         )}
         {!viewOnly ? (
           !sureRemove ? (
-          <>
-            <div
-              onClick={() => {
-                setSureRemove(true);
-              }}
-              className={`flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1 cursor-pointer`}
-            >
-              <img className="size-5" src="/icons/delete-green.svg" alt="" />
-              Delete
+            <>
+              <div
+                onClick={() => {
+                  setSureRemove(true);
+                }}
+                className={`flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1 cursor-pointer`}
+              >
+                <img className="size-5" src="/icons/delete-green.svg" alt="" />
+                Delete
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-start gap-2">
+              <div className="text-Text-Quadruple text-xs">Sure?</div>
+              <img
+                src="/icons/tick-circle-green.svg"
+                alt=""
+                className="w-[20px] h-[20px] cursor-pointer"
+                onClick={() => {
+                  OnClose();
+                  onDelete();
+                  // handleDelete(
+                  //   id,
+                  //   el.unique_id,
+                  //   el.forms_unique_id,
+                  //   el.status,
+                  // );
+                }}
+              />
+              <img
+                src="/icons/close-circle-red.svg"
+                alt=""
+                className="w-[20px] h-[20px] cursor-pointer"
+                onClick={() => setSureRemove(false)}
+              />
             </div>
-          </>
-        ) : (
-          <div className="flex items-center justify-start gap-2">
-            <div className="text-Text-Quadruple text-xs">Sure?</div>
-            <img
-              src="/icons/tick-circle-green.svg"
-              alt=""
-              className="w-[20px] h-[20px] cursor-pointer"
-              onClick={() => {
-                OnClose();
-                onDelete();
-                // handleDelete(
-                //   id,
-                //   el.unique_id,
-                //   el.forms_unique_id,
-                //   el.status,
-                // );
-              }}
-            />
-            <img
-              src="/icons/close-circle-red.svg"
-              alt=""
-              className="w-[20px] h-[20px] cursor-pointer"
-              onClick={() => setSureRemove(false)}
-            />
-          </div>
           )
         ) : null}
       </div>
