@@ -35,6 +35,8 @@ import PackagePage from '../pages/settings/components/Package.tsx';
 import Staff from '../pages/staff/index.tsx';
 import CustomBiomarkers from '../pages/CustomBiomarkers.tsx/index.tsx';
 import FormView from '../pages/CheckIn/FormView.tsx';
+import PublicPatientRegistration from '../pages/patientRegistration/PublicPatientRegistration';
+import ClinicPatientRegistration from '../pages/patientRegistration/ClinicPatientRegistration';
 import CustomBranding from '../pages/CustomBranding/index.tsx';
 import CustomParametric from '../pages/CustomParametric/index.tsx';
 import Activity from '../pages/Library/Activity/index.tsx';
@@ -110,6 +112,14 @@ const router = createBrowserRouter([
           {
             path: '/forms',
             element: <NewForms></NewForms>,
+          },
+          {
+            path: '/clinic-registration',
+            element: (
+              <RoleProtectedRoute allowedRoles={['admin']}>
+                <ClinicPatientRegistration />
+              </RoleProtectedRoute>
+            ),
           },
           {
             path: '/staff',
@@ -335,6 +345,18 @@ const router = createBrowserRouter([
   {
     path: '/questionary/:encode/:id/:f-id',
     element: <FormView mode="questionary"></FormView>,
+  },
+  {
+    path: '/patient-registration/invite/:token',
+    element: <PublicPatientRegistration />,
+  },
+  {
+    path: '/patient-registration/:clinicSlug/new-patient-registration-form',
+    element: <PublicPatientRegistration />,
+  },
+  {
+    path: '/patient-registration/:clinicSlug',
+    element: <PublicPatientRegistration />,
   },
   {
     path: '/tasks/:encode/:id',

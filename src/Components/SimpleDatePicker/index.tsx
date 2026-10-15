@@ -77,6 +77,7 @@ export default function SimpleDatePicker({
       ref={calendarRef}
     >
       <button
+        type="button"
         onClick={() => {
           setOpen(!open);
           onManualOpen?.();

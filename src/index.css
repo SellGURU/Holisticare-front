@@ -206,6 +206,17 @@ input[type='number'] {
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
 }
+.sidemenu-menu-icon-PatientRegistration {
+  mask-image: url(/icons/side-menu/profile-2user.svg);
+  -webkit-mask-image: url(/icons/side-menu/profile-2user.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor;
+}
 .sidemenu-menu-icon-Form {
   mask-image: url(/icons/side-menu/firstline.svg);
   -webkit-mask-image: url(/icons/side-menu/firstline.svg);
@@ -1081,4 +1092,45 @@ input:-webkit-autofill:active {
 
 textarea::-webkit-scrollbar {
   width: 6px;
+}
+
+/* Public registration is a standalone page. The portal locks :root overflow. */
+html.public-form-scroll {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+  min-height: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+html.public-form-scroll body {
+  overflow: visible;
+  height: auto;
+  min-height: 100%;
+}
+
+html.public-form-scroll .react-tel-input,
+html.public-form-scroll .react-tel-input .form-control {
+  width: 100% !important;
+  max-width: 100%;
+}
+
+html.public-form-scroll .react-tel-input .form-control {
+  height: 44px !important;
+  font-size: 16px !important;
+}
+
+html.public-form-scroll .tz-input-box {
+  height: 44px;
+  border-radius: 12px;
+}
+
+html.public-form-scroll .tz-input-field {
+  font-size: 16px;
+}
+
+html.public-form-scroll .Calendar,
+html.public-form-scroll .custom-calendar {
+  width: 100% !important;
+  max-width: min(100%, 320px) !important;
 }

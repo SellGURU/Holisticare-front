@@ -69,6 +69,7 @@ interface QuestionaryControllerModalProps {
   error: string;
   isQuestionary?: boolean;
   textErrorMessage: string;
+  allowEmptyQuestions?: boolean;
   fetchForm?: (id: string) => Promise<{ data: any }>;
   fetchCatalog?: () => Promise<{ data: any }>;
 }
@@ -82,6 +83,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   error,
   isQuestionary,
   textErrorMessage,
+  allowEmptyQuestions = false,
   fetchForm,
   fetchCatalog,
 }) => {
@@ -306,7 +308,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       return true;
     } else if (requireClientConsent && consentText.length == 0) {
       return true;
-    } else if (questions.length == 0 && step !== 0) {
+    } else if (!allowEmptyQuestions && questions.length == 0 && step !== 0) {
       return true;
     } else if (step === 1 && questionsJsonError) {
       return true;
@@ -523,7 +525,10 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             </div>
           )}
         </div>
-        {showValidation && questions.length == 0 && step === 1 && (
+        {showValidation &&
+          !allowEmptyQuestions &&
+          questions.length == 0 &&
+          step === 1 && (
           <div className="text-[10px] text-Red shrink-0">
             Add question to continue.
           </div>

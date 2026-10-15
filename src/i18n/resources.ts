@@ -1,3 +1,4 @@
+import { patientRegistrationEn } from './patientRegistrationText';
 import { generateFlowEn } from './portalNamespaces/generateFlow';
 import { libraryEn } from './portalNamespaces/library';
 import { reportChromeEn } from './portalNamespaces/reportChrome';
@@ -47,6 +48,7 @@ export const englishResources = {
     custom_branding: 'Custom Branding',
     custom_biomarker: 'Custom Biomarker',
     custom_form: 'Custom Form',
+    patient_registration: 'Patient Registration',
     intelligence_model: 'Intelligence Model',
     diet: 'Diet',
     activity: 'Activity',
@@ -109,7 +111,9 @@ export const englishResources = {
       integrations_and_ai: 'Integrations & AI',
       integrations: 'Integrations',
       ai_preferences: 'AI Preferences',
+      patient_registration: patientRegistrationEn.menu,
     },
+    registration: patientRegistrationEn,
   },
   auth: {
     signIn: 'Sign in',

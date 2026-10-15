@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Sidebar from './components/SideBar';
 import { LanguageAndRegion } from './components/LanguageAndRegion';
 import { navKey } from '../../i18n/wave1Resources';
@@ -16,6 +16,7 @@ import { useApp } from '../../hooks';
 
 const Setting: React.FC = () => {
   const { t } = useTranslation(['settings', 'nav']);
+  const navigate = useNavigate();
   const { accountRole } = useApp();
   const isAdmin =
     String(accountRole || '')
@@ -23,7 +24,7 @@ const Setting: React.FC = () => {
       .toLowerCase() === 'admin';
   const [activeMenu, setActiveMenu] = useState('Clinic Preferences');
   const [loginWithGoogle, setLoginWithGoogle] = useState(false);
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const mobileMenuItems = useMemo(() => {
     const items = [
@@ -50,6 +51,12 @@ const Setting: React.FC = () => {
   useEffect(() => {
     getShowBrandInfo();
   }, []);
+
+  useEffect(() => {
+    if (searchParams.get('section') === 'patient-registration') {
+      navigate('/clinic-registration', { replace: true });
+    }
+  }, [navigate, searchParams]);
 
   useEffect(() => {
     if (activeMenu === 'Clinic Profile' && !isAdmin) {

@@ -13,6 +13,11 @@ import {
 } from './portalNamespaces/reportChrome';
 import { shareEs, shareFr, shareAr } from './portalNamespaces/share';
 import { uploadEs, uploadFr, uploadAr } from './portalNamespaces/upload';
+import {
+  patientRegistrationAr,
+  patientRegistrationEs,
+  patientRegistrationFr,
+} from './patientRegistrationText';
 
 const nav = {
   es: {
@@ -30,6 +35,7 @@ const nav = {
     custom_branding: 'Marca personalizada',
     custom_biomarker: 'Biomarcador personalizado',
     custom_form: 'Formulario personalizado',
+    patient_registration: 'Registro de pacientes',
     intelligence_model: 'Modelo de inteligencia',
     diet: 'Dieta',
     activity: 'Actividad',
@@ -57,6 +63,7 @@ const nav = {
     custom_branding: 'Image de marque',
     custom_biomarker: 'Biomarqueur personnalisé',
     custom_form: 'Formulaire personnalisé',
+    patient_registration: 'Inscription des patients',
     intelligence_model: "Modèle d'intelligence",
     diet: 'Alimentation',
     activity: 'Activité',
@@ -84,6 +91,7 @@ const nav = {
     custom_branding: 'الهوية المخصصة',
     custom_biomarker: 'مؤشر حيوي مخصص',
     custom_form: 'نموذج مخصص',
+    patient_registration: 'تسجيل المرضى',
     intelligence_model: 'نموذج الذكاء',
     diet: 'النظام الغذائي',
     activity: 'النشاط',
@@ -149,7 +157,9 @@ const settings = {
       integrations_and_ai: 'Integraciones e IA',
       integrations: 'Integraciones',
       ai_preferences: 'Preferencias de IA',
+      patient_registration: patientRegistrationEs.menu,
     },
+    registration: patientRegistrationEs,
   },
   fr: {
     title: 'Paramètres',
@@ -201,7 +211,9 @@ const settings = {
       integrations_and_ai: 'Intégrations et IA',
       integrations: 'Intégrations',
       ai_preferences: 'Préférences d’IA',
+      patient_registration: patientRegistrationFr.menu,
     },
+    registration: patientRegistrationFr,
   },
   ar: {
     title: 'الإعدادات',
@@ -251,7 +263,9 @@ const settings = {
       integrations_and_ai: 'التكامل والذكاء الاصطناعي',
       integrations: 'عمليات التكامل',
       ai_preferences: 'تفضيلات الذكاء الاصطناعي',
+      patient_registration: patientRegistrationAr.menu,
     },
+    registration: patientRegistrationAr,
   },
 } as const;
 

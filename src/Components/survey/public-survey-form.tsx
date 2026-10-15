@@ -712,7 +712,7 @@ export function PublicSurveyForm({
       // --- END MODIFICATION ---
 
       if (isClient) {
-        onSubmitClient?.(respond);
+        await Promise.resolve(onSubmitClient?.(respond));
         setCurrentStep(sortedQuestions.length + 2);
         setSubmitting(false);
       } else {
@@ -785,6 +785,19 @@ export function PublicSurveyForm({
         className: 'bg-green-600 text-white',
       });
     } catch (error) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'registrationFailed' in error &&
+        (error as { registrationFailed?: boolean }).registrationFailed
+      ) {
+        toast({
+          title: 'Could not submit',
+          description: error instanceof Error ? error.message : 'Please try again.',
+          className: 'bg-red-600 text-white',
+        });
+        return;
+      }
       console.error('Failed to submit survey:', error);
 
       // Simulating successful submission for demo even on error, remove in production

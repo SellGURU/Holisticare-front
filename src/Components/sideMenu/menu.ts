@@ -63,6 +63,12 @@ export const menus = [
         active: true,
       },
       {
+        name: 'Patient Registration',
+        url: '/clinic-registration',
+        icon: 'sidemenu-menu-icon-PatientRegistration',
+        active: true,
+      },
+      {
         name: 'Intelligence Model',
         url: '/custom-parametric/risk',
         icon: 'sidemenu-menu-icon-HealthRisk',

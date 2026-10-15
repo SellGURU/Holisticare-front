@@ -3,6 +3,7 @@ const PUBLIC_CLIENT_PREFIXES = [
   '/checkin',
   '/tasks',
   '/share',
+  '/patient-registration',
 ] as const;
 
 const PORTAL_AUTH_PAGE_MARKERS = [

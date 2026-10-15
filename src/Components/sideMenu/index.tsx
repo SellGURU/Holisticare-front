@@ -84,6 +84,12 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     ) {
       return true;
     }
+    if (
+      name === 'Patient Registration' &&
+      String(accountRole || '').toLowerCase() !== 'admin'
+    ) {
+      return true;
+    }
     if (name === 'Setting' && permissions.setting === false) {
       return true;
     }

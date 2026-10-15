@@ -1,3 +1,4 @@
+import { patientRegistrationFa } from './patientRegistrationText';
 import { generateFlowFa } from './portalNamespaces/generateFlow';
 import { libraryFa } from './portalNamespaces/library';
 import { reportChromeFa } from './portalNamespaces/reportChrome';
@@ -27,6 +28,7 @@ export const faResources = {
     custom_branding: 'برند اختصاصی',
     custom_biomarker: 'نشانگر اختصاصی',
     custom_form: 'فرم اختصاصی',
+    patient_registration: 'ثبت بیمار',
     intelligence_model: 'مدل هوش',
     diet: 'رژیم',
     activity: 'فعالیت',
@@ -88,7 +90,9 @@ export const faResources = {
       integrations_and_ai: 'یکپارچه‌سازی و هوش مصنوعی',
       integrations: 'یکپارچه‌سازی',
       ai_preferences: 'ترجیحات هوش مصنوعی',
+      patient_registration: patientRegistrationFa.menu,
     },
+    registration: patientRegistrationFa,
   },
   reports: {
     title: 'گزارش‌ها',
