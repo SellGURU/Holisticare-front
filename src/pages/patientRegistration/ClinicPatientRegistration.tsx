@@ -999,14 +999,24 @@ const ApiUsage = ({ text }: { text: (key: string) => string }) => {
       </p>
       <div className="mt-4 space-y-3 text-xs">
         <div>
-          <div className="font-medium text-[#344054]">{text('apiDocsSchema')}</div>
-          <code dir="ltr" className="mt-1 block break-all text-left text-[#667085]">
+          <div className="font-medium text-[#344054]">
+            {text('apiDocsSchema')}
+          </div>
+          <code
+            dir="ltr"
+            className="mt-1 block break-all text-left text-[#667085]"
+          >
             GET {base}/v1/clinic-registration/schema
           </code>
         </div>
         <div>
-          <div className="font-medium text-[#344054]">{text('apiDocsCreate')}</div>
-          <code dir="ltr" className="mt-1 block break-all text-left text-[#667085]">
+          <div className="font-medium text-[#344054]">
+            {text('apiDocsCreate')}
+          </div>
+          <code
+            dir="ltr"
+            className="mt-1 block break-all text-left text-[#667085]"
+          >
             POST {base}/v1/clinic-registration/patients
           </code>
         </div>
@@ -1036,11 +1046,15 @@ const ApiUsage = ({ text }: { text: (key: string) => string }) => {
       <button
         type="button"
         className="mt-2 text-xs text-Primary-DeepTeal"
-        onClick={() => copyText(example).then(() => toast.success(text('copied')))}
+        onClick={() =>
+          copyText(example).then(() => toast.success(text('copied')))
+        }
       >
         {text('apiDocsCopy')}
       </button>
-      <p className="mt-3 text-xs leading-5 text-[#667085]">{text('apiDocsNotes')}</p>
+      <p className="mt-3 text-xs leading-5 text-[#667085]">
+        {text('apiDocsNotes')}
+      </p>
       <p className="mt-2 text-xs leading-5 text-[#667085]">
         {text('apiDocsResponse')}
       </p>
