@@ -1,6 +1,8 @@
 type CacheEntry<T> = {
   data: T;
   timestamp: number;
+  /** Set only on session hydrate when picture was omitted from storage. */
+  pictureStripped?: boolean;
 };
 
 const store = new Map<string, CacheEntry<unknown>>();
@@ -31,8 +33,9 @@ const persistHealthPlanCache = (): void => {
       typeof entry.data === 'object'
     ) {
       payload[key] = {
-        ...entry,
         data: { ...(entry.data as Record<string, unknown>), picture: '' },
+        timestamp: entry.timestamp,
+        pictureStripped: true,
       };
       continue;
     }
@@ -63,9 +66,13 @@ const hydrateHealthPlanCache = (): void => {
     const parsed = JSON.parse(raw) as Record<string, CacheEntry<unknown>>;
     for (const [key, entry] of Object.entries(parsed || {})) {
       if (key.startsWith(HEALTHPLAN_PREFIX) && entry && 'data' in entry) {
+        const persistedPicture = (entry.data as { picture?: unknown })?.picture;
         store.set(key, {
           data: entry.data,
           timestamp: entry.timestamp || Date.now(),
+          pictureStripped:
+            Boolean(entry.pictureStripped) ||
+            (key.includes(':patient-info:') && !persistedPicture),
         });
       }
     }
@@ -90,17 +97,43 @@ const writeStore = <T>(key: string, data: T): void => {
 const revalidateInBackground = <T>(
   key: string,
   fetcher: () => Promise<T>,
-): void => {
+): Promise<T> => {
+  const pending = inFlight.get(key) as Promise<T> | undefined;
+  if (pending) {
+    return pending;
+  }
+
   const gen = cacheGeneration;
-  void fetcher()
+  const promise = fetcher()
     .then((data) => {
-      if (cacheGeneration !== gen) return;
-      writeStore(key, data);
+      if (cacheGeneration === gen) {
+        writeStore(key, data);
+      }
+      return data;
     })
-    .catch(() => {
-      // Keep stale entry on background refresh failure.
+    .finally(() => {
+      if (inFlight.get(key) === promise) {
+        inFlight.delete(key);
+      }
     });
+
+  inFlight.set(key, promise);
+  return promise;
 };
+
+/** Join the in-flight refresh for this key. Concurrent callers share one fetch. */
+export function revalidateCached<T>(
+  key: string,
+  fetcher: () => Promise<T>,
+): Promise<T> {
+  return revalidateInBackground(key, fetcher);
+}
+
+/** True when this entry was restored from session storage with picture omitted. */
+export function cachedPictureWasStripped(key: string): boolean {
+  const entry = store.get(key) as CacheEntry<unknown> | undefined;
+  return Boolean(entry?.pictureStripped);
+}
 
 const fetchAndStore = <T>(
   key: string,
@@ -138,7 +171,9 @@ export async function getCached<T>(
   const existing = store.get(key) as CacheEntry<T> | undefined;
 
   if (existing) {
-    revalidateInBackground(key, fetcher);
+    void revalidateInBackground(key, fetcher).catch(() => {
+      // Keep stale entry on background refresh failure.
+    });
     return existing.data;
   }
 

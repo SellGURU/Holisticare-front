@@ -424,10 +424,18 @@ export function useHealthRiskAssessments(
     };
     subscribe('processingDomainReady', onScoringComplete);
     subscribe('labReportDeleted', onScoringComplete);
+    // Delete marks the file removed before risk rows are rewritten.
+    // Reload again when that background pass finishes.
+    subscribe('completedProgress', onScoringComplete);
+    subscribe('allProgressCompleted', onScoringComplete);
+    subscribe('healthPlanProcessingComplete', onScoringComplete);
     subscribe('syncReport', onCompileReload);
     return () => {
       unsubscribe('processingDomainReady', onScoringComplete);
       unsubscribe('labReportDeleted', onScoringComplete);
+      unsubscribe('completedProgress', onScoringComplete);
+      unsubscribe('allProgressCompleted', onScoringComplete);
+      unsubscribe('healthPlanProcessingComplete', onScoringComplete);
       unsubscribe('syncReport', onCompileReload);
     };
   }, [enabled, memberId]);

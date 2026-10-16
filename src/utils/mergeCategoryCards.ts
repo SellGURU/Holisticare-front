@@ -226,8 +226,18 @@ export const mergeClientSummaryCategories = (prev: any, incoming: any): any => {
   const nextSubs: any[] = incoming.subcategories ?? [];
   const isProcessing = Boolean(incoming.processing);
   const isEmptyResponse = isAuthoritativeEmptyCategories(incoming);
+  const prevTotal = Number(prev?.total_subcategory ?? 0);
+  const nextTotal = Number(incoming?.total_subcategory ?? 0);
+  const biomarkersRemoved =
+    Number.isFinite(prevTotal) &&
+    Number.isFinite(nextTotal) &&
+    prevTotal > 0 &&
+    nextTotal < prevTotal;
   const useIncrementalMerge =
-    isProcessing && !isEmptyResponse && prevSubs.length > 0;
+    isProcessing &&
+    !isEmptyResponse &&
+    prevSubs.length > 0 &&
+    !biomarkersRemoved;
 
   if (isEmptyResponse) {
     return incoming;

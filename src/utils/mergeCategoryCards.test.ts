@@ -96,6 +96,32 @@ describe('lab-only category merge', () => {
     expect(applyClientSummaryCategories(null, incoming)).toEqual(incoming);
   });
 
+  it('drops removed category cards while a delete is still processing', () => {
+    const prev = {
+      subcategories: [
+        { subcategory: 'Blood', num_of_biomarkers: 10 },
+        { subcategory: 'Activity', num_of_biomarkers: 1 },
+      ],
+      total_subcategory: 76,
+      total_category: 14,
+      client_summary: 'previous narrative',
+    };
+    const incoming = {
+      processing: true,
+      data_phase: 'scoring',
+      subcategories: [{ subcategory: 'Activity', num_of_biomarkers: 1 }],
+      total_subcategory: 1,
+      total_category: 1,
+      client_summary: 'previous narrative',
+    };
+
+    const next = applyClientSummaryCategories(prev, incoming);
+    expect(next.subcategories.map((c: { subcategory: string }) => c.subcategory)).toEqual([
+      'Activity',
+    ]);
+    expect(next.total_subcategory).toBe(1);
+  });
+
   it('applies scored category cards while category insights are still pending', () => {
     const incoming = {
       processing: true,

@@ -1057,6 +1057,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       clearReportSections();
     }
     refreshPatientInfo();
+    fetchData({ force: true, silent: true });
     if (sourceRefreshFollowUpRef.current) {
       clearTimeout(sourceRefreshFollowUpRef.current);
       sourceRefreshFollowUpRef.current = null;

@@ -19,7 +19,11 @@ import SvgIcon from '../../utils/svgIcon.tsx';
 import FileHistoryNew from './components/FileHistory/FileHistoryNew.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
 import { motion } from 'framer-motion';
-import { getCached } from '../../utils/pageCache';
+import {
+  cachedPictureWasStripped,
+  getCached,
+  revalidateCached,
+} from '../../utils/pageCache';
 import {
   HEALTH_PLAN_CACHE_KEYS,
   HEALTH_PLAN_TTL_MS,
@@ -91,17 +95,18 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     };
     const loadPatientInfo = () =>
       Application.getPatientsInfo({ member_id: id }).then((res) => res.data);
+    const cacheKey = HEALTH_PLAN_CACHE_KEYS.patientInfo(id);
+    // Session persist blanks picture. Join the shared refresh instead of a
+    // second network call. A real empty picture has no stripped flag.
+    const pictureRefresh = cachedPictureWasStripped(cacheKey)
+      ? revalidateCached(cacheKey, loadPatientInfo)
+      : null;
 
-    getCached(
-      HEALTH_PLAN_CACHE_KEYS.patientInfo(id),
-      loadPatientInfo,
-      HEALTH_PLAN_TTL_MS,
-    )
+    getCached(cacheKey, loadPatientInfo, HEALTH_PLAN_TTL_MS)
       .then((data) => {
         applyPatientInfo(data);
-        if (!isUsablePicture(data?.picture)) {
-          return loadPatientInfo().then(applyPatientInfo);
-        }
+        if (!pictureRefresh) return;
+        return pictureRefresh.then(applyPatientInfo);
       })
       .catch(() => {
         console.error('Error getting patient info');

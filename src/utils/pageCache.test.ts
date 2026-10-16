@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   __resetPageCacheForTests,
   __hydrateHealthPlanCacheForTests,
+  cachedPictureWasStripped,
   getCached,
   getCachedUntilInvalidated,
   fetchFresh,
@@ -9,6 +10,7 @@ import {
   invalidate,
   peekCached,
   removeCachedKey,
+  revalidateCached,
   HEALTHPLAN_PAGE_CACHE_STORAGE_KEY,
 } from './pageCache';
 
@@ -226,6 +228,99 @@ describe('pageCache', () => {
     expect(dumped['portal:healthplan:patient-info:99'].data).toEqual({
       name: 'Elena M',
       picture: '',
+    });
+    expect(dumped['portal:healthplan:patient-info:99'].pictureStripped).toBe(
+      true,
+    );
+    expect(
+      cachedPictureWasStripped('portal:healthplan:patient-info:99'),
+    ).toBe(false);
+  });
+
+  it('shares one background refresh across concurrent cache hits', async () => {
+    const key = 'portal:healthplan:patient-info:7';
+    await getCached(key, () =>
+      Promise.resolve({ name: 'A', picture: 'data:image/png;base64,AA' }),
+    );
+
+    let resolve!: (value: { name: string; picture: string }) => void;
+    const fetcher = vi.fn(
+      () =>
+        new Promise<{ name: string; picture: string }>((res) => {
+          resolve = res;
+        }),
+    );
+
+    const hits = await Promise.all([
+      getCached(key, fetcher),
+      getCached(key, fetcher),
+      getCached(key, fetcher),
+    ]);
+
+    expect(hits.map((row) => row.picture)).toEqual([
+      'data:image/png;base64,AA',
+      'data:image/png;base64,AA',
+      'data:image/png;base64,AA',
+    ]);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+
+    resolve({ name: 'A', picture: 'data:image/png;base64,BB' });
+    await vi.waitFor(() => {
+      expect(peekCached(key)).toEqual({
+        name: 'A',
+        picture: 'data:image/png;base64,BB',
+      });
+    });
+  });
+
+  it('joins a stripped picture refresh with the shared cache hit', async () => {
+    const memory: Record<string, string> = {};
+    const session = {
+      getItem: (key: string) => memory[key] ?? null,
+      setItem: (key: string, value: string) => {
+        memory[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete memory[key];
+      },
+    };
+    vi.stubGlobal('sessionStorage', session);
+
+    const key = 'portal:healthplan:patient-info:99';
+    await getCached(key, () =>
+      Promise.resolve({
+        name: 'Elena M',
+        picture: 'data:image/jpeg;base64,AAA',
+      }),
+    );
+    const dumped = memory[HEALTHPLAN_PAGE_CACHE_STORAGE_KEY];
+
+    invalidate();
+    sessionStorage.setItem(HEALTHPLAN_PAGE_CACHE_STORAGE_KEY, dumped);
+    __hydrateHealthPlanCacheForTests();
+
+    expect(cachedPictureWasStripped(key)).toBe(true);
+    expect(peekCached<{ picture: string }>(key)?.picture).toBe('');
+
+    const fetcher = vi.fn(() =>
+      Promise.resolve({
+        name: 'Elena M',
+        picture: 'data:image/jpeg;base64,BBB',
+      }),
+    );
+    const pictureRefresh = revalidateCached(key, fetcher);
+    const stale = await getCached(key, fetcher);
+
+    expect(stale).toEqual({ name: 'Elena M', picture: '' });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    await expect(pictureRefresh).resolves.toEqual({
+      name: 'Elena M',
+      picture: 'data:image/jpeg;base64,BBB',
+    });
+    expect(cachedPictureWasStripped(key)).toBe(false);
+    expect(peekCached(key)).toEqual({
+      name: 'Elena M',
+      picture: 'data:image/jpeg;base64,BBB',
     });
   });
 });
