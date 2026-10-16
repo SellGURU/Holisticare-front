@@ -40,8 +40,6 @@ import {
 import { visibilityPollMs } from '../../utils/visibilityPoll';
 // import { ButtonPrimary } from '../Button/ButtonPrimary';
 import Circleloader from '../CircleLoader';
-import InfoToltip from '../InfoToltip';
-import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 // import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
@@ -49,6 +47,7 @@ import PrintReportV2 from './PrintReportV2';
 import { UploadTestV2 } from './UploadTestV2';
 // import HolisticShare from './components/HolisticShare';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
+import { ClientIdentityHeader } from './ClientIdentityHeader';
 import HealthRisksPanel from './HealthRisksPanel';
 import { RISKS_SCORES_AGE_SECTION } from './healthRiskAssessments';
 import MarkdownText from '../markdownText';
@@ -322,6 +321,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       )
         .then(async (data) => {
           if (gen !== sourceRefreshGenRef.current) return;
+          if (
+            data == null ||
+            !Object.prototype.hasOwnProperty.call(data, 'conditions')
+          ) {
+            data = await fetchFresh(
+              HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
+              () =>
+                Application.getPatientsInfo({
+                  member_id: resolvedMemberID,
+                }).then((res) => res.data),
+            );
+            if (gen !== sourceRefreshGenRef.current) return;
+          }
           const needsFreshGate =
             data.show_report === false &&
             data.first_time_view !== true &&
@@ -953,8 +965,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         }).then((res) => res.data),
       HEALTH_PLAN_TTL_MS,
     )
-      .then((data) => {
+      .then(async (data) => {
         if (gen !== sourceRefreshGenRef.current) return;
+        if (
+          data == null ||
+          !Object.prototype.hasOwnProperty.call(data, 'conditions')
+        ) {
+          data = await fetchFresh(
+            HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
+            () =>
+              Application.getPatientsInfo({
+                member_id: resolvedMemberID,
+              }).then((res) => res.data),
+          );
+          if (gen !== sourceRefreshGenRef.current) return;
+        }
         setUserInfoData(data);
         publish('userInfoData', data);
         setIsHaveReport(data.show_report || data.first_time_view);
@@ -2240,76 +2265,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
                   <div className="flex-grow w-full mt-0 ">
                     <div
-                      className={`w-full flex justify-between items-center ${
+                      className={`w-full flex justify-between gap-3 ${
                         isSticky
-                          ? 'fixed top-9 h-[50px] bg-[#E9F0F2] z-50 !w-auto start-0 end-0 xl:start-[200px] xl:end-28 px-5 '
-                          : ''
+                          ? 'fixed top-9 h-[50px] items-center bg-[#E9F0F2] z-50 !w-auto start-0 end-0 xl:start-[200px] xl:end-28 px-5 '
+                          : 'items-start'
                       }`}
                     >
-                      {' '}
-                      <div className="flex justify-start items-center">
-                        {userInfoData?.name && (
-                          <div className="size-6 border border-Primary-DeepTeal flex items-center justify-center mr-1 overflow-hidden rounded-full">
-                            <img
-                              className="h-full w-full rounded-full object-cover"
-                              onError={(e: any) => {
-                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                  userInfoData?.name || 'Client',
-                                )}`;
-                              }}
-                              src={
-                                String(userInfoData?.picture || '').startsWith(
-                                  'data:image/',
-                                ) ||
-                                String(userInfoData?.picture || '').startsWith(
-                                  'http',
-                                )
-                                  ? userInfoData.picture
-                                  : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                      userInfoData?.name || 'Client',
-                                    )}`
-                              }
-                              alt=""
-                            />
-                          </div>
-                        )}
-
-                        <div className="text-xs md:text-[14px] font-medium text-Text-Primary">
-                          <TooltipTextAuto
-                            maxWidth="180px"
-                            tooltipPlace="bottom"
-                            tooltipClassName="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999] !break-words"
-                          >
-                            {userInfoData?.name}
-                          </TooltipTextAuto>
-                        </div>
-
-                        {userInfoData && (
-                          <>
-                            {userInfoData.sex && (
-                              <>
-                                <div className=" text-[10px] md:text-[12px] text-Text-Secondary ml-3 flex gap-1">
-                                  <span className="hidden md:block">
-                                    Gender:
-                                  </span>
-                                  {uiText(userInfoData.sex)}{' '}
-                                </div>
-                                <div className="w-[0.75px] mx-2 md:mx-1 h-[24px] bg-Text-Triarty"></div>
-                              </>
-                            )}
-                            {userInfoData.age && (
-                              <div className="text-[10px] md:text-[12px] text-Text-Secondary  flex gap-1">
-                                <span className="hidden md:block"> Age:</span>
-                                {userInfoData.age}
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-                      <div className="hidden md:block">
-                        {' '}
-                        <InfoToltip isShare={isShare} />
-                      </div>
+                      <ClientIdentityHeader
+                        user={userInfoData}
+                        compact={isSticky}
+                        isShare={isShare}
+                      />
                     </div>
                     <div
                       className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"

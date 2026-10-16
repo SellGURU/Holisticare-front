@@ -5,9 +5,10 @@ import Application from '../../api/app';
 interface InfoToltipProps {
   mode?: string;
   isShare?: boolean;
+  light?: boolean;
 }
 
-const InfoToltip: React.FC<InfoToltipProps> = ({ mode, isShare }) => {
+const InfoToltip: React.FC<InfoToltipProps> = ({ mode, isShare, light }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [items, setItems] = useState([]);
   useEffect(() => {
@@ -43,9 +44,15 @@ const InfoToltip: React.FC<InfoToltipProps> = ({ mode, isShare }) => {
         className="w-full flex justify-end items-center gap-1 cursor-pointer"
       >
         <div>
-          <img src="/icons/user-navbar/info-circle.svg" />
+          <img
+            src="/icons/user-navbar/info-circle.svg"
+            className={light ? 'brightness-0 invert' : undefined}
+            alt=""
+          />
         </div>
-        <div className="text-[12px] text-Primary-DeepTeal">
+        <div
+          className={`text-[12px] ${light ? 'text-white' : 'text-Primary-DeepTeal'}`}
+        >
           {mode == 'Treatment' ? 'Plan Priority' : 'Category'}
         </div>
       </div>
