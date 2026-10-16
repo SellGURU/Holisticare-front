@@ -57,18 +57,38 @@ const proseClass =
 function narrativeBlock(sentence: string): Omit<NarrativeBlock, 'text'> {
   const text = sentence.toLowerCase();
   if (/next step|confirm|align a plan|follow-up|review/.test(text)) {
-    return { label: 'Practitioner review', icon: '/icons/task-square-green.svg', tint: 'bg-emerald-50' };
+    return {
+      label: 'Practitioner review',
+      icon: '/icons/task-square-green.svg',
+      tint: 'bg-emerald-50',
+    };
   }
   if (/sleep|stress|shift|exercise|hydration|lifestyle|diet/.test(text)) {
-    return { label: 'Lifestyle', icon: '/icons/activity-green.svg', tint: 'bg-sky-50' };
+    return {
+      label: 'Lifestyle',
+      icon: '/icons/activity-green.svg',
+      tint: 'bg-sky-50',
+    };
   }
   if (/medication|treated|asthma|copd|supplement|dose/.test(text)) {
-    return { label: 'Medications', icon: '/icons/biomarkers/pil.svg', tint: 'bg-violet-50' };
+    return {
+      label: 'Medications',
+      icon: '/icons/biomarkers/pil.svg',
+      tint: 'bg-violet-50',
+    };
   }
   if (/goal|hormone|menopause|energy|female|male|age/.test(text)) {
-    return { label: 'Client context', icon: '/icons/health.svg', tint: 'bg-teal-50' };
+    return {
+      label: 'Client context',
+      icon: '/icons/health.svg',
+      tint: 'bg-teal-50',
+    };
   }
-  return { label: 'Key findings', icon: '/icons/chart.svg', tint: 'bg-amber-50' };
+  return {
+    label: 'Key findings',
+    icon: '/icons/chart.svg',
+    tint: 'bg-amber-50',
+  };
 }
 
 function narrativeBlocks(summary: string): NarrativeBlock[] {
@@ -102,17 +122,24 @@ function reasonForGroup(
   summary: string,
 ): string {
   const name = (group.subcategory || '').trim().toLowerCase();
-  const category = categories.find((item) => (item.subcategory || '').trim().toLowerCase() === name);
+  const category = categories.find(
+    (item) => (item.subcategory || '').trim().toLowerCase() === name,
+  );
   const direct = category?.reasoning || category?.description || '';
   if (direct.trim()) return shorten(direct);
 
-  const markers = (group.biomarkers ?? []).map((item) => (item.name || '').toLowerCase()).filter(Boolean);
+  const markers = (group.biomarkers ?? [])
+    .map((item) => (item.name || '').toLowerCase())
+    .filter(Boolean);
   const related = summary
     .split(/(?<=[.!?])\s+(?=\S)/)
     .map((sentence) => sentence.trim())
     .filter((sentence) => {
       const text = sentence.toLowerCase();
-      return text.includes(name) || markers.some((marker) => marker && text.includes(marker));
+      return (
+        text.includes(name) ||
+        markers.some((marker) => marker && text.includes(marker))
+      );
     });
   if (related.length > 0) return shorten(related.join(' '));
 
@@ -143,13 +170,17 @@ function profileChips(value: unknown): string[] {
     .map((part) => part.trim())
     .filter((part) => {
       const token = part.toLowerCase();
-      return part !== '' && token !== '-' && token !== 'null' && token !== 'none';
+      return (
+        part !== '' && token !== '-' && token !== 'null' && token !== 'none'
+      );
     });
 }
 
 function SectionIcon({ src, tint }: { src: string; tint: string }) {
   return (
-    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tint}`}>
+    <span
+      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tint}`}
+    >
       <img src={src} alt="" className="h-5 w-5 object-contain" />
     </span>
   );
@@ -179,7 +210,10 @@ export default function PractitionerBriefSection({
   }, [enabled, memberId]);
 
   const visibleSummary = brief?.brief?.executive_summary || summary || '';
-  const blocks = useMemo(() => narrativeBlocks(visibleSummary), [visibleSummary]);
+  const blocks = useMemo(
+    () => narrativeBlocks(visibleSummary),
+    [visibleSummary],
+  );
   const signals = brief?.brief?.priority_signals ?? [];
   const profileRows = CLINICAL_ROWS.map((row) => ({
     ...row,
@@ -189,13 +223,20 @@ export default function PractitionerBriefSection({
   if (!enabled) return null;
 
   return (
-    <section id="AI Clinical Brief" className="sectionScrollEl my-10" aria-label="AI Clinical Brief">
+    <section
+      id="AI Clinical Brief"
+      className="sectionScrollEl my-10"
+      aria-label="AI Clinical Brief"
+    >
       <div className="mb-4 flex items-start gap-3">
         <SectionIcon src="/icons/ai-icon.svg" tint="bg-[#E7F6F2]" />
         <div>
-          <h2 className="TextStyle-Headline-4 text-Text-Primary">AI Clinical Brief</h2>
+          <h2 className="TextStyle-Headline-4 text-Text-Primary">
+            AI Clinical Brief
+          </h2>
           <p className="mt-1 text-sm text-Text-Secondary">
-            Practitioner review summary. Not a diagnosis or treatment instruction.
+            Practitioner review summary. Not a diagnosis or treatment
+            instruction.
           </p>
         </div>
       </div>
@@ -203,15 +244,23 @@ export default function PractitionerBriefSection({
       {profileRows.length > 0 && (
         <div className="mb-4 grid gap-3">
           {profileRows.map((row) => (
-            <article key={row.key} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <article
+              key={row.key}
+              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+            >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-3">
                   <SectionIcon src={row.icon} tint="bg-[#E7F6F2]" />
-                  <h3 className="text-sm font-semibold text-Text-Primary">{row.label}</h3>
+                  <h3 className="text-sm font-semibold text-Text-Primary">
+                    {row.label}
+                  </h3>
                 </div>
                 <div className="flex min-w-0 flex-wrap gap-1.5 sm:justify-end">
                   {row.chips.map((chip, index) => (
-                    <span key={`${row.key}-${index}`} className="max-w-full break-words rounded-full bg-[#F4F7F8] px-3 py-1 text-xs leading-4 text-Text-Primary">
+                    <span
+                      key={`${row.key}-${index}`}
+                      className="max-w-full break-words rounded-full bg-[#F4F7F8] px-3 py-1 text-xs leading-4 text-Text-Primary"
+                    >
                       {chip}
                     </span>
                   ))}
@@ -224,17 +273,26 @@ export default function PractitionerBriefSection({
 
       <div className="grid gap-3">
         {blocks.map((block) => (
-          <article key={`${block.label}-${block.text.slice(0, 24)}`} className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <article
+            key={`${block.label}-${block.text.slice(0, 24)}`}
+            className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+          >
             <SectionIcon src={block.icon} tint={block.tint} />
             <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-Text-Primary">{block.label}</h3>
-              <MarkdownText className={`mt-1 ${proseClass}`} text={block.text} />
+              <h3 className="text-sm font-semibold text-Text-Primary">
+                {block.label}
+              </h3>
+              <MarkdownText
+                className={`mt-1 ${proseClass}`}
+                text={block.text}
+              />
             </div>
           </article>
         ))}
         {blocks.length === 0 && (
           <article className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-Text-Secondary">
-            The narrative summary is not ready yet. Detailed biomarker values remain available in Need Focus and Detailed Analysis.
+            The narrative summary is not ready yet. Detailed biomarker values
+            remain available in Need Focus and Detailed Analysis.
           </article>
         )}
       </div>
@@ -242,42 +300,71 @@ export default function PractitionerBriefSection({
       {(signals.length > 0 || groups.length > 0) && (
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {signals.map((signal) => (
-            <article key={signal.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <article
+              key={signal.title}
+              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+            >
               <div className="flex items-start gap-3">
-                <SectionIcon src="/icons/info-circle-blue.svg" tint="bg-sky-50" />
+                <SectionIcon
+                  src="/icons/info-circle-blue.svg"
+                  tint="bg-sky-50"
+                />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-semibold text-Text-Primary">{signal.title}</h3>
-                    <span className={`rounded-full px-2 py-1 text-xs ${severityClass[signal.severity] || severityClass.review}`}>
+                    <h3 className="font-semibold text-Text-Primary">
+                      {signal.title}
+                    </h3>
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs ${severityClass[signal.severity] || severityClass.review}`}
+                    >
                       {signal.severity.replace(/_/g, ' ')}
                     </span>
                   </div>
-                  <MarkdownText className={`mt-1 ${proseClass}`} text={signal.why_review} />
+                  <MarkdownText
+                    className={`mt-1 ${proseClass}`}
+                    text={signal.why_review}
+                  />
                 </div>
               </div>
             </article>
           ))}
-          {signals.length === 0 && groups.map((group) => (
-            <article key={group.subcategory} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <SectionIcon src={resolveAnalyseIcon(group.subcategory || '')} tint="bg-[#F3F7F8]" />
-                <h3 className="font-semibold text-Text-Primary">{group.subcategory}</h3>
-              </div>
-              <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-[#005F73]">Why it is flagged</p>
-              <MarkdownText
-                className={`mt-1 ${proseClass}`}
-                text={reasonForGroup(group, categories, visibleSummary)}
-              />
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {(group.biomarkers ?? []).map((item) => (
-                  <li key={`${group.subcategory}-${item.name}`} className="rounded-full bg-[#F4F7F8] px-3 py-1 text-xs text-Text-Primary">
-                    <span className="font-medium">{item.name}</span>
-                    <span className="ml-1 text-Text-Secondary">{item.Result ?? '-'} {item.Units ?? ''}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
+          {signals.length === 0 &&
+            groups.map((group) => (
+              <article
+                key={group.subcategory}
+                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <SectionIcon
+                    src={resolveAnalyseIcon(group.subcategory || '')}
+                    tint="bg-[#F3F7F8]"
+                  />
+                  <h3 className="font-semibold text-Text-Primary">
+                    {group.subcategory}
+                  </h3>
+                </div>
+                <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-[#005F73]">
+                  Why it is flagged
+                </p>
+                <MarkdownText
+                  className={`mt-1 ${proseClass}`}
+                  text={reasonForGroup(group, categories, visibleSummary)}
+                />
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {(group.biomarkers ?? []).map((item) => (
+                    <li
+                      key={`${group.subcategory}-${item.name}`}
+                      className="rounded-full bg-[#F4F7F8] px-3 py-1 text-xs text-Text-Primary"
+                    >
+                      <span className="font-medium">{item.name}</span>
+                      <span className="ml-1 text-Text-Secondary">
+                        {item.Result ?? '-'} {item.Units ?? ''}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
         </div>
       )}
     </section>

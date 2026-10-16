@@ -316,7 +316,8 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                 }}
                 key={index}
                 className={`text-[10px] ${disableClicks && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center ps-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
-                  resolveReportSection(item) === resolveReportSection(activeMenu)
+                  resolveReportSection(item) ===
+                  resolveReportSection(activeMenu)
                     ? 'border-Primary-EmeraldGreen'
                     : 'border-gray-50'
                 } flex justify-start gap-1 `}

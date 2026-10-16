@@ -1,4 +1,8 @@
-export type BriefSeverity = 'informational' | 'monitor' | 'review' | 'urgent_review';
+export type BriefSeverity =
+  | 'informational'
+  | 'monitor'
+  | 'review'
+  | 'urgent_review';
 export type CoverageStatus = 'covered' | 'partial' | 'not_available' | 'failed';
 
 export type SourceRef = {

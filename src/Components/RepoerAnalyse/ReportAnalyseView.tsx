@@ -309,7 +309,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setLoading(false);
         });
     } else if (resolvedMemberID != null) {
-      const patientInfoKey = HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID);
+      const patientInfoKey =
+        HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID);
       const loadPatientInfo = () =>
         Application.getPatientsInfo({
           member_id: resolvedMemberID,
@@ -2223,10 +2224,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               ?.checked == true && (
               <div className="relative hidden shrink-0 xl:block">
-                <div
-                  className="relative w-fit max-w-full"
-                  dir="ltr"
-                >
+                <div className="relative w-fit max-w-full" dir="ltr">
                   <img
                     className={`block ${isBodyFigureLoading ? 'opacity-60' : ''}`}
                     src="/human.png"

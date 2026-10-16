@@ -561,7 +561,11 @@ const resovleJson = ({
   }
   if (isActiveSection('Concerning Result') == true) {
     AddConcerningResult(transformConceringData());
-    addHeader('AI Clinical Brief', 'Shown only when this shared section is enabled.', 'ai-clinical-brief');
+    addHeader(
+      'AI Clinical Brief',
+      'Shown only when this shared section is enabled.',
+      'ai-clinical-brief',
+    );
   }
   if (isActiveSection('Detailed Analysis') == true) {
     AddDetailedAnalyse(referenceData, resolveCategories(), resolveBioMarkers);

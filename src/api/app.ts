@@ -423,7 +423,8 @@ class Application extends Api {
   }
   static getPractitionerBriefEvidence(data: any, refId: string) {
     return this.post(
-      '/overview/practitioner_brief/evidence?ref_id=' + encodeURIComponent(refId),
+      '/overview/practitioner_brief/evidence?ref_id=' +
+        encodeURIComponent(refId),
       data,
     );
   }

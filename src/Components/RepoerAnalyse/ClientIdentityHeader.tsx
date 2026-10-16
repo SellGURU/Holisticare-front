@@ -60,7 +60,9 @@ export const ClientIdentityHeader = ({
     user.age != null && user.age !== ''
       ? { label: 'Age', value: `${user.age} years` }
       : null,
-    user.ethnicity ? { label: 'Ethnicity', value: String(user.ethnicity) } : null,
+    user.ethnicity
+      ? { label: 'Ethnicity', value: String(user.ethnicity) }
+      : null,
   ].filter((item): item is { label: string; value: string } => item != null);
   const meta = [
     memberId != null && memberId !== '' ? `ID: ${memberId}` : '',
@@ -80,49 +82,54 @@ export const ClientIdentityHeader = ({
 
   return (
     <>
-    <section className="group relative flex min-h-[148px] min-w-0 w-full overflow-hidden rounded-2xl border border-[#E6EEF0] bg-white shadow-sm">
-      <Avatar user={user} size="min-h-[148px] w-[148px] self-stretch rounded-none text-2xl" />
-      <div className="flex min-w-0 flex-1 flex-col justify-center px-5 py-4">
-        <h2 className="truncate text-lg font-semibold text-Text-Primary">
-          {user.name}
-        </h2>
-        {meta.length > 0 && (
-          <p className="mt-1 truncate text-xs text-Text-Secondary">
-            {meta.join(' · ')}
-          </p>
-        )}
-        {facts.length > 0 && (
-          <div className="mt-4 grid grid-cols-2 gap-4 border-t border-[#EEF3F4] pt-3 sm:grid-cols-3">
-            {facts.map((fact) => (
-              <div key={fact.label}>
-                <div className="text-[11px] text-Text-Secondary">{fact.label}</div>
-                <div className="mt-0.5 text-sm font-medium text-Text-Primary">
-                  {fact.value}
+      <section className="group relative flex min-h-[148px] min-w-0 w-full overflow-hidden rounded-2xl border border-[#E6EEF0] bg-white shadow-sm">
+        <Avatar
+          user={user}
+          size="min-h-[148px] w-[148px] self-stretch rounded-none text-2xl"
+        />
+        <div className="flex min-w-0 flex-1 flex-col justify-center px-5 py-4">
+          <h2 className="truncate text-lg font-semibold text-Text-Primary">
+            {user.name}
+          </h2>
+          {meta.length > 0 && (
+            <p className="mt-1 truncate text-xs text-Text-Secondary">
+              {meta.join(' · ')}
+            </p>
+          )}
+          {facts.length > 0 && (
+            <div className="mt-4 grid grid-cols-2 gap-4 border-t border-[#EEF3F4] pt-3 sm:grid-cols-3">
+              {facts.map((fact) => (
+                <div key={fact.label}>
+                  <div className="text-[11px] text-Text-Secondary">
+                    {fact.label}
+                  </div>
+                  <div className="mt-0.5 text-sm font-medium text-Text-Primary">
+                    {fact.value}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+              ))}
+            </div>
+          )}
+        </div>
+        {details ? (
+          <button
+            type="button"
+            onClick={() => setDetailsOpen(true)}
+            className="absolute bottom-3 end-3 rounded-full bg-[#005F73] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow transition hover:bg-[#004E5F] focus:opacity-100 group-hover:opacity-100"
+          >
+            {String(uiText('View details'))}
+          </button>
+        ) : null}
+      </section>
       {details ? (
-        <button
-          type="button"
-          onClick={() => setDetailsOpen(true)}
-          className="absolute bottom-3 end-3 rounded-full bg-[#005F73] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow transition hover:bg-[#004E5F] focus:opacity-100 group-hover:opacity-100"
-        >
-          {String(uiText('View details'))}
-        </button>
+        <ClientSummaryDetailsModal
+          isOpen={detailsOpen}
+          onClose={() => setDetailsOpen(false)}
+          user={user}
+          memberId={memberId}
+          details={details}
+        />
       ) : null}
-    </section>
-    {details ? (
-      <ClientSummaryDetailsModal
-        isOpen={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-        user={user}
-        memberId={memberId}
-        details={details}
-      />
-    ) : null}
     </>
   );
 };

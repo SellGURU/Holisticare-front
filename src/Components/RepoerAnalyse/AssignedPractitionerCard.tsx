@@ -11,7 +11,10 @@ type AssignedPractitionerCardProps = {
 };
 
 function initials(name: string) {
-  const parts = name.split(/[\s._@-]+/).filter(Boolean).slice(0, 2);
+  const parts = name
+    .split(/[\s._@-]+/)
+    .filter(Boolean)
+    .slice(0, 2);
   return parts.map((part) => part.charAt(0).toUpperCase()).join('') || 'P';
 }
 
@@ -78,11 +81,15 @@ export default function AssignedPractitionerCard({
             <div className="truncate text-sm font-medium text-Text-Primary">
               {displayName(assigned.username)}
             </div>
-            <div className="truncate text-xs text-Text-Secondary">Practitioner</div>
+            <div className="truncate text-xs text-Text-Secondary">
+              Practitioner
+            </div>
           </div>
         </div>
       ) : (
-        <p className="mt-4 text-sm text-Text-Secondary">No practitioner assigned yet.</p>
+        <p className="mt-4 text-sm text-Text-Secondary">
+          No practitioner assigned yet.
+        </p>
       )}
       <button
         type="button"
@@ -95,7 +102,9 @@ export default function AssignedPractitionerCard({
       {open && (
         <div className="absolute inset-x-4 top-full z-20 mt-2 max-h-56 overflow-auto rounded-xl border border-[#E6EEF0] bg-white p-2 shadow-lg">
           {coaches.length === 0 ? (
-            <p className="px-2 py-3 text-sm text-Text-Secondary">No practitioners are available.</p>
+            <p className="px-2 py-3 text-sm text-Text-Secondary">
+              No practitioners are available.
+            </p>
           ) : (
             coaches.map((coach) => (
               <button
@@ -103,7 +112,9 @@ export default function AssignedPractitionerCard({
                 type="button"
                 onClick={() => selectCoach(coach)}
                 className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-[#F4F7F8] ${
-                  coach.assigned ? 'bg-[#E7F6F2] font-medium text-[#005F73]' : 'text-Text-Primary'
+                  coach.assigned
+                    ? 'bg-[#E7F6F2] font-medium text-[#005F73]'
+                    : 'text-Text-Primary'
                 }`}
               >
                 <span className="flex size-7 items-center justify-center rounded-full bg-[#F3F7F8] text-[10px]">
