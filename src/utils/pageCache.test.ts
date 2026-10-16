@@ -232,9 +232,9 @@ describe('pageCache', () => {
     expect(dumped['portal:healthplan:patient-info:99'].pictureStripped).toBe(
       true,
     );
-    expect(
-      cachedPictureWasStripped('portal:healthplan:patient-info:99'),
-    ).toBe(false);
+    expect(cachedPictureWasStripped('portal:healthplan:patient-info:99')).toBe(
+      false,
+    );
   });
 
   it('shares one background refresh across concurrent cache hits', async () => {

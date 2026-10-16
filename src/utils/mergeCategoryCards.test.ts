@@ -116,9 +116,9 @@ describe('lab-only category merge', () => {
     };
 
     const next = applyClientSummaryCategories(prev, incoming);
-    expect(next.subcategories.map((c: { subcategory: string }) => c.subcategory)).toEqual([
-      'Activity',
-    ]);
+    expect(
+      next.subcategories.map((c: { subcategory: string }) => c.subcategory),
+    ).toEqual(['Activity']);
     expect(next.total_subcategory).toBe(1);
   });
 
