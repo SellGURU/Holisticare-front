@@ -31,9 +31,12 @@ export function isCalculatedRisk(item: HealthRiskAssessment): boolean {
 
 export const RISKS_SCORES_AGE_SECTION = 'Risks, Scores & Age';
 
+export const AI_CLINICAL_BRIEF_SECTION = 'AI Clinical Brief';
+
 export const RISKS_SCORES_AGE_ALIASES: Record<string, string> = {
   'Health Risks': RISKS_SCORES_AGE_SECTION,
   'Health Scores': RISKS_SCORES_AGE_SECTION,
+  'Concerning Result': AI_CLINICAL_BRIEF_SECTION,
 };
 
 export type ReportDomainType = 'RISK' | 'SCORING' | 'AGING';

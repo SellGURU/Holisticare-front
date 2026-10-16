@@ -37,6 +37,7 @@ interface ClinicRow {
   plan_type: 'demo' | 'paying';
   is_disabled: boolean;
   simplified_report_labels: boolean;
+  ai_clinical_brief_enabled?: boolean;
   plan_updated_at: string | null;
   plan_updated_by: string;
   user_count: number;
@@ -223,6 +224,7 @@ const Clinics = () => {
       plan_type?: 'demo' | 'paying';
       is_disabled?: boolean;
       simplified_report_labels?: boolean;
+      ai_clinical_brief_enabled?: boolean;
     },
   ) => {
     if (

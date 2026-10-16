@@ -415,6 +415,18 @@ class Application extends Api {
     return response;
   }
   // endShare
+  static getPractitionerBrief(data: any) {
+    return this.post('/overview/practitioner_brief', data);
+  }
+  static refreshPractitionerBrief(data: any) {
+    return this.post('/overview/practitioner_brief/refresh', data);
+  }
+  static getPractitionerBriefEvidence(data: any, refId: string) {
+    return this.post(
+      '/overview/practitioner_brief/evidence?ref_id=' + encodeURIComponent(refId),
+      data,
+    );
+  }
   static getConceringResults(data: any) {
     const response = this.post('/overview/concerning_results', data);
     return response;

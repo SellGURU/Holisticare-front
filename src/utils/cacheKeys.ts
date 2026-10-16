@@ -37,6 +37,8 @@ export const HEALTH_PLAN_CACHE_KEYS = {
     `portal:healthplan:overview-treatment-plan:${memberId}`,
   healthRisks: (memberId: string | number) =>
     `portal:healthplan:health-risks:${memberId}`,
+  practitionerBrief: (memberId: string | number, locale = 'default') =>
+    `portal:healthplan:practitioner-brief:${memberId}:${locale}`,
 } as const;
 
 export function invalidateHealthPlanCache(memberId: string | number): void {
@@ -82,6 +84,8 @@ export function invalidateHealthPlanQueryKeys(
       keys.push(HEALTH_PLAN_CACHE_KEYS.overviewTreatmentPlan(id));
     } else if (query === 'healthRisks') {
       keys.push(HEALTH_PLAN_CACHE_KEYS.healthRisks(id));
+    } else if (query === 'practitionerBrief') {
+      keys.push(HEALTH_PLAN_CACHE_KEYS.practitionerBrief(id));
     }
   }
   for (const key of new Set(keys)) {

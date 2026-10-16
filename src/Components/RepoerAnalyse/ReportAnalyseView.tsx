@@ -2,19 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
-import {
-  CLIENT_SUMMARY_TITLE,
-  resolveOverviewBiomarkerTotals,
-} from './UploadTestV2/biomarkerCountCopy';
+import { resolveOverviewBiomarkerTotals } from './UploadTestV2/biomarkerCountCopy';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
 import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
-import ConceringRow from './Boxs/ConceringRow';
 import DetiledAnalyse from './Boxs/DetiledAnalyse';
+import PractitionerBriefSection from './PractitionerBriefSection';
+import AssignedPractitionerCard from './AssignedPractitionerCard';
 import RefrenceBox from './Boxs/RefrenceBox';
-import Legends from './Legends';
-import SummaryBox from './SummaryBox';
 
 import {
   useLocation,
@@ -40,7 +36,6 @@ import {
 import { visibilityPollMs } from '../../utils/visibilityPoll';
 // import { ButtonPrimary } from '../Button/ButtonPrimary';
 import Circleloader from '../CircleLoader';
-import { AccordionItem } from './Boxs/Accordion';
 // import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
 // import { ShareModal } from './ShareModal';
@@ -49,14 +44,13 @@ import { UploadTestV2 } from './UploadTestV2';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
 import { ClientIdentityHeader } from './ClientIdentityHeader';
 import HealthRisksPanel from './HealthRisksPanel';
-import { RISKS_SCORES_AGE_SECTION } from './healthRiskAssessments';
-import MarkdownText from '../markdownText';
-import ChartLoadingPlaceholder from './ChartLoadingPlaceholder';
+import {
+  resolveReportSection,
+  RISKS_SCORES_AGE_SECTION,
+} from './healthRiskAssessments';
 import NewDetailedAcordin from './Boxs/newDetailedAcordin';
 import {
   ActionPlanSkeleton,
-  ClientSummarySkeleton,
-  ClientSummaryContentSkeleton,
   ConcerningResultSkeleton,
   DetailedAnalysisSkeleton,
   HolisticPlanSkeleton,
@@ -70,7 +64,6 @@ import {
   filterCategoryCardsToVisibleBiomarkers,
   shouldApplyCategoryResponse,
   shouldApplyReferenceResponse,
-  shouldShowClientSummaryEmptyIllustration,
   shouldShowNeedFocusEmptyIllustration,
   shouldTreatEmptyFindingsAsAuthoritative,
 } from '../../utils/mergeCategoryCards';
@@ -86,7 +79,6 @@ import {
   type OverviewDataPhase,
 } from '../../utils/asyncProcessing';
 import { reconcileOverviewUiState } from '../../utils/reconcileOverviewUiState';
-import { uiText } from '../../i18n/uiText';
 import { logDescriptionRender } from '../../utils/descriptionDebug';
 import {
   HEALTH_PLAN_CACHE_KEYS,
@@ -94,7 +86,13 @@ import {
   invalidateHealthPlanCache,
   invalidateHealthPlanQueryKeys,
 } from '../../utils/cacheKeys';
-import { getCached, peekCached, fetchFresh } from '../../utils/pageCache';
+import {
+  cachedPictureWasStripped,
+  fetchFresh,
+  getCached,
+  peekCached,
+  revalidateCached,
+} from '../../utils/pageCache';
 import {
   normalizeTreatmentPlanCategories,
   pickLatestGeneratedHolisticPlan,
@@ -311,14 +309,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setLoading(false);
         });
     } else if (resolvedMemberID != null) {
-      getCached(
-        HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
-        () =>
-          Application.getPatientsInfo({
-            member_id: resolvedMemberID,
-          }).then((res) => res.data),
-        HEALTH_PLAN_TTL_MS,
-      )
+      const patientInfoKey = HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID);
+      const loadPatientInfo = () =>
+        Application.getPatientsInfo({
+          member_id: resolvedMemberID,
+        }).then((res) => res.data);
+      const pictureRefresh = cachedPictureWasStripped(patientInfoKey)
+        ? revalidateCached(patientInfoKey, loadPatientInfo)
+        : null;
+      getCached(patientInfoKey, loadPatientInfo, HEALTH_PLAN_TTL_MS)
         .then(async (data) => {
           if (gen !== sourceRefreshGenRef.current) return;
           if (
@@ -388,6 +387,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           }
           if (shouldLoadOverview) {
             fetchData();
+          }
+          if (pictureRefresh) {
+            const fresh = await pictureRefresh;
+            if (gen !== sourceRefreshGenRef.current || !fresh?.picture) return;
+            setUserInfoData((prev: any) =>
+              prev ? { ...prev, picture: fresh.picture } : fresh,
+            );
+            publish('userInfoData', { ...data, picture: fresh.picture });
           }
         })
         .catch((err) => {
@@ -957,14 +964,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const refreshPatientInfo = () => {
     if (resolvedMemberID == null || isShare) return;
     const gen = sourceRefreshGenRef.current;
-    getCached(
-      HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
-      () =>
-        Application.getPatientsInfo({
-          member_id: resolvedMemberID,
-        }).then((res) => res.data),
-      HEALTH_PLAN_TTL_MS,
-    )
+    const patientInfoKey = HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID);
+    const loadPatientInfo = () =>
+      Application.getPatientsInfo({
+        member_id: resolvedMemberID,
+      }).then((res) => res.data);
+    const pictureRefresh = cachedPictureWasStripped(patientInfoKey)
+      ? revalidateCached(patientInfoKey, loadPatientInfo)
+      : null;
+    getCached(patientInfoKey, loadPatientInfo, HEALTH_PLAN_TTL_MS)
       .then(async (data) => {
         if (gen !== sourceRefreshGenRef.current) return;
         if (
@@ -987,6 +995,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setHasWearableData(data.has_wearable_data);
         setQuestionnaires(data.questionnaires);
         setDisableGenerate(data.has_minimum_data === false);
+        if (pictureRefresh) {
+          const fresh = await pictureRefresh;
+          if (gen !== sourceRefreshGenRef.current || !fresh?.picture) return;
+          setUserInfoData((prev: any) =>
+            prev ? { ...prev, picture: fresh.picture } : fresh,
+          );
+          publish('userInfoData', { ...data, picture: fresh.picture });
+        }
       })
       .catch((err) => {
         console.error(
@@ -1623,9 +1639,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return filterCategoryCardsToVisibleBiomarkers(raw, biomarkers);
   }, [ClientSummaryBoxs, referenceData, referenceLoading]);
   const hasCategoryCards = displayedCategoryCards.length > 0;
-  const hasSummaryText = Boolean(
-    String(ClientSummaryBoxs?.client_summary || '').trim(),
-  );
   const awaitingOverviewData =
     overviewProcessing &&
     !hasReferenceBiomarkers &&
@@ -1713,52 +1726,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     hasDisplayedData: ConcerningResultIsLoaded,
     isInitialRequest: concerningLoading,
   });
-  const showClientSummarySkeleton = shouldShowSectionSkeleton({
-    hasDisplayedData: hasCategoryCards || hasReferenceBiomarkers,
-    isInitialRequest: clientSummaryLoading && ClientSummaryBoxs === null,
-  });
-  const showClientSummaryContentSkeleton = shouldShowSectionSkeleton({
-    hasDisplayedData: hasCategoryCards,
-    hasAuthoritativeEmpty:
-      ClientSummaryBoxs != null &&
-      !hasCategoryCards &&
-      (ClientSummaryBoxs?.total_subcategory ?? 0) === 0 &&
-      !hasReferenceBiomarkers,
-    isInitialRequest:
-      (clientSummaryLoading && ClientSummaryBoxs === null) ||
-      (hasReferenceBiomarkers && !hasCategoryCards),
-  });
-  const clientSummaryDomainState = String(
-    ClientSummaryBoxs?.domain_outcomes?.client_summary?.state || '',
-  );
-  const summaryRegenInFlight = overviewProcessing || clientSummaryLoading;
-  const summaryDomainStalled =
-    (clientSummaryDomainState === 'pending' ||
-      clientSummaryDomainState === 'incomplete') &&
-    !summaryRegenInFlight;
-  const showClientSummaryTextLoading =
-    !overviewPollTimedOut &&
-    (summaryRegenInFlight ||
-      (!hasSummaryText &&
-        !summaryDomainStalled &&
-        (clientSummaryDomainState === 'pending' ||
-          clientSummaryDomainState === 'incomplete' ||
-          (hasCategoryCards &&
-            !clientSummaryReady &&
-            clientSummaryDomainState.length === 0))) ||
-      (hasSummaryText &&
-        summaryRegenInFlight &&
-        clientSummaryDomainState === 'pending'));
   const showDetailedAnalysisSkeleton = shouldShowSectionSkeleton({
     hasDisplayedData: hasReferenceBiomarkers || hasCategoryCards,
     isInitialRequest: detailedAnalysisLoading,
   });
-  const showOverviewCounts = hasCategoryCards || hasReferenceBiomarkers;
   const overviewBiomarkerTotals = useMemo(
     () => resolveOverviewBiomarkerTotals(referenceData, ClientSummaryBoxs),
     [referenceData, ClientSummaryBoxs],
   );
-  const isBodyFigureLoading = showClientSummaryContentSkeleton;
   const resolveBioMarkers = () => {
     // const refData: Array<any> = [];
     // referenceData?.biomarkers.forEach((el: any) => {
@@ -1785,12 +1760,53 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const resolveCategories = () => displayedCategoryCards;
+  const isBodyFigureLoading = clientSummaryLoading && !hasCategoryCards;
+  const memoizedPoints = useMemo(() => {
+    return resolveCategories().map((el: any, index: number) => {
+      const curretPositionBox = resolvePosition(el.position);
+      const cardUi = resolveCategoryCardUi(el);
+      return (
+        <Point
+          key={`${el.subcategory}-${index}`}
+          name={el.subcategory}
+          status={resolveStatusArray(el.status)}
+          isProcessing={cardUi.ringLoading}
+          onClick={() => {
+            document.getElementById(el.subcategory)?.scrollIntoView({
+              behavior: 'smooth',
+            });
+          }}
+          top={curretPositionBox.top}
+          left={curretPositionBox.left}
+        />
+      );
+    });
+  }, [
+    resolvedMemberID,
+    ClientSummaryBoxs,
+    displayedCategoryCards,
+    isScoringComplete,
+  ]);
+  const [, setSearchParams] = useSearchParams();
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const section = params.get('section');
-    if (!loading && section) {
-      const element = document.getElementById(section);
-      if (element) {
+    const targetId = section ? resolveReportSection(section) : '';
+    if (!loading && targetId) {
+      if (section !== targetId) {
+        const next = new URLSearchParams(location.search);
+        next.set('section', targetId);
+        setSearchParams(next, { replace: true });
+      }
+      const element = document.getElementById(targetId);
+      if (targetId === 'AI Clinical Brief') {
+        setTimeout(() => {
+          const container = document.querySelector('.scroll-container');
+          if (container instanceof HTMLElement) {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }, 500);
+      } else if (element) {
         setTimeout(() => {
           element.scrollIntoView({
             behavior: 'smooth',
@@ -1892,7 +1908,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  const [, setSearchParams] = useSearchParams();
   useEffect(() => {
     const handleUploadTestShow = (data: any) => {
       const detail = data?.detail || {};
@@ -1926,28 +1941,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     };
   }, [setSearchParams]);
   const [isHolisticPlanEmpty, setIsHolisticPlanEmpty] = useState(true);
-
-  const memoizedPoints = useMemo(() => {
-    return resolveCategories().map((el: any, index: number) => {
-      const curretPositionBox = resolvePosition(el.position);
-      const cardUi = resolveCategoryCardUi(el);
-      return (
-        <Point
-          key={`${el.subcategory}-${index}`}
-          name={el.subcategory}
-          status={resolveStatusArray(el.status)}
-          isProcessing={cardUi.ringLoading}
-          onClick={() => {
-            document.getElementById(el.subcategory)?.scrollIntoView({
-              behavior: 'smooth',
-            });
-          }}
-          top={curretPositionBox.top}
-          left={curretPositionBox.left}
-        />
-      );
-    });
-  }, [resolvedMemberID, ClientSummaryBoxs, isScoringComplete]);
   const [checkedSteptwo, setCheckedStepTwo] = useState(false);
   useEffect(() => {
     if (checkedSteptwo) {
@@ -2226,128 +2219,85 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               latest available data.
             </div>
           )}
-          {accessManager.filter((el) => el.name == 'Client Summary')[0]
-            .checked == true && (
-            <>
-              {showClientSummarySkeleton ? (
-                <ClientSummarySkeleton />
-              ) : (
-                <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 ">
-                  <div className="min-w-[430px] w-full xl:w-[330px] relative xl:min-h-[750px]">
-                    <div>
-                      <div
-                        id="Client Summary"
-                        className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
-                      >
-                        {uiText(CLIENT_SUMMARY_TITLE)}
-                        <div className="ml-4 invisible">
-                          <Legends isGray></Legends>
-                        </div>
-                      </div>
-                      {ClientSummaryBoxs && showOverviewCounts && (
-                        <div className="text-Text-Secondary text-[12px]">
-                          {overviewBiomarkerTotals.subtitle}
-                        </div>
-                      )}
-                    </div>
-                    <div
-                      className="relative hidden xl:block w-fit max-w-full"
-                      dir="ltr"
-                    >
-                      <img
-                        className={`block ${isBodyFigureLoading ? 'opacity-60' : ''}`}
-                        src="/human.png"
-                        alt=""
-                      />
-                      <div className="absolute inset-0">{memoizedPoints}</div>
-                    </div>
-                  </div>
-
-                  <div className="flex-grow w-full mt-0 ">
-                    <div
-                      className={`w-full flex justify-between gap-3 ${
-                        isSticky
-                          ? 'fixed top-9 h-[50px] items-center bg-[#E9F0F2] z-50 !w-auto start-0 end-0 xl:start-[200px] xl:end-28 px-5 '
-                          : 'items-start'
-                      }`}
-                    >
+          <div className="flex flex-col items-start gap-6 xl:flex-row xl:gap-14">
+            {accessManager.filter((el) => el.name == 'Client Summary')[0]
+              ?.checked == true && (
+              <div className="relative hidden shrink-0 xl:block">
+                <div
+                  className="relative w-fit max-w-full"
+                  dir="ltr"
+                >
+                  <img
+                    className={`block ${isBodyFigureLoading ? 'opacity-60' : ''}`}
+                    src="/human.png"
+                    alt=""
+                  />
+                  <div className="absolute inset-0">{memoizedPoints}</div>
+                </div>
+              </div>
+            )}
+            <div className="min-w-0 w-full flex-1">
+              <div id="Client Summary">
+                <div
+                  className={`w-full ${
+                    isSticky
+                      ? 'fixed top-9 z-50 !w-auto start-0 end-0 xl:start-[200px] xl:end-28 bg-[#E9F0F2] px-5 '
+                      : ''
+                  }`}
+                >
+                  {isSticky ? (
+                    <ClientIdentityHeader
+                      user={userInfoData}
+                      memberId={resolvedMemberID}
+                      compact
+                    />
+                  ) : (
+                    <div className="grid items-stretch gap-3 xl:grid-cols-[minmax(0,1.5fr)_minmax(260px,0.7fr)]">
                       <ClientIdentityHeader
                         user={userInfoData}
-                        compact={isSticky}
-                        isShare={isShare}
+                        memberId={resolvedMemberID}
+                        details={
+                          accessManager.filter(
+                            (el) => el.name == 'Client Summary',
+                          )[0]?.checked == true
+                            ? {
+                                summary: ClientSummaryBoxs?.client_summary,
+                                subtitle: overviewBiomarkerTotals.subtitle,
+                                categories: resolveCategories(),
+                                cardUi: resolveCategoryCardUi,
+                              }
+                            : undefined
+                        }
                       />
-                    </div>
-                    <div
-                      className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
-                      style={{ lineHeight: '24px' }}
-                    >
-                      {showClientSummaryTextLoading ? (
-                        <ChartLoadingPlaceholder
-                          variant="text"
-                          label={t('reportChrome:generatingSummary')}
-                        />
-                      ) : showClientSummaryContentSkeleton ? (
-                        <div className="animate-pulse space-y-2">
-                          {Array.from({ length: 3 }).map((_, i) => (
-                            <div
-                              key={i}
-                              className="h-2.5 rounded bg-Gray-100"
-                              style={{
-                                width: i === 2 ? '75%' : '100%',
-                                animationDelay: `${i * 50}ms`,
-                              }}
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <MarkdownText
-                          text={ClientSummaryBoxs?.client_summary}
-                        />
+                      {!isShare && resolvedMemberID != null && (
+                        <AssignedPractitionerCard memberId={resolvedMemberID} />
                       )}
                     </div>
-                    {showClientSummaryContentSkeleton ? (
-                      <ClientSummaryContentSkeleton />
-                    ) : (
-                      <div className="w-full mt-4 grid gap-4 grid-cols-1 xl:grid-cols-2">
-                        {resolveCategories().map((el: any) => {
-                          const cardUi = resolveCategoryCardUi(el);
-                          return (
-                            <SummaryBox
-                              key={el.subcategory}
-                              isActive={false}
-                              data={el}
-                              needFocusAnalyzing={cardUi.needFocusAnalyzing}
-                              ringLoading={cardUi.ringLoading}
-                            ></SummaryBox>
-                          );
-                        })}
-                      </div>
-                    )}
-                    {shouldShowClientSummaryEmptyIllustration({
-                      categoryCount: resolveCategories().length,
-                      hasReferenceBiomarkers,
-                      showingSkeleton: showClientSummaryContentSkeleton,
-                    }) && (
-                      <>
-                        <div className="flex justify-center items-center w-full">
-                          <div className="flex flex-col items-center justify-center">
-                            <img
-                              src="/icons/Empty/biomarkerEmpty.svg"
-                              alt=""
-                              className="w-[219px]"
-                            />
-                            <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
-                              No Biomarkers Available Yet!
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                  )}
                 </div>
-              )}
-            </>
-          )}
+              </div>
+              {accessManager.filter((el) => el.name == 'Concerning Result')[0]
+                ?.checked == true &&
+                (showConcerningSkeleton ? (
+                  <ConcerningResultSkeleton />
+                ) : (
+                  <PractitionerBriefSection
+                    memberId={resolvedMemberID ?? null}
+                    enabled={
+                      !isShare ||
+                      accessManager.some(
+                        (item) =>
+                          item.name === 'Concerning Result' && item.checked,
+                      )
+                    }
+                    summary={ClientSummaryBoxs?.client_summary}
+                    groups={ResolveConceringData()}
+                    categories={resolveCategories()}
+                    profile={userInfoData}
+                  />
+                ))}
+            </div>
+          </div>
           {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
             .checked == true && (
             <>
@@ -2408,87 +2358,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 enabled={!isShare}
               />
             )}
-          {accessManager.filter((el) => el.name == 'Concerning Result')[0]
-            .checked == true && (
-            <>
-              <div className="my-10 min-h-[700px]">
-                <div className="w-full mb-3 flex items-center justify-between">
-                  <div
-                    id="Concerning Result"
-                    className="sectionScrollEl TextStyle-Headline-4 text-Text-Primary flex items-center"
-                  >
-                    Concerning Result
-                  </div>
-                  <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
-                    {/* Total of 30 Treatment in 4 category */}
-                  </div>
-                  {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
-                </div>
-                {showConcerningSkeleton ? (
-                  <ConcerningResultSkeleton />
-                ) : ResolveConceringData().length > 0 ? (
-                  <>
-                    <div className=" hidden xl:block">
-                      <div className="w-full bg-gray-100 rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center font-medium">
-                        <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
-                          Name
-                        </div>
-                        <div className="TextStyle-Headline-6 text-Text-Primary w-[120px] text-center">
-                          Result
-                        </div>
-                        <div className="TextStyle-Headline-6 text-Text-Primary   w-[120px] text-center">
-                          Units
-                        </div>
-                        <div className="TextStyle-Headline-6 text-Text-Primary  w-[180px] text-center">
-                          Lab Ref Range
-                        </div>
-                        {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
-                          Baseline
-                        </div> */}
-                        <div className="TextStyle-Headline-6 text-Text-Primary w-[150px] text-center">
-                          Optimal Range
-                        </div>
-                        {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
-                          Changes
-                        </div> */}
-                      </div>
-                      {ResolveConceringData().map((el: any) => {
-                        return (
-                          <>
-                            <ConceringRow data={el}></ConceringRow>
-                          </>
-                        );
-                      })}
-                    </div>
-                    <div className="flex xl:hidden flex-col gap-3">
-                      {ResolveConceringData().map((el: any) => {
-                        return (
-                          <>
-                            <AccordionItem data={el}></AccordionItem>
-                          </>
-                        );
-                      })}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex justify-center items-center mt-10 w-full">
-                      <div className="flex flex-col items-center justify-center">
-                        <img
-                          src="/icons/Empty/conceningEmpty.svg"
-                          alt=""
-                          className="w-[219px]"
-                        />
-                        <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
-                          No Concerning Results Available Yet!
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </>
-          )}
           {accessManager.filter((el) => el.name == 'Detailed Analysis')[0]
             .checked == true && (
             <div className="my-[200px] min-h-[700px]">

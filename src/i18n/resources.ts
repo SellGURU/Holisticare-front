@@ -159,7 +159,7 @@ export const englishResources = {
       client_summary: 'Client Summary',
       need_focus_biomarker: '"Need Focus" Biomarker',
       risks_scores_and_age: 'Risks, Scores & Age',
-      concerning_result: 'Concerning Result',
+      concerning_result: 'AI Clinical Brief',
       detailed_analysis: 'Detailed Analysis',
       holistic_plan: 'Holistic Plan',
       action_plan: 'Action Plan',

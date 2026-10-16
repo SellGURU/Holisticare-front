@@ -20,6 +20,7 @@ export type ReportQueryName =
   | 'clientSummary'
   | 'perBiomarkerNarratives'
   | 'healthRisks'
+  | 'practitionerBrief'
   | 'holisticPlan';
 
 export type DomainName =
@@ -28,7 +29,8 @@ export type DomainName =
   | 'client_summary'
   | 'per_biomarker_insights'
   | 'risk_assessments'
-  | 'holistic_plan';
+  | 'holistic_plan'
+  | 'practitioner_brief';
 
 export type DomainOutcome = {
   state?: DomainState | string | null;
@@ -70,6 +72,7 @@ export const DOMAIN_QUERY_MAP: Record<DomainName, ReportQueryName[]> = {
   per_biomarker_insights: ['perBiomarkerNarratives'],
   risk_assessments: ['healthRisks'],
   holistic_plan: ['holisticPlan'],
+  practitioner_brief: ['practitionerBrief'],
 };
 
 export const PROCESSING_DOMAIN_READY_EVENT = 'processingDomainReady';

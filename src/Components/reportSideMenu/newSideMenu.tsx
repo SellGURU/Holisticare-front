@@ -8,6 +8,7 @@ import SvgIcon from '../../utils/svgIcon';
 import { decodeAccessUser } from '../../help';
 import { navKey } from '../../i18n/wave1Resources';
 import {
+  AI_CLINICAL_BRIEF_SECTION,
   resolveReportSection,
   RISKS_SCORES_AGE_SECTION,
 } from '../RepoerAnalyse/healthRiskAssessments';
@@ -37,10 +38,9 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       defaultValue: formatStringWithQuotes(item),
     });
   const menuItems = [
-    'Client Summary',
+    'Concerning Result',
     'Need Focus Biomarker',
     RISKS_SCORES_AGE_SECTION,
-    'Concerning Result',
     'Detailed Analysis',
     'Holistic Plan',
     'Action Plan',
@@ -58,7 +58,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     return menuItems;
   };
 
-  const [activeMenu, setactiveMenu] = useState('Client Summary');
+  const [activeMenu, setactiveMenu] = useState(AI_CLINICAL_BRIEF_SECTION);
   const [ActiveLayer] = useState('menu');
   const [activeImg, setactiveImg] = useState(1);
   const [disableClicks, setDisableClicks] = useState(false);
@@ -119,7 +119,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       if (params.get('section')) {
         setactiveMenu(resolveReportSection(params.get('section') as string));
       } else {
-        setactiveMenu('Client Summary');
+        setactiveMenu(AI_CLINICAL_BRIEF_SECTION);
       }
     };
     const handleReportAvailable = () => {
@@ -127,7 +127,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       if (params.get('section')) {
         setactiveMenu(resolveReportSection(params.get('section') as string));
       } else {
-        setactiveMenu('Client Summary');
+        setactiveMenu(AI_CLINICAL_BRIEF_SECTION);
       }
     };
     subscribe('noReportAvailable', handleNoReportAvailable);
@@ -142,6 +142,13 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     const section = resolveReportSection(item);
     setSearchParams({ ['section']: section });
     setactiveMenu(section);
+    if (section === AI_CLINICAL_BRIEF_SECTION) {
+      const container = document.querySelector('.scroll-container');
+      if (container instanceof HTMLElement) {
+        container.scrollTo({ top: 0, behavior: 'instant' });
+      }
+      return;
+    }
     document.getElementById(section)?.scrollIntoView({
       behavior: 'instant',
     });
@@ -193,10 +200,10 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             onClick={() => {
               setSearchParams({
                 ['type']: 'Health',
-                ['section']: 'Client Summary',
+                ['section']: AI_CLINICAL_BRIEF_SECTION,
               });
               setActiveReportSection('Health');
-              setactiveMenu('Client Summary');
+              setactiveMenu(AI_CLINICAL_BRIEF_SECTION);
               setactiveImg(1);
               // publish('activeTabChange', { tab: 'Health' });
             }}
@@ -309,7 +316,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                 }}
                 key={index}
                 className={`text-[10px] ${disableClicks && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center ps-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
-                  item === activeMenu
+                  resolveReportSection(item) === resolveReportSection(activeMenu)
                     ? 'border-Primary-EmeraldGreen'
                     : 'border-gray-50'
                 } flex justify-start gap-1 `}

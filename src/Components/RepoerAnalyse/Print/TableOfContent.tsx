@@ -121,6 +121,7 @@ const TableOfContent = ({ isActiveSection }: TableOfContentProps) => {
                   Concerning Result
                 </a>
               </div>
+              <div className="ml-10 mt-2 text-sm text-white">AI Clinical Brief is included with this shared section.</div>
             </>
           )}
           {isActiveSection('Detailed Analysis') && (

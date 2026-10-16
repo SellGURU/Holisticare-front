@@ -5,6 +5,30 @@ import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
+
+function phoneHref(value?: string) {
+  const text = String(value || '').trim();
+  const digits = text.replace(/[^\d+]/g, '');
+  if (!text || text === '-' || digits.replace(/\+/g, '').length < 7) return '';
+  return `tel:${digits}`;
+}
+
+function PhoneLink({ value }: { value?: string }) {
+  const text = String(value || '').trim() || '-';
+  const href = phoneHref(text);
+  if (!href) {
+    return <span className="max-w-[150px] truncate text-end">{text}</span>;
+  }
+  return (
+    <a
+      href={href}
+      className="max-w-[150px] truncate text-end text-Primary-DeepTeal underline"
+    >
+      {text}
+    </a>
+  );
+}
+
 export const ClientInfo = () => {
   const { id } = useParams<{ id: string }>();
   type ClientInfoType = {
@@ -17,6 +41,9 @@ export const ClientInfo = () => {
     Location: string;
     email: string;
     'phone number': string;
+    pharmacy: string;
+    'pharmacy address': string;
+    'pharmacy phone': string;
     medication: string;
     conditions: string;
     allergy: string;
@@ -152,9 +179,32 @@ export const ClientInfo = () => {
                 <img src="/icons/call.svg" alt="" />
                 Phone
               </div>
+              <PhoneLink value={data['phone number']} />
+            </div>
+            <div className="w-full flex justify-between items-center">
+              <div className="text-Text-Secondary font-medium flex items-center gap-1">
+                <img src="/icons/pill.svg" alt="" />
+                Pharmacy
+              </div>
               <TooltipTextAuto maxWidth="150px">
-                {data['phone number']}
+                {data['pharmacy'] || '-'}
               </TooltipTextAuto>
+            </div>
+            <div className="w-full flex justify-between items-center">
+              <div className="text-Text-Secondary font-medium flex items-center gap-1 text-nowrap">
+                <img src="/icons/location.svg" alt="" />
+                Pharmacy address
+              </div>
+              <TooltipTextAuto maxWidth="150px">
+                {data['pharmacy address'] || '-'}
+              </TooltipTextAuto>
+            </div>
+            <div className="w-full flex justify-between items-center">
+              <div className="text-Text-Secondary font-medium flex items-center gap-1 text-nowrap">
+                <img src="/icons/call.svg" alt="" />
+                Pharmacy phone
+              </div>
+              <PhoneLink value={data['pharmacy phone']} />
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">

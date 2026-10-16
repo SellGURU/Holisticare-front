@@ -61,6 +61,9 @@ describe('HealthRisksPanel copy', () => {
       RISKS_SCORES_AGE_SECTION,
     );
     expect(resolveReportSection('Client Summary')).toBe('Client Summary');
+    expect(resolveReportSection('Concerning Result')).toBe(
+      'AI Clinical Brief',
+    );
   });
 
   it('hides report groups that are not active in Intelligence Model', () => {

@@ -124,7 +124,7 @@ export const faResources = {
       client_summary: 'خلاصه مراجع',
       need_focus_biomarker: 'نشانگر نیازمند توجه',
       risks_scores_and_age: 'ریسک‌ها، امتیازها و سن',
-      concerning_result: 'نتیجه مهم',
+      concerning_result: 'خلاصه بالینی هوش مصنوعی',
       detailed_analysis: 'تحلیل جزئی',
       holistic_plan: 'برنامه جامع',
       action_plan: 'برنامه اقدام',
