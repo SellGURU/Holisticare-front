@@ -65,7 +65,9 @@ function profileChips(value: unknown): string[] {
     .map((part) => part.trim())
     .filter((part) => {
       const token = part.toLowerCase();
-      return part !== '' && token !== '-' && token !== 'null' && token !== 'none';
+      return (
+        part !== '' && token !== '-' && token !== 'null' && token !== 'none'
+      );
     });
 }
 
@@ -91,57 +93,57 @@ export const ClientIdentityHeader = ({
       }
     >
       <div className="flex w-full items-start justify-between gap-3">
-      <div className="flex min-w-0 items-center gap-3">
-        {user.name && (
-          <div
-            className={`${avatarSize} shrink-0 overflow-hidden rounded-full border border-Primary-DeepTeal`}
-          >
-            <img
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  user.name || 'Client',
-                )}`;
-              }}
-              src={profilePictureSrc(user)}
-              alt=""
-            />
-          </div>
-        )}
-        <div className="min-w-0">
-          <div
-            className={`font-medium text-Text-Primary ${
-              compact ? 'text-sm' : 'text-base'
-            }`}
-          >
-            <TooltipTextAuto
-              maxWidth={compact ? '140px' : '240px'}
-              tooltipPlace="bottom"
-              tooltipClassName="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999] !break-words"
+        <div className="flex min-w-0 items-center gap-3">
+          {user.name && (
+            <div
+              className={`${avatarSize} shrink-0 overflow-hidden rounded-full border border-Primary-DeepTeal`}
             >
-              {user.name || ''}
-            </TooltipTextAuto>
-          </div>
-          {!compact && (user.sex || user.age) && (
-            <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] text-Text-Secondary">
-              {user.sex && <span>{String(uiText(user.sex))}</span>}
-              {user.sex && user.age && (
-                <span className="h-3 w-px bg-Primary-DeepTeal bg-opacity-30" />
-              )}
-              {user.age && (
-                <span>
-                  {String(uiText('Age'))} {user.age}
-                </span>
-              )}
+              <img
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    user.name || 'Client',
+                  )}`;
+                }}
+                src={profilePictureSrc(user)}
+                alt=""
+              />
             </div>
           )}
+          <div className="min-w-0">
+            <div
+              className={`font-medium text-Text-Primary ${
+                compact ? 'text-sm' : 'text-base'
+              }`}
+            >
+              <TooltipTextAuto
+                maxWidth={compact ? '140px' : '240px'}
+                tooltipPlace="bottom"
+                tooltipClassName="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999] !break-words"
+              >
+                {user.name || ''}
+              </TooltipTextAuto>
+            </div>
+            {!compact && (user.sex || user.age) && (
+              <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] text-Text-Secondary">
+                {user.sex && <span>{String(uiText(user.sex))}</span>}
+                {user.sex && user.age && (
+                  <span className="h-3 w-px bg-Primary-DeepTeal bg-opacity-30" />
+                )}
+                {user.age && (
+                  <span>
+                    {String(uiText('Age'))} {user.age}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      {!compact && (
-        <div className="hidden shrink-0 md:block">
-          <InfoToltip isShare={isShare} />
-        </div>
-      )}
+        {!compact && (
+          <div className="hidden shrink-0 md:block">
+            <InfoToltip isShare={isShare} />
+          </div>
+        )}
       </div>
       {!compact && clinicalRows.length > 0 && (
         <div className="mt-3 flex flex-col border-t border-Primary-DeepTeal border-opacity-10">
